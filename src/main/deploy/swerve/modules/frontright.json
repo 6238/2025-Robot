@@ -10,15 +10,15 @@
       "canbus": null
     },
     "encoder": {
-      "type": "ctre_mag",
-      "id": 0,
+      "type": "cancoder",
+      "id": 3,
       "canbus": null
     },
     "inverted": {
-      "drive": true,
+      "drive": false,
       "angle": true
     },
-    "absoluteEncoderOffset": 146.35,
+    "absoluteEncoderOffset": 232.558,
     "location": {
       "front": 12.125,
       "left": -12.125
