@@ -1,0 +1,33 @@
+package frc.robot;
+
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
+public final class Constants {
+    public final class IDs {
+        public static final int ELEVATOR_MOTOR = -1; // TODO: Determine Elevator Motor ID
+    }
+
+    public final class Elevator {
+        // From SysID routine
+        public static final double kS = 0.0; // voltage to overcome static friction
+        public static final double kG = 0.0; // voltage to overcome gravity
+        public static final double kV = 0.0; // volts per 1 rps
+        public static final double kA = 0.0; // volts per 1 rps/s
+
+        // Motion Profile
+        public static final TrapezoidProfile motionProfile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(
+                0.0, // max velocity in rps
+                0.0 // max acceleration in rps/s
+            )
+        );
+
+        // PID for correcting errors
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+        // Converting from height to rotations
+        public static final double heightPerRot = 0.0;
+    }
+}
