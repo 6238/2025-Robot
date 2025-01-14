@@ -34,7 +34,13 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setHeight(Double height) {
-        goal.position = height * Constants.Elevator.heightPerRot;
+        if (height > Constants.Elevator.maxHeight) {
+            goal.position = Constants.Elevator.maxHeight * Constants.Elevator.gearRatio;
+        }
+        if (height < Constants.Elevator.minHeight) {
+            goal.position = Constants.Elevator.minHeight * Constants.Elevator.gearRatio;
+        }
+        goal.position = height * Constants.Elevator.gearRatio;
     }
 
     public void setRotations(Double rotations) {

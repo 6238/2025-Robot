@@ -28,6 +28,10 @@ public final class Constants {
         public static final double kD = 0.0;
 
         // Converting from height to rotations
-        public static final double heightPerRot = 0.0;
+        public static final double gearRatio = 0.0;
+
+        // Min and Max Height for the Elevator
+        public static final double minHeight = 0.0;
+        public static final double maxHeight = 0.0;
     }
 }
