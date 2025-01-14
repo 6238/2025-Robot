@@ -33,6 +33,8 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # Runs a single command using the runner's shell
     - name: Compile robot code
       run: ./gradlew build
+
+    - name: Unit Tests
+      run: ./gradlew test
