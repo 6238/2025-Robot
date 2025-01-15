@@ -23,6 +23,10 @@ public final class Constants {
             public static final double kD = 0.0;
         }
 
+        public final class ElevatorHeights {
+            public static final double TEST_HEIGHT = 0.0; // Should be removed later. Here for example purposes
+        }
+
         // Motion Profile
         public static final TrapezoidProfile ELEVATOR_MOTION_PROFILE = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
