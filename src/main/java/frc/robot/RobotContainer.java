@@ -26,7 +26,7 @@ public class RobotContainer {
 
   CommandXboxController driverXbox = new CommandXboxController(0);
 
-  // private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
 
@@ -39,28 +39,10 @@ public class RobotContainer {
       () -> -driverXbox.getRightY());
       
       swerve.setDefaultCommand(driveFieldOrientedDirectAngle);
-    // swerve.setDefaultCommand(
-    //     swerve.driveCommand(
-    //         () ->
-    //             MathUtil.applyDeadband(
-    //                 -driverXbox.getLeftY(),
-    //                 0.02), // Y axis on joystick is X axis for FRC. Forward is postive-Y, so need to
-    //         // invert sign
-    //         () ->
-    //             MathUtil.applyDeadband(
-    //                 -driverXbox.getLeftX(),
-    //                 0.02), // X axis on joystick is Y axis for FRC. Left is positive-X, so need to
-    //         // invert sign
-    //         () ->
-    //             MathUtil.applyDeadband(
-    //                 -driverXbox.getRightX(), // Rotation for FRC is CCW-positive, so need to invert sign
-    //                 0.08)));
+    
     // Initialize autonomous chooser
-    // autoChooser = AutoBuilder.buildAutoChooser();
-    // SmartDashboard.putData("Auton Path", autoChooser);
-
-    // Log metadata
-    //MetadataLogger.logMetadata();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auton Path", autoChooser);
   }
 
   /**
