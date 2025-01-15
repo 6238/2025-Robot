@@ -19,9 +19,12 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
 
-public class Elevator extends SubsystemBase {
+import static frc.robot.Constants.Elevator.*;
+import frc.robot.Constants.Elevator.Gains;
+import frc.robot.Constants.IDs;
+
+public class ElevatorSubsystem extends SubsystemBase {
     private TalonFX elevatorMotor;
 
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
@@ -29,30 +32,30 @@ public class Elevator extends SubsystemBase {
 
     private final PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
 
-    public Elevator() {
-        elevatorMotor = new TalonFX(Constants.IDs.ELEVATOR_MOTOR);
+    public ElevatorSubsystem() {
+        elevatorMotor = new TalonFX(IDs.ELEVATOR_MOTOR);
 
         Slot0Configs motorConfig = new Slot0Configs();
         motorConfig.GravityType = GravityTypeValue.Elevator_Static;
-        motorConfig.kS = Constants.Elevator.kS;
-        motorConfig.kG = Constants.Elevator.kG;
-        motorConfig.kV = Constants.Elevator.kV;
-        motorConfig.kA = Constants.Elevator.kA;
-        motorConfig.kP = Constants.Elevator.kP;
-        motorConfig.kI = Constants.Elevator.kI;
-        motorConfig.kD = Constants.Elevator.kD;
+        motorConfig.kS = Gains.kS;
+        motorConfig.kG = Gains.kG;
+        motorConfig.kV = Gains.kV;
+        motorConfig.kA = Gains.kA;
+        motorConfig.kP = Gains.kP;
+        motorConfig.kI = Gains.kI;
+        motorConfig.kD = Gains.kD;
 
         elevatorMotor.getConfigurator().apply(motorConfig);
     }
 
     public void setHeight(Double height) {
-        if (height > Constants.Elevator.maxHeight) {
-            goal.position = Constants.Elevator.maxHeight * Constants.Elevator.gearRatio;
+        if (height > ELEVATOR_MAX_HEIGHT) {
+            goal.position = ELEVATOR_MAX_HEIGHT * ELEVATOR_GEAR_RATIO;
         }
-        if (height < Constants.Elevator.minHeight) {
-            goal.position = Constants.Elevator.minHeight * Constants.Elevator.gearRatio;
+        if (height < ELEVATOR_MIN_HEIGHT) {
+            goal.position = ELEVATOR_MAX_HEIGHT * ELEVATOR_GEAR_RATIO;
         }
-        goal.position = height * Constants.Elevator.gearRatio;
+        goal.position = height * ELEVATOR_GEAR_RATIO;
     }
 
     public void setRotations(Double rotations) {
@@ -61,7 +64,7 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setpoint = Constants.Elevator.motionProfile.calculate(0.020, setpoint, goal);
+        setpoint = ELEVATOR_MOTION_PROFILE.calculate(0.020, setpoint, goal);
 
         positionVoltage.Position = setpoint.position;
         positionVoltage.Velocity = setpoint.velocity;
