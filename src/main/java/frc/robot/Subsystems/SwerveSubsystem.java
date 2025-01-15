@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import static frc.robot.Constants.Swerve.*;
 
 import java.io.File;
 import java.util.Optional;
@@ -39,18 +39,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
-
-  /**
-   * Constants specific to the swerve modules See
-   * https://docs.wcproducts.com/wcp-swervex/general-info/ratio-options
-   */
-  public double maximumSpeed = Units.feetToMeters(15.12);
-
-  double wheelDiameter = 4.0; // Inches
-  double driveGearRatio = 6.55;
-  double steeringGearRatio = 10.29;
-  double driveEncoderResolution = 1.0;
-  double steeringEncoderResolution = 1.0;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -87,13 +75,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
       double driveConversionFactor =
           SwerveMath.calculateMetersPerRotation(
-              Units.inchesToMeters(wheelDiameter), driveGearRatio, driveEncoderResolution);
+              Units.inchesToMeters(WHEEL_DIAMETER), DRIVE_GEAR_RATIO, DRIVER_ENCODER_RESOLUTION);
       double steeringConversionFactor =
           SwerveMath.calculateDegreesPerSteeringRotation(
-              steeringGearRatio, steeringEncoderResolution);
+              STEERING_GEAR_RATIO, STEERING_ENCODER_RESOLUTION);
       swerveDrive =
           new SwerveParser(directory)
-              .createSwerveDrive(maximumSpeed, steeringConversionFactor, driveConversionFactor);
+              .createSwerveDrive(MAX_SPEED, steeringConversionFactor, driveConversionFactor);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -280,7 +268,7 @@ public class SwerveSubsystem extends SubsystemBase {
     xInput = Math.pow(xInput, 3);
     yInput = Math.pow(yInput, 3);
     return swerveDrive.swerveController.getTargetSpeeds(
-        xInput, yInput, headingX, headingY, getHeading().getRadians(), maximumSpeed);
+        xInput, yInput, headingX, headingY, getHeading().getRadians(), MAX_SPEED);
   }
 
   /**
@@ -295,7 +283,7 @@ public class SwerveSubsystem extends SubsystemBase {
     xInput = Math.pow(xInput, 3);
     yInput = Math.pow(yInput, 3);
     return swerveDrive.swerveController.getTargetSpeeds(
-        xInput, yInput, rotation2d.getRadians(), getHeading().getRadians(), maximumSpeed);
+        xInput, yInput, rotation2d.getRadians(), getHeading().getRadians(), MAX_SPEED);
   }
 
   /**
@@ -450,11 +438,11 @@ public class SwerveSubsystem extends SubsystemBase {
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
           double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
           // Make the robot move
-          double rotation = rotationSpeed.getAsDouble() * Constants.MAX_ANGULAR_VELOCITY;
+          double rotation = rotationSpeed.getAsDouble() * MAX_ANGULAR_VELOCITY;
 
           Translation2d translation =
               new Translation2d(
-                  sign * xInput * this.maximumSpeed, sign * yInput * this.maximumSpeed);
+                  sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
           this.drive(translation, rotation, true);
         });
   }
