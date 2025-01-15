@@ -9,12 +9,16 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,6 +30,9 @@ import static frc.robot.Constants.Swerve.*;
 import java.io.File;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+
+import org.photonvision.EstimatedRobotPose;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.imu.NavXSwerve;
@@ -183,6 +190,23 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Pose2d getPose() {
     return swerveDrive.getPose();
+  }
+
+  /**
+   * Add vision pose (with standard deviation matrix)
+   * @param pose
+   * @param stdev
+   */
+  public void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
+    swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, stdev);
+  }
+
+  /**
+   * Add vision pose
+   * @param pose
+   */
+  public void addVisionPose(EstimatedRobotPose pose) {
+    swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
   }
 
   /**
