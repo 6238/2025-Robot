@@ -4,10 +4,20 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Radians;
+
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import frc.robot.util.CameraSettings;
 
 
 /** Constants for the robot. */
@@ -29,12 +39,43 @@ public final class Constants {
     public static final double DRIVER_ENCODER_RESOLUTION = 1.0;
     public static final double STEERING_ENCODER_RESOLUTION = 1.0;
   }
-  
 
   public final class Vision {
-    public static final String PHOTONCAMERA_NAME_A = "Arducam_A";
-    public static final String PHOTONCAMERA_NAME_B = "Arducam_B";
-  }
+    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-  public static final Matrix<N3, N1> VISION_STDDEV = new Matrix<N3,N1>(N3.instance, N1.instance, new double[] {2,0,2,0,2.5});
+    public static final CameraSettings CAMERA_SETTINGS[] = {
+      new CameraSettings(
+        "Arducam_A",
+        new Transform3d(
+          new Translation3d(
+            Inches.of(-13.5),
+            Inches.of(13.5),
+            Inches.of(10.5)
+          ),
+          new Rotation3d(
+            Degrees.of(0).in(Radians),
+            Degrees.of(-55).in(Radians),
+            Degrees.of(150).in(Radians)
+          )
+        )
+      ),
+      new CameraSettings(
+        "Arducam_B",
+        new Transform3d(
+          new Translation3d(
+            Inches.of(-13.5),
+            Inches.of(-13.5),
+            Inches.of(10.5)
+          ),
+          new Rotation3d(
+            Degrees.of(180).in(Radians),
+            Degrees.of(-55).in(Radians),
+            Degrees.of(210).in(Radians)
+          )
+        )
+      )
+    };
+    
+    public static final Matrix<N3, N1> VISION_STDDEV = new Matrix<N3,N1>(N3.instance, N1.instance, new double[] {2,0,2,0,2.5});
+  }
 }
