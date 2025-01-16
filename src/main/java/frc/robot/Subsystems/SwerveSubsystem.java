@@ -8,7 +8,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -368,34 +367,6 @@ public class SwerveSubsystem extends SubsystemBase {
         DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder. Try checking version numbers and clean /deploy/* on the rio", e.getStackTrace());
     }
   }
-
-  /**
-   * Get the path follower with events.
-   *
-   * @param pathName PathPlanner path name.
-   * @param setOdomToStart Set the odometry position to the start of the path.
-   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
-   */
- /* public Command getAutonomousCommand(String pathName, boolean setOdomToStart) {
-    // Load the path you want to follow using its name in the GUI
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-    if (setOdomToStart) {
-      resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
-    }
-
-    // Create a path following command using AutoBuilder. This will also trigger
-    // event markers.
-    return AutoBuilder.followPath(path);
-  }*/
-
-  /*public void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
-    swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, stdev);
-  }
-
-  public void addVisionPose(EstimatedRobotPose pose) {
-    swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
-  }*/
 
   private void resetGyroTo(Rotation2d rot) {
     // if our gyro isn't a navx, this will throw a ClassCastException
