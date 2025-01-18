@@ -5,15 +5,17 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.util.AutonTeleController;
+
 import java.io.File;
 
 /**
@@ -25,11 +27,12 @@ public class RobotContainer {
   SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
 
   CommandXboxController driverXbox = new CommandXboxController(0);
+  AutonTeleController autonTeleController = new AutonTeleController(driverXbox);
 
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
-
+    PathfindingCommand.warmupCommand().schedule();
     configureTriggers();
 
     Command driveFieldOrientedDirectAngle = swerve.debugDriveCommand(
@@ -55,6 +58,7 @@ public class RobotContainer {
   private void configureTriggers() {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand()); 
+    autonTeleController.SetupPoseCommands();
   }
 
   public Command getAutonomousCommand() {
