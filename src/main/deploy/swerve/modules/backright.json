@@ -16,7 +16,7 @@
     },
     "inverted": {
       "drive": false,
-      "angle": true
+      "angle": false
     },
     "absoluteEncoderOffset": 217.086,
     "location": {

@@ -77,16 +77,9 @@ public class SwerveSubsystem extends SubsystemBase {
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
-
-      double driveConversionFactor =
-          SwerveMath.calculateMetersPerRotation(
-              Units.inchesToMeters(WHEEL_DIAMETER), DRIVE_GEAR_RATIO, DRIVER_ENCODER_RESOLUTION);
-      double steeringConversionFactor =
-          SwerveMath.calculateDegreesPerSteeringRotation(
-              STEERING_GEAR_RATIO, STEERING_ENCODER_RESOLUTION);
       swerveDrive =
           new SwerveParser(directory)
-              .createSwerveDrive(MAX_SPEED, steeringConversionFactor, driveConversionFactor);
+              .createSwerveDrive(MAX_SPEED);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
