@@ -32,13 +32,12 @@ public class RobotContainer {
 
     configureTriggers();
 
-    Command driveFieldOrientedDirectAngle = swerve.debugDriveCommand(
+    Command driveCommand = swerve.driveCommand(
       () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
       () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), 0.02),
-      () -> -driverXbox.getRightX(),
-      () -> -driverXbox.getRightY());
+      () -> -driverXbox.getRightX());
       
-      swerve.setDefaultCommand(driveFieldOrientedDirectAngle);
+      swerve.setDefaultCommand(driveCommand);
     
     // Initialize autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();

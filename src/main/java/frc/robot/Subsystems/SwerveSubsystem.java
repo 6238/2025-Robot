@@ -93,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setHeadingCorrection(
         false); // sHeading correction should only be used while controlling the robot via angle.
 
-    // setupPathPlanner();
+    setupPathPlanner();
   }
 
 
