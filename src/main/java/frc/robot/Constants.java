@@ -22,7 +22,18 @@ public final class Constants {
         }
 
         public final class ElevatorHeights {
+            public static final double ELEVATOR_GEAR_RATIO = 0.0;
+
+            // Min and Max Height for the Elevator
+            public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+            public static final double ELEVATOR_MAX_HEIGHT = 0.0;
             public static final double TEST_HEIGHT = 0.0; // Should be removed later. Here for example purposes
+            
+            //TODO: find heights
+            public static final double L1 = 1.0;
+            public static final double L2 = 2.0;
+            public static final double L3 = 3.0;
+            public static final double L4 = 4.0;
         }
 
         // Motion Profile
@@ -34,10 +45,6 @@ public final class Constants {
         );
 
         // Converting from height to rotations
-        public static final double ELEVATOR_GEAR_RATIO = 0.0;
 
-        // Min and Max Height for the Elevator
-        public static final double ELEVATOR_MIN_HEIGHT = 0.0;
-        public static final double ELEVATOR_MAX_HEIGHT = 0.0;
     }
 }

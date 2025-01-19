@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import static frc.robot.Constants.Elevator.*;
+
+import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
 
@@ -47,19 +49,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorMotor.getConfigurator().apply(motorConfig);
     }
-
-    public void setHeight(Double height) {
-        if (height > ELEVATOR_MAX_HEIGHT) {
-            goal.position = ELEVATOR_MAX_HEIGHT * ELEVATOR_GEAR_RATIO;
-        }
-        if (height < ELEVATOR_MIN_HEIGHT) {
-            goal.position = ELEVATOR_MAX_HEIGHT * ELEVATOR_GEAR_RATIO;
-        }
-        goal.position = height * ELEVATOR_GEAR_RATIO;
+    public Command setHeightCommand(double givenHeight) {
+        return run(() -> setHeight(givenHeight));
     }
-
-    public void setRotations(Double rotations) {
-        goal.position = rotations;
+    
+    //// sets the height to a clamped value
+    public void setHeight(Double height) {
+        double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
+        double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
+        goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
     }
 
     @Override
