@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Subsystems;
+package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -21,6 +21,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.Swerve.*;
@@ -77,23 +79,16 @@ public class SwerveSubsystem extends SubsystemBase {
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
-
-      double driveConversionFactor =
-          SwerveMath.calculateMetersPerRotation(
-              Units.inchesToMeters(WHEEL_DIAMETER), DRIVE_GEAR_RATIO, DRIVER_ENCODER_RESOLUTION);
-      double steeringConversionFactor =
-          SwerveMath.calculateDegreesPerSteeringRotation(
-              STEERING_GEAR_RATIO, STEERING_ENCODER_RESOLUTION);
       swerveDrive =
           new SwerveParser(directory)
-              .createSwerveDrive(MAX_SPEED, steeringConversionFactor, driveConversionFactor);
+              .createSwerveDrive(MAX_SPEED);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(
         false); // sHeading correction should only be used while controlling the robot via angle.
 
-    // setupPathPlanner();
+    setupPathPlanner();
   }
 
 
