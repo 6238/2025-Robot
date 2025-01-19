@@ -40,10 +40,7 @@ public class Camera {
     camDisconnected.set(false);
     
     Optional<EstimatedRobotPose> pose = poseEst.update(cam.getLatestResult());
-    if (pose.isPresent()) {
-        return pose;
-    }
     
-    return Optional.empty();
+    return pose;
   }
 }
