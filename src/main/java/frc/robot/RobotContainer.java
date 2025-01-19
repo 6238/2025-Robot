@@ -12,7 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.AlgaeEndEffector;
+import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.Subsystems.SwerveSubsystem;
 import java.io.File;
 
@@ -23,6 +27,7 @@ import java.io.File;
 public class RobotContainer {
 
   SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+  AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
 
@@ -54,6 +59,21 @@ public class RobotContainer {
   private void configureTriggers() {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand()); 
+
+    driverXbox.x().onTrue(
+      new SequentialCommandGroup(
+        algaeSubsystem.intakeUntilStalled(),
+        algaeSubsystem.stopMotors()
+      )
+    );
+
+    driverXbox.b().onTrue(
+      new SequentialCommandGroup(
+        algaeSubsystem.startOutake(),
+        new WaitCommand(AlgaeEndEffector.OUTAKE_WAIT),
+        algaeSubsystem.stopMotors()
+      )
+    );
   }
 
   public Command getAutonomousCommand() {
