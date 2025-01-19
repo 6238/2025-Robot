@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.Swerve.*;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
@@ -45,6 +46,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class SwerveSubsystem extends SubsystemBase {
 
   /** Swerve drive object. */
+  private final Field2d field = new Field2d();
   private final SwerveDrive swerveDrive;
 
   /**
@@ -89,6 +91,8 @@ public class SwerveSubsystem extends SubsystemBase {
         false); // sHeading correction should only be used while controlling the robot via angle.
 
     setupPathPlanner();
+
+    SmartDashboard.putData("Vision", field);
   }
 
 
@@ -191,6 +195,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param stdev
    */
   public void addVisionPose(EstimatedRobotPose pose, Matrix<N3, N1> stdev) {
+    field.setRobotPose(pose.estimatedPose.toPose2d());
     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, stdev);
   }
 
