@@ -4,8 +4,15 @@
 
 package frc.robot.util;
 
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.BuildConstants;
 
 /** This class logs pertinent metadata to NetworkTables. */
@@ -56,5 +63,34 @@ public class Logging {
         .getStringTopic("/Metadata/ProjectName")
         .publish()
         .set(BuildConstants.MAVEN_NAME);
+  }
+
+  public static void initializeCommandSchedulerHooks() {
+    CommandScheduler.getInstance().onCommandInitialize(initializeHook());
+    CommandScheduler.getInstance().onCommandFinish(finishHook());
+    CommandScheduler.getInstance().onCommandInterrupt(initializeHook());
+  }
+
+  private static Consumer<Command> initializeHook() {
+    return (Command command) -> {
+        DataLogManager.log("INITIALIZE: " + command.getName());
+    };
+  }
+
+  private static Consumer<Command> finishHook() {
+    return (Command command) -> {
+        DataLogManager.log("FINISH: " + command.getName());
+    };
+  }
+
+  private static BiConsumer<Command, Optional<Command>> interruptHook() {
+    return (Command command, Optional<Command> other) -> {
+        if (other.isPresent()) {
+            DataLogManager.log("INTERRUPT: " + command.getName() + " by " + other.get().getName());
+            return;
+        }
+        
+        DataLogManager.log("INTERRUPT: " + command.getName());
+    };
   }
 }
