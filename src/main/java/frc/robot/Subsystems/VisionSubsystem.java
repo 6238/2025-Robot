@@ -19,8 +19,8 @@ public class VisionSubsystem extends SubsystemBase {
     private AprilTagFieldLayout fieldLayout;
 
     // Keep track of cameras and poses
-    private ArrayList<Camera> cameras;
-    private ArrayList<Optional<EstimatedRobotPose>> poses;
+    private ArrayList<Camera> cameras = new ArrayList<>();
+    private ArrayList<Optional<EstimatedRobotPose>> poses = new ArrayList<>();
 
     private SwerveSubsystem swerve;
 
@@ -29,7 +29,8 @@ public class VisionSubsystem extends SubsystemBase {
         this.swerve = swerve;
 
         try {
-            fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+            fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
+            System.out.println("Loaded apriltag field from: "+ fieldLayout);
         } catch (IOException e) {
             DataLogManager.log("ERROR: Unable to load apriltag field layout"+e.getStackTrace().toString());
         }
