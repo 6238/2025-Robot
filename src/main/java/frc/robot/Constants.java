@@ -68,7 +68,7 @@ public final class Constants {
             Inches.of(10.5)
           ),
           new Rotation3d(
-            Degrees.of(180).in(Radians),
+            Degrees.of(0).in(Radians),
             Degrees.of(-55).in(Radians),
             Degrees.of(210).in(Radians)
           )
