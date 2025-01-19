@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -19,6 +21,7 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.Logging;
 import frc.robot.util.AutonTeleController;
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
@@ -35,12 +38,13 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+    Pathfinding.setPathfinder(new LocalADStar());
+
     DataLogManager.start();
     Logging.logMetadata();
     Logging.initializeCommandSchedulerHooks();
     PathfindingCommand.warmupCommand().schedule();
 
-    PathfindingCommand.warmupCommand().schedule();
     configureTriggers();
 
     Command driveCommand = swerve.driveCommand(
