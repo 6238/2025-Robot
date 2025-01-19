@@ -41,7 +41,7 @@ public class Camera {
     }
     camDisconnected.set(false);
 
-    Optional<EstimatedRobotPose> pose;
+    Optional<EstimatedRobotPose> pose = Optional.empty();
     for (PhotonPipelineResult result : cam.getAllUnreadResults()) {
       pose = poseEst.update(result);
     }
