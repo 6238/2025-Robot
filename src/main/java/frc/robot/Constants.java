@@ -34,6 +34,9 @@ public final class Constants {
             public static final double L2 = 2.0;
             public static final double L3 = 3.0;
             public static final double L4 = 4.0;
+
+            // TODO
+            public static final double REACH_STATE_THRES = 0.1;
         }
 
         // Motion Profile

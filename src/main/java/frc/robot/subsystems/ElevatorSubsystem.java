@@ -69,6 +69,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorMotor.setControl(positionVoltage);
     }
+    public boolean reachedState() {
+        double error = elevatorMotor.getPosition().getValueAsDouble() - setpoint.position;
+        return Math.abs(error) < ElevatorHeights.REACH_STATE_THRES;
+    }
 
 
     /* SYSID */

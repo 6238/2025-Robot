@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +20,12 @@ public class RobotContainer {
 
 
   public RobotContainer() {
+    NamedCommands.registerCommand ("Elevator_L1", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
+    NamedCommands.registerCommand ("Elevator_L2", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    NamedCommands.registerCommand ("Elevator_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+    NamedCommands.registerCommand ("Elevator_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
+
+
     configureBindings();
   }
 
