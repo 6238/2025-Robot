@@ -41,7 +41,7 @@ public final class Constants {
   }
 
   public final class Vision {
-    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.AVERAGE_BEST_TARGETS;
+    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.LOWEST_AMBIGUITY;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
       new CameraSettings(
