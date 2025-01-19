@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.Logging;
+
 import java.io.File;
 
 /**
@@ -32,6 +34,9 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+    DataLogManager.start();
+    Logging.logMetadata();
+    Logging.initializeCommandSchedulerHooks();
 
     configureTriggers();
 
@@ -45,8 +50,6 @@ public class RobotContainer {
     // Initialize autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Path", autoChooser);
-
-    DataLogManager.start();
   }
 
   /**
