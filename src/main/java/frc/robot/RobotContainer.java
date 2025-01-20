@@ -16,8 +16,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AlgaeEndEffector;
-import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
-import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+
 import java.io.File;
 
 /**
