@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
@@ -22,6 +18,10 @@ import frc.robot.util.CameraSettings;
 
 /** Constants for the robot. */
 public final class Constants {
+  
+  public final class IDs {
+    public static final int ELEVATOR_MOTOR = 30; // TODO: Determine Elevator Motor ID
+  }
 
   /** The robot's maximum angular velocity. */
   public final class Swerve {
@@ -38,6 +38,43 @@ public final class Constants {
     public static final double STEERING_GEAR_RATIO = 10.29;
     public static final double DRIVER_ENCODER_RESOLUTION = 1.0;
     public static final double STEERING_ENCODER_RESOLUTION = 1.0;
+  }
+  
+  public final class Elevator {
+    public final class Gains {
+      // From SysID routine
+      public static final double kS = 0.16002; // voltage to overcome static friction
+      public static final double kG =-0.19416; // voltage to overcome gravity
+      public static final double kV = 0.10967; // volts per 1 rps
+      public static final double kA = 0.001425; // volts per 1 rps/s
+
+      // PID for correcting errors
+      public static final double kP = 0.75;
+      public static final double kI = 0.02;
+      public static final double kD = 0.0;
+    }
+
+    public final class ElevatorHeights {
+      public static final double ELEVATOR_GEAR_RATIO = -1.62976;
+
+      // Min and Max Height for the Elevator
+      public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+      public static final double ELEVATOR_MAX_HEIGHT = 60.0;
+
+      //TODO: find heights
+      public static final double L1 = 12.0;
+      public static final double L2 = 24.0;
+      public static final double L3 = 36.0;
+      public static final double L4 = 48.0;
+
+      // TODO
+      public static final double REACH_STATE_THRES = 0.1;
+    }
+
+    // Motion Profile
+    public static final double MAX_VELOCITY = 25.0;
+    public static final double MAX_ACCEL = 50.0;
+    public static final double JERK = 500.0;
   }
 
   public final class Vision {

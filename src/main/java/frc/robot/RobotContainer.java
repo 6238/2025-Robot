@@ -4,6 +4,14 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.Constants;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.MathUtil;
@@ -28,6 +36,7 @@ public class RobotContainer {
 
   SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
+  ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
 
@@ -39,6 +48,11 @@ public class RobotContainer {
     Logging.initializeCommandSchedulerHooks();
 
     configureTriggers();
+    
+    NamedCommands.registerCommand ("Elevator_L1", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
+    NamedCommands.registerCommand ("Elevator_L2", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    NamedCommands.registerCommand ("Elevator_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+    NamedCommands.registerCommand ("Elevator_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
 
     Command driveCommand = swerve.driveCommand(
       () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
@@ -61,7 +75,19 @@ public class RobotContainer {
    */
   private void configureTriggers() {
     // Controls
-    driverXbox.start().onTrue(swerve.zeroYawCommand()); 
+    driverXbox.start().onTrue(swerve.zeroYawCommand());
+    
+    new JoystickButton(m_driverController, Button.kA.value)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
+
+    new JoystickButton(m_driverController, Button.kB.value)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+
+    new JoystickButton(m_driverController, Button.kX.value)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+
+    new JoystickButton(m_driverController, Button.kY.value)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
   }
 
   public Command getAutonomousCommand() {
