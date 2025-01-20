@@ -9,7 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Constants;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -24,12 +24,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.util.Logging;
 import frc.robot.Constants.AlgaeEndEffector;
-import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
 
 import java.io.File;
 
