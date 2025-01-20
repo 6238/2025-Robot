@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,15 +15,18 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
         leftMotor = new TalonFX(AlgaeEndEffector.LEFT_MOTOR_ID);
         rightMotor = new TalonFX(AlgaeEndEffector.RIGHT_MOTOR_ID);
     }
-
+    // todo
     public boolean isMotorStopped() {
-        double val = leftMotor.getVelocity().getValueAsDouble();
-        return Math.abs(val) <= AlgaeEndEffector.STALL_THRESHOLD;
+        // if just vel this will flag when you start motor and still accelerating
+        double vel = leftMotor.getVelocity().getValueAsDouble();
+        double cur = leftMotor.getSupplyCurrent().getValueAsDouble();
+        double stall = leftMotor.getMotorStallCurrent().getValueAsDouble(); // todo?
+        return Math.abs(vel) <= AlgaeEndEffector.STALL_THRESHOLD && cur > 5; 
     }
 
     public void setMotorSpeed(double speed) {
         leftMotor.set(speed);
-        rightMotor.set(speed);
+        rightMotor.set(-speed);
     }
 
     public Command startIntake() {
