@@ -83,19 +83,26 @@ public class RobotContainer {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand());
     
-    new JoystickButton(m_driverController, Button.kA.value)
+    driverXbox.a()
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
-    new JoystickButton(m_driverController, Button.kB.value)
+    driverXbox.b()
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
 
-    new JoystickButton(m_driverController, Button.kX.value)
+    driverXbox.x()
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
 
-    new JoystickButton(m_driverController, Button.kY.value)
+    driverXbox.y()
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
     
     driverXbox.start().onTrue(swerve.zeroYawCommand()); 
+
+    driverXbox.rightBumper().onTrue(algaeSubsystem.intakeUntilStalled());
+    driverXbox.leftBumper().onTrue(new SequentialCommandGroup(
+      algaeSubsystem.startOutake(),
+      new WaitCommand(AlgaeEndEffector.OUTAKE_WAIT),
+      algaeSubsystem.stopMotors()
+    ));
   }
 
   public Command getAutonomousCommand() {
