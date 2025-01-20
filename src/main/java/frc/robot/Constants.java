@@ -77,6 +77,18 @@ public final class Constants {
     public static final double JERK = 500.0;
   }
 
+  public final class AlgaeEndEffector {
+    public static final int LEFT_MOTOR_ID = 0;
+    public static final int RIGHT_MOTOR_ID = 0;
+
+    public static final double STALL_THRESHOLD = 0.1;
+
+    public static final double INTAKE_SPEED = 0;
+    public static final double OUTAKE_SPEED = 0;
+
+    public static final double OUTAKE_WAIT = 3.0;
+  }
+
   public final class Vision {
     public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.AVERAGE_BEST_TARGETS;
 
