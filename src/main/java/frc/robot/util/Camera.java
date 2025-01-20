@@ -43,7 +43,7 @@ public class Camera {
 
     Optional<EstimatedRobotPose> pose = Optional.empty();
     for (PhotonPipelineResult result : cam.getAllUnreadResults()) {
-      pose = poseEst.update(result);
+      pose = poseEst.update(result, cam.getCameraMatrix(), cam.getDistCoeffs());
     }
     
     return pose;
