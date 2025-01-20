@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -32,12 +34,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State(0, 0);
 
-    private final PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     public ElevatorSubsystem() {
         elevatorMotor = new TalonFX(IDs.ELEVATOR_MOTOR);
 
-        Slot0Configs motorConfig = new Slot0Configs();
+        var elevatorMotorConfigs = new TalonFXConfiguration();
+
+        Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
+
         motorConfig.GravityType = GravityTypeValue.Elevator_Static;
         motorConfig.kS = Gains.kS;
         motorConfig.kG = Gains.kG;
@@ -47,7 +52,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         motorConfig.kI = Gains.kI;
         motorConfig.kD = Gains.kD;
 
-        elevatorMotor.getConfigurator().apply(motorConfig);
+        var motionMagicConfigs = elevatorMotorConfigs.MotionMagic;
+        motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+        motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+        motionMagicConfigs.MotionMagicJerk = 1600;
+
+        elevatorMotor.getConfigurator().apply(elevatorMotorConfigs);
     }
     public Command setHeightCommand(double givenHeight) {
         return run(() -> setHeight(givenHeight));
@@ -62,12 +72,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setpoint = ELEVATOR_MOTION_PROFILE.calculate(0.020, setpoint, goal);
-
-        positionVoltage.Position = setpoint.position;
-        positionVoltage.Velocity = setpoint.velocity;
-
-        elevatorMotor.setControl(positionVoltage);
+        elevatorMotor.setControl(m_request.withPosition(goal.position));
     }
     public boolean reachedState() {
         double error = elevatorMotor.getPosition().getValueAsDouble() - setpoint.position;
