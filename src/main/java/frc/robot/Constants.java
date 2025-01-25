@@ -55,7 +55,7 @@ public final class Constants {
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = -1.62976;
+      public static final double ELEVATOR_GEAR_RATIO = 1.62976;
 
       // Min and Max Height for the Elevator
       public static final double ELEVATOR_MIN_HEIGHT = 0.0;
@@ -63,9 +63,9 @@ public final class Constants {
 
       //TODO: find heights
       public static final double L1 = 12.0;
-      public static final double L2 = 24.0;
-      public static final double L3 = 36.0;
-      public static final double L4 = 48.0;
+      public static final double L2 = 28.5;
+      public static final double L3 = 40.0;
+      public static final double L4 = 52.0;
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
@@ -78,13 +78,13 @@ public final class Constants {
   }
 
   public final class AlgaeEndEffector {
-    public static final int LEFT_MOTOR_ID = 0;
-    public static final int RIGHT_MOTOR_ID = 0;
+    public static final int LEFT_MOTOR_ID = 40;
+    public static final int RIGHT_MOTOR_ID = 41;
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 0;
-    public static final double OUTAKE_SPEED = 0;
+    public static final double INTAKE_SPEED = 35;
+    public static final double OUTAKE_SPEED = 50;
 
     public static final double OUTAKE_WAIT = 3.0;
   }
