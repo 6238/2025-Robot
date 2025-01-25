@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -68,6 +69,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         elevatorMotor.setControl(m_request.withPosition(goal.position));
+        SmartDashboard.putNumber("elevator height", elevatorMotor.getPosition().getValueAsDouble());
     }
     public boolean reachedState() {
         double error = elevatorMotor.getPosition().getValueAsDouble() - setpoint.position;
