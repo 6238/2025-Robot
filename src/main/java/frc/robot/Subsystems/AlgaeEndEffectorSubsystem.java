@@ -28,8 +28,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
         var slot0Configs = talonFXConfigs.Slot0;
 
-        slot0Configs.kP = 5.0; // An error of 1 rotation results in 2.4 V output
-        slot0Configs.kI = 0.1; // no output for integrated error
+        slot0Configs.kP = 7.0; // An error of 1 rotation results in 2.4 V output
+        slot0Configs.kI = 0.2; // no output for integrated error
         slot0Configs.kD = 0.2; // A velocity of 1 rps results in 0.1 V output
 
         var slot1Configs = talonFXConfigs.Slot1;
@@ -53,7 +53,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     public boolean motorStopped() {
         // System.out.println("test");
-        return upToSpeed && (Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint) > (0.2 * speedSetpoint) || Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint) > (0.2 * speedSetpoint));
+        return upToSpeed && (Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint) > (0.5 * speedSetpoint) || Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint) > (0.5 * speedSetpoint));
     }
 
     private void setMotorSpeed(double speed) {

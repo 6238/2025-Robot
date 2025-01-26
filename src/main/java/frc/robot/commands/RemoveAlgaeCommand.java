@@ -59,6 +59,6 @@ public class RemoveAlgaeCommand extends Command{
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return dist > AlgaeEndEffector.REEF_REMOVAL_DIST.baseUnitMagnitude();
+        return dist > AlgaeEndEffector.REEF_REMOVAL_DIST.baseUnitMagnitude() || speed_supplier.getAsDouble() < 0.1;
     }
 }
