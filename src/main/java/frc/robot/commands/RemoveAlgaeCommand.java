@@ -5,6 +5,8 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeEndEffector;
@@ -39,11 +41,13 @@ public class RemoveAlgaeCommand extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_driveSubsystem.drive(new Translation2d(0, -AlgaeEndEffector.REEF_REMOVAL_SPEED * speed_supplier.getAsDouble()), 0, false);
+        SmartDashboard.putNumber("speed_supplier", speed_supplier.getAsDouble());
+        m_driveSubsystem.drive(new Translation2d(0, AlgaeEndEffector.REEF_REMOVAL_SPEED * speed_supplier.getAsDouble()), 0, false);
         
         Transform2d diff = startPose.minus(m_driveSubsystem.getPose());
         dist = Math.sqrt( Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2) );
-        m_elevatorSubsystem.setHeight(Math.sin(Math.toRadians(35)) * dist + startHeight);
+        SmartDashboard.putNumber("dist", dist);
+        m_elevatorSubsystem.setHeight(Units.metersToInches(dist * Math.sin(Math.toRadians(35))) + startHeight);
     }
 
     // Called once the command ends or is interrupted.

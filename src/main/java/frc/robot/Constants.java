@@ -64,8 +64,8 @@ public final class Constants {
 
       //TODO: find heights
       public static final double L1 = 1.0;
-      public static final double L2 = 9.1;
-      public static final double L3 = 29.2;
+      public static final double L2 = 10.0;
+      public static final double L3 = 28.2;
       public static final double L4 = 44.5;
 
       // TODO
@@ -85,11 +85,11 @@ public final class Constants {
     public static final double STALL_THRESHOLD = 0.1;
 
     public static final double INTAKE_SPEED = 25;
-    public static final double OUTAKE_SPEED = 40;
+    public static final double OUTAKE_SPEED = 60;
 
     public static final double OUTAKE_WAIT = 3.0;
 
-    public static final double REEF_REMOVAL_SPEED = 0.1;
+    public static final double REEF_REMOVAL_SPEED = 1;
     public static final Distance REEF_REMOVAL_DIST = Inches.of(12);
     public static final double REEF_REMOVAL_CONTROLLER_VAL = 0.75;
   }

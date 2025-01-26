@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import static edu.wpi.first.units.Units.Radians;
@@ -54,6 +55,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicJerk = 1600;
 
         elevatorMotor.getConfigurator().apply(elevatorMotorConfigs);
+
+        elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     }
     public Command setHeightCommand(double givenHeight) {
         return run(() -> setHeight(givenHeight));
