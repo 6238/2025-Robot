@@ -58,6 +58,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     public Command setHeightCommand(double givenHeight) {
         return run(() -> setHeight(givenHeight));
     }
+
+    public double getHeight(){
+        return goal.position;
+    }
     
     //// sets the height to a clamped value
     public void setHeight(Double height) {
@@ -69,7 +73,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         elevatorMotor.setControl(m_request.withPosition(goal.position));
-        SmartDashboard.putNumber("elevator height", elevatorMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("elevator height", elevatorMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+        SmartDashboard.putNumber("elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     }
     public boolean reachedState() {
         double error = elevatorMotor.getPosition().getValueAsDouble() - setpoint.position;

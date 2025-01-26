@@ -22,6 +22,7 @@ import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.SwerveSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.util.Logging;
 
 /**
@@ -46,10 +47,25 @@ public class RobotContainer {
 
     configureTriggers();
     
-    NamedCommands.registerCommand ("Elevator_L1", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
-    NamedCommands.registerCommand ("Elevator_L2", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
-    NamedCommands.registerCommand ("Elevator_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-    NamedCommands.registerCommand ("Elevator_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
+    NamedCommands.registerCommand ("Intake_Algae_L2", Commands.sequence(
+      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3),
+      algaeSubsystem.intakeUntilStalled(),
+      algaeSubsystem.holdAlgae(),
+      new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)
+    ));
+
+    NamedCommands.registerCommand ("Intake_Algae_L2", Commands.sequence(
+      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4),
+      algaeSubsystem.intakeUntilStalled(),
+      algaeSubsystem.holdAlgae(),
+      new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)
+    ));
+
+    NamedCommands.registerCommand("Shoot_Algae", Commands.sequence(
+      algaeSubsystem.startOutake(),
+      new WaitCommand(0.5),
+      algaeSubsystem.stopMotors()
+    ));
 
     Command driveCommand = swerve.driveCommand(
       () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
@@ -87,6 +103,8 @@ public class RobotContainer {
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
     
     driverXbox.start().onTrue(swerve.zeroYawCommand()); 
+
+    driverXbox.rightTrigger().onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
 
     driverXbox.rightBumper().onTrue(Commands.sequence(
       algaeSubsystem.intakeUntilStalled(),
