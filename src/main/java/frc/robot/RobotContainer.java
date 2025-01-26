@@ -47,18 +47,19 @@ public class RobotContainer {
 
     configureTriggers();
     
-    NamedCommands.registerCommand ("Intake_Algae_L2", Commands.sequence(
-      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3),
-      algaeSubsystem.intakeUntilStalled(),
-      algaeSubsystem.holdAlgae(),
-      new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)
+    NamedCommands.registerCommand ("Elevator_Algae_L2", Commands.sequence(
+      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)
     ));
 
-    NamedCommands.registerCommand ("Intake_Algae_L2", Commands.sequence(
-      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4),
+    NamedCommands.registerCommand ("Elevator_Algae_L2", Commands.sequence(
+      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4)
+    ));
+
+    NamedCommands.registerCommand("Reverse_From_Reef", new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL));
+
+    NamedCommands.registerCommand("Intake_Algae", Commands.sequence(
       algaeSubsystem.intakeUntilStalled(),
-      algaeSubsystem.holdAlgae(),
-      new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)
+      algaeSubsystem.holdAlgae()
     ));
 
     NamedCommands.registerCommand("Shoot_Algae", Commands.sequence(
