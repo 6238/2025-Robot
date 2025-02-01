@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import frc.robot.util.CameraSettings;
 
 
@@ -55,17 +56,17 @@ public final class Constants {
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = -1.62976;
+      public static final double ELEVATOR_GEAR_RATIO = 1.62976;
 
       // Min and Max Height for the Elevator
       public static final double ELEVATOR_MIN_HEIGHT = 0.0;
       public static final double ELEVATOR_MAX_HEIGHT = 60.0;
 
       //TODO: find heights
-      public static final double L1 = 12.0;
-      public static final double L2 = 24.0;
-      public static final double L3 = 36.0;
-      public static final double L4 = 48.0;
+      public static final double L1 = 1.0;
+      public static final double L2 = 10.0;
+      public static final double L3 = 28.2;
+      public static final double L4 = 44.5;
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
@@ -78,15 +79,19 @@ public final class Constants {
   }
 
   public final class AlgaeEndEffector {
-    public static final int LEFT_MOTOR_ID = 0;
-    public static final int RIGHT_MOTOR_ID = 0;
+    public static final int LEFT_MOTOR_ID = 40;
+    public static final int RIGHT_MOTOR_ID = 41;
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 0;
-    public static final double OUTAKE_SPEED = 0;
+    public static final double INTAKE_SPEED = 25;
+    public static final double OUTAKE_SPEED = 60;
 
     public static final double OUTAKE_WAIT = 3.0;
+
+    public static final double REEF_REMOVAL_SPEED = 1;
+    public static final Distance REEF_REMOVAL_DIST = Inches.of(12);
+    public static final double REEF_REMOVAL_CONTROLLER_VAL = 0.75;
   }
 
   public final class Vision {

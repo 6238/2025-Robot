@@ -4,10 +4,17 @@
 
 package frc.robot.Subsystems;
 
+import java.io.File;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
+
+import org.photonvision.EstimatedRobotPose;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,14 +29,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.Swerve.*;
-
-import java.io.File;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-
-import org.photonvision.EstimatedRobotPose;
-
+import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
+import static frc.robot.Constants.Swerve.MAX_SPEED;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.imu.NavXSwerve;

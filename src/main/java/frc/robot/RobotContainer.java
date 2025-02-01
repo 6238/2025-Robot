@@ -4,15 +4,10 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Subsystems.ElevatorSubsystem;
-import frc.robot.Constants;
+import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -21,17 +16,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.SwerveSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
-import frc.robot.Subsystems.ElevatorSubsystem;
+import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.util.Logging;
-import frc.robot.Constants.AlgaeEndEffector;
-import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
-
-import java.io.File;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
@@ -55,10 +47,26 @@ public class RobotContainer {
 
     configureTriggers();
     
-    NamedCommands.registerCommand ("Elevator_L1", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
-    NamedCommands.registerCommand ("Elevator_L2", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
-    NamedCommands.registerCommand ("Elevator_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-    NamedCommands.registerCommand ("Elevator_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
+    NamedCommands.registerCommand ("Elevator_Algae_L2", Commands.sequence(
+      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)
+    ));
+
+    NamedCommands.registerCommand ("Elevator_Algae_L2", Commands.sequence(
+      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4)
+    ));
+
+    NamedCommands.registerCommand("Reverse_From_Reef", new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL));
+
+    NamedCommands.registerCommand("Intake_Algae", Commands.sequence(
+      algaeSubsystem.intakeUntilStalled(),
+      algaeSubsystem.holdAlgae()
+    ));
+
+    NamedCommands.registerCommand("Shoot_Algae", Commands.sequence(
+      algaeSubsystem.startOutake(),
+      new WaitCommand(0.5),
+      algaeSubsystem.stopMotors()
+    ));
 
     Command driveCommand = swerve.driveCommand(
       () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
@@ -97,10 +105,20 @@ public class RobotContainer {
     
     driverXbox.start().onTrue(swerve.zeroYawCommand()); 
 
-    driverXbox.rightBumper().onTrue(algaeSubsystem.intakeUntilStalled());
-    driverXbox.leftBumper().onTrue(new SequentialCommandGroup(
+    driverXbox.rightTrigger().onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
+
+    driverXbox.rightBumper().onTrue(Commands.sequence(
+      algaeSubsystem.intakeUntilStalled(),
+      Commands.parallel(
+        // algaeSubsystem.stopMotors()
+        algaeSubsystem.holdAlgae()
+        // new RemoveAlgaeCommand(swerve, algaeSubsystem)
+      )
+    ));
+
+    driverXbox.leftBumper().onTrue(Commands.sequence(
       algaeSubsystem.startOutake(),
-      new WaitCommand(AlgaeEndEffector.OUTAKE_WAIT),
+      new WaitCommand(0.5),
       algaeSubsystem.stopMotors()
     ));
   }
