@@ -20,7 +20,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     // Keep track of cameras and poses
     private ArrayList<Camera> cameras = new ArrayList<>();
-    private ArrayList<Optional<EstimatedRobotPose>> poses = new ArrayList<>();
 
     private SwerveSubsystem swerve;
 
@@ -39,7 +38,6 @@ public class VisionSubsystem extends SubsystemBase {
         
         for (CameraSettings cameraSettings : Vision.CAMERA_SETTINGS) {
             cameras.add(new Camera(cameraSettings, fieldLayout));
-            poses.add(Optional.empty());
         }
     }
 
@@ -47,20 +45,10 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         for (int i = 0; i < cameras.size(); i++) {
             Optional<EstimatedRobotPose> pose = cameras.get(i).update();
-            poses.set(i, pose);
             
             if (pose.isPresent()) {
                 swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV);
             }
         }
-    }
-
-    public Trigger hasPose() {
-        return new Trigger(() -> {
-            for (Optional<EstimatedRobotPose> pose : poses) {
-                return pose.isPresent();
-            }
-            return false;
-        });
     }
 }

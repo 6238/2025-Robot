@@ -4,6 +4,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import frc.robot.telemetry.Alert;
 import java.util.Optional;
 import org.photonvision.*;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import frc.robot.Constants.Vision;
 
 /**
@@ -38,12 +40,12 @@ public class Camera {
       return Optional.empty();
     }
     camDisconnected.set(false);
-    
-    Optional<EstimatedRobotPose> pose = poseEst.update(cam.getLatestResult());
-    if (pose.isPresent()) {
-        return pose;
+
+    Optional<EstimatedRobotPose> pose = Optional.empty();
+    for (PhotonPipelineResult result : cam.getAllUnreadResults()) {
+      pose = poseEst.update(result, cam.getCameraMatrix(), cam.getDistCoeffs());
     }
     
-    return Optional.empty();
+    return pose;
   }
 }
