@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "richardwillis.vscode-spotless-gradle"
+        "richardwillis.vscode-spotless-gradle",
+        "editorconfig.editorconfig"
     ]
 }
