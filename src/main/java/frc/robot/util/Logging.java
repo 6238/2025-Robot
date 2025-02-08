@@ -4,21 +4,21 @@
 
 package frc.robot.util;
 
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.BuildConstants;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /** This class logs pertinent metadata to NetworkTables. */
 public class Logging {
   /** Private constructor because this should never be instantiated. */
-  private Logging() {};
+  private Logging() {}
+  ;
 
   // https://github.com/Mechanical-Advantage/AdvantageScope/blob/main/docs/tabs/METADATA.md
   // Data put in the `/Metadata/` table as strings is hidden in AdvantageScope by default,
@@ -73,24 +73,24 @@ public class Logging {
 
   private static Consumer<Command> initializeHook() {
     return (Command command) -> {
-        DataLogManager.log("INITIALIZE: " + command.getName());
+      DataLogManager.log("INITIALIZE: " + command.getName());
     };
   }
 
   private static Consumer<Command> finishHook() {
     return (Command command) -> {
-        DataLogManager.log("FINISH: " + command.getName());
+      DataLogManager.log("FINISH: " + command.getName());
     };
   }
 
   private static BiConsumer<Command, Optional<Command>> interruptHook() {
     return (Command command, Optional<Command> other) -> {
-        if (other.isPresent()) {
-            DataLogManager.log("INTERRUPT: " + command.getName() + " by " + other.get().getName());
-            return;
-        }
-        
-        DataLogManager.log("INTERRUPT: " + command.getName());
+      if (other.isPresent()) {
+        DataLogManager.log("INTERRUPT: " + command.getName() + " by " + other.get().getName());
+        return;
+      }
+
+      DataLogManager.log("INTERRUPT: " + command.getName());
     };
   }
 }

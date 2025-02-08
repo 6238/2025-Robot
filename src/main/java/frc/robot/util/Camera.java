@@ -1,12 +1,11 @@
 package frc.robot.util;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import frc.robot.Constants.Vision;
 import frc.robot.telemetry.Alert;
 import java.util.Optional;
 import org.photonvision.*;
 import org.photonvision.targeting.PhotonPipelineResult;
-
-import frc.robot.Constants.Vision;
 
 /**
  * Utility class to work with reading from a camera attached via PhotonVision and feeding the data
@@ -29,9 +28,13 @@ public class Camera {
    */
   public Camera(CameraSettings settings, AprilTagFieldLayout layout) {
     cam = new PhotonCamera(settings.getCameraName());
-    poseEst = new PhotonPoseEstimator(layout, Vision.VISION_POSE_STRATEGY, settings.getCameraToRobotTransform());
+    poseEst =
+        new PhotonPoseEstimator(
+            layout, Vision.VISION_POSE_STRATEGY, settings.getCameraToRobotTransform());
 
-    camDisconnected = new Alert("Camera " + settings.getCameraName() + " is disconnected!", Alert.AlertType.ERROR);
+    camDisconnected =
+        new Alert(
+            "Camera " + settings.getCameraName() + " is disconnected!", Alert.AlertType.ERROR);
   }
 
   public Optional<EstimatedRobotPose> update() {
@@ -45,7 +48,7 @@ public class Camera {
     for (PhotonPipelineResult result : cam.getAllUnreadResults()) {
       pose = poseEst.update(result, cam.getCameraMatrix(), cam.getDistCoeffs());
     }
-    
+
     return pose;
   }
 }
