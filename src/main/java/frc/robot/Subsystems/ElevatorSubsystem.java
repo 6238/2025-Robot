@@ -2,9 +2,11 @@ package frc.robot.Subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -26,7 +28,8 @@ import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    private TalonFX elevatorMotor;
+    private TalonFX leaderMotor;
+    private TalonFX followerMotor;
 
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State(0, 0);
@@ -34,10 +37,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     public ElevatorSubsystem() {
-        elevatorMotor = new TalonFX(IDs.ELEVATOR_MOTOR);
+        leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
+        followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
 
         var elevatorMotorConfigs = new TalonFXConfiguration();
-
+        elevatorMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        
         Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
 
         motorConfig.GravityType = GravityTypeValue.Elevator_Static;
@@ -54,9 +59,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
         motionMagicConfigs.MotionMagicJerk = 1600;
 
-        elevatorMotor.getConfigurator().apply(elevatorMotorConfigs);
+        leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
+        followerMotor.setControl(new Follower(IDs.ELEVATOR_FOLLOWER_MOTOR, false));
 
-        elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+        leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+        followerMotor.setNeutralMode(NeutralModeValue.Brake);
     }
     public Command setHeightCommand(double givenHeight) {
         return run(() -> setHeight(givenHeight));
@@ -75,12 +82,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        elevatorMotor.setControl(m_request.withPosition(goal.position));
-        SmartDashboard.putNumber("elevator height", elevatorMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+        leaderMotor.setControl(m_request.withPosition(goal.position));
+        SmartDashboard.putNumber("elevator height", leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
         SmartDashboard.putNumber("elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     }
     public boolean reachedState() {
-        double error = elevatorMotor.getPosition().getValueAsDouble() - setpoint.position;
+        double error = leaderMotor.getPosition().getValueAsDouble() - setpoint.position;
         return Math.abs(error) < ElevatorHeights.REACH_STATE_THRES;
     }
 
@@ -99,20 +106,20 @@ public class ElevatorSubsystem extends SubsystemBase {
             new SysIdRoutine.Config(),
             new SysIdRoutine.Mechanism(
                 voltage -> {
-                    elevatorMotor.setVoltage(voltage.magnitude());
+                    leaderMotor.setVoltage(voltage.magnitude());
                 },
                 // Tell SysId how to record a frame of data for each motor on the mechanism being
                 // characterized.
                 log -> {
                     log.motor("elevator-motor")
                         .voltage(
-                            appliedVoltage.mut_replace(elevatorMotor.get() * RobotController.getBatteryVoltage(), Volts)
+                            appliedVoltage.mut_replace(leaderMotor.get() * RobotController.getBatteryVoltage(), Volts)
                         )
                         .angularPosition(
-                            angle.mut_replace(elevatorMotor.getPosition().getValueAsDouble(), Rotations)
+                            angle.mut_replace(leaderMotor.getPosition().getValueAsDouble(), Rotations)
                         )
                         .angularVelocity(
-                            velocity.mut_replace(elevatorMotor.getVelocity().getValueAsDouble(), RotationsPerSecond)
+                            velocity.mut_replace(leaderMotor.getVelocity().getValueAsDouble(), RotationsPerSecond)
                         );
                 },
                 this));

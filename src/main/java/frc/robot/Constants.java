@@ -21,7 +21,8 @@ import frc.robot.util.CameraSettings;
 public final class Constants {
   
   public final class IDs {
-    public static final int ELEVATOR_MOTOR = 30; // TODO: Determine Elevator Motor ID
+    public static final int ELEVATOR_LEADER_MOTOR = 30;
+    public static final int ELEVATOR_FOLLOWER_MOTOR = 30;
   }
 
   /** The robot's maximum angular velocity. */
