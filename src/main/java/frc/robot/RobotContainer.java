@@ -18,11 +18,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
-import frc.robot.Subsystems.ElevatorSubsystem;
-import frc.robot.Subsystems.SwerveSubsystem;
-import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.commands.RemoveAlgaeCommand;
+import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.Logging;
 
 /**
