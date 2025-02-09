@@ -107,6 +107,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             new SysIdRoutine.Mechanism(
                 voltage -> {
                     leaderMotor.setVoltage(voltage.magnitude());
+                    followerMotor.setVoltage(voltage.magnitude());
                 },
                 // Tell SysId how to record a frame of data for each motor on the mechanism being
                 // characterized.
