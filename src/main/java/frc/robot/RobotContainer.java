@@ -4,8 +4,13 @@
 
 package frc.robot;
 
+import java.io.File;
+
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -13,15 +18,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
+import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.Logging;
-import java.io.File;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
@@ -97,7 +108,10 @@ public class RobotContainer {
 
     driverXbox.x().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
 
-    driverXbox.y().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
+    driverXbox.y()
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
+
+    driverXbox.leftTrigger().onTrue(m_elevator.increaseHeight(() -> driverXbox.getLeftTriggerAxis()*0.25));
 
     driverXbox.start().onTrue(swerve.zeroYawCommand());
 
@@ -105,22 +119,22 @@ public class RobotContainer {
         .rightTrigger()
         .onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
 
-    driverXbox
-        .rightBumper()
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.intakeUntilStalled(),
-                Commands.parallel(
-                    // algaeSubsystem.stopMotors()
-                    algaeSubsystem.holdAlgae()
-                    // new RemoveAlgaeCommand(swerve, algaeSubsystem)
-                    )));
+    driverXbox.leftBumper().onTrue(Commands.sequence(
+      algaeSubsystem.intakeUntilStalled(),
+      Commands.parallel(
+        // algaeSubsystem.stopMotors()
+        algaeSubsystem.holdAlgae()
+        // new RemoveAlgaeCommand(swerve, algaeSubsystem)
+      )
+    ));
 
-    driverXbox
-        .leftBumper()
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
+    driverXbox.rightBumper().onTrue(Commands.sequence(
+      algaeSubsystem.startOutake(),
+      new WaitCommand(0.5),
+      algaeSubsystem.stopMotors()
+    ));
+
+    new Trigger(HALUtil::getFPGAButton).onTrue(new InstantCommand( () -> m_elevator.resetEncoder(), m_elevator ));
   }
 
   public Command getAutonomousCommand() {

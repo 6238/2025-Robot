@@ -19,7 +19,8 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public final class Constants {
 
   public final class IDs {
-    public static final int ELEVATOR_MOTOR = 30; // TODO: Determine Elevator Motor ID
+    public static final int ELEVATOR_LEADER_MOTOR = 50;
+    public static final int ELEVATOR_FOLLOWER_MOTOR = 51;
   }
 
   /** The robot's maximum angular velocity. */
@@ -44,7 +45,7 @@ public final class Constants {
     public final class Gains {
       // From SysID routine
       public static final double kS = 0.16002; // voltage to overcome static friction
-      public static final double kG = -0.19416; // voltage to overcome gravity
+      public static final double kG = 0.19416; // voltage to overcome gravity
       public static final double kV = 0.10967; // volts per 1 rps
       public static final double kA = 0.001425; // volts per 1 rps/s
 
@@ -55,17 +56,17 @@ public final class Constants {
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = 1.62976;
+      public static final double ELEVATOR_GEAR_RATIO = (42.464355+1.552734)/81.25;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+      public static final double ELEVATOR_MIN_HEIGHT = 1.0;
       public static final double ELEVATOR_MAX_HEIGHT = 60.0;
 
-      // TODO: find heights
-      public static final double L1 = 1.0;
+      //TODO: find heights
+      public static final double L1 = 3.0;
       public static final double L2 = 10.0;
-      public static final double L3 = 28.2;
-      public static final double L4 = 44.5;
+      public static final double L3 = 31;
+      public static final double L4 = 47.5;
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
