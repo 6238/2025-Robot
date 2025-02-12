@@ -6,9 +6,11 @@ package frc.robot;
 
 import java.io.File;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -16,8 +18,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.SwerveSubsystem;
@@ -90,50 +94,42 @@ public class RobotContainer {
    */
   private void configureTriggers() {
     // Controls
-    // driverXbox.start().onTrue(swerve.zeroYawCommand());
+    driverXbox.start().onTrue(swerve.zeroYawCommand());
     
-    // driverXbox.a()
-    //     .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
-
-    // driverXbox.b()
-    //     .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
-
-    // driverXbox.x()
-    //     .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-
-    // driverXbox.y()
-    //     .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
-    
-    // driverXbox.start().onTrue(swerve.zeroYawCommand()); 
-
-    // driverXbox.rightTrigger().onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
-
-    // driverXbox.rightBumper().onTrue(Commands.sequence(
-    //   algaeSubsystem.intakeUntilStalled(),
-    //   Commands.parallel(
-    //     // algaeSubsystem.stopMotors()
-    //     algaeSubsystem.holdAlgae()
-    //     // new RemoveAlgaeCommand(swerve, algaeSubsystem)
-    //   )
-    // ));
-
-    // driverXbox.leftBumper().onTrue(Commands.sequence(
-    //   algaeSubsystem.startOutake(),
-    //   new WaitCommand(0.5),
-    //   algaeSubsystem.stopMotors()
-    // ));
-
     driverXbox.a()
-        .onTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
-    
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
+
     driverXbox.b()
-        .onTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
 
     driverXbox.x()
-        .onTrue(m_elevator.sysIdDynamic(Direction.kForward));
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
 
     driverXbox.y()
-        .onTrue(m_elevator.sysIdDynamic(Direction.kReverse));
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
+    
+    driverXbox.leftTrigger().onTrue(m_elevator.increaseHeight(() -> driverXbox.getLeftTriggerAxis()*0.25));
+    
+    driverXbox.start().onTrue(swerve.zeroYawCommand()); 
+
+    driverXbox.rightTrigger().onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
+
+    driverXbox.leftBumper().onTrue(Commands.sequence(
+      algaeSubsystem.intakeUntilStalled(),
+      Commands.parallel(
+        // algaeSubsystem.stopMotors()
+        algaeSubsystem.holdAlgae()
+        // new RemoveAlgaeCommand(swerve, algaeSubsystem)
+      )
+    ));
+
+    driverXbox.rightBumper().onTrue(Commands.sequence(
+      algaeSubsystem.startOutake(),
+      new WaitCommand(0.5),
+      algaeSubsystem.stopMotors()
+    ));
+
+    new Trigger(HALUtil::getFPGAButton).onTrue(new InstantCommand( () -> m_elevator.resetEncoder(), m_elevator ));
   }
 
   public Command getAutonomousCommand() {

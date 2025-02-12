@@ -1,9 +1,11 @@
 package frc.robot.Subsystems;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -14,10 +16,21 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.VoltsPerMeterPerSecond;
+
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.units.TimeUnit;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,9 +54,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
 
         var elevatorMotorConfigs = new TalonFXConfiguration();
-        elevatorMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         
         Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
+
+        elevatorMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         motorConfig.GravityType = GravityTypeValue.Elevator_Static;
         motorConfig.kS = Gains.kS;
@@ -60,10 +74,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicJerk = 1600;
 
         leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
-        followerMotor.setControl(new Follower(IDs.ELEVATOR_FOLLOWER_MOTOR, false));
+        followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
 
         leaderMotor.setNeutralMode(NeutralModeValue.Brake);
         followerMotor.setNeutralMode(NeutralModeValue.Brake);
+
+        this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
     }
     public Command setHeightCommand(double givenHeight) {
         return run(() -> setHeight(givenHeight));
@@ -80,6 +96,18 @@ public class ElevatorSubsystem extends SubsystemBase {
         goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
     }
 
+    public Command increaseHeight(DoubleSupplier speed) {
+        return runOnce(() -> {          
+            goal.position += goal.position + speed.getAsDouble();
+        });
+    }
+
+    public void resetEncoder() {
+        leaderMotor.setPosition(0);
+        followerMotor.setPosition(0);
+        DataLogManager.log("Reset Elevator Encoder");
+    }
+
     @Override
     public void periodic() {
         leaderMotor.setControl(m_request.withPosition(goal.position));
@@ -92,38 +120,29 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     /* SYSID */
+    private Time timeout = Time.ofRelativeUnits(10, Seconds);
+    private Velocity<VoltageUnit> ramp = Volts.per(Seconds).ofBaseUnits(0.5);
 
-    // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-    private final MutVoltage appliedVoltage = Volts.mutable(0);
-    // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-    private final MutAngle angle = Radians.mutable(0);
-    // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-    private final MutAngularVelocity velocity = RadiansPerSecond.mutable(0);
+    private final VoltageOut m_voltReq = new VoltageOut(0.0);
 
     private final SysIdRoutine sysIdRoutine =
-        new SysIdRoutine(
-            // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-            new SysIdRoutine.Config(),
-            new SysIdRoutine.Mechanism(
-                voltage -> {
-                    leaderMotor.setVoltage(voltage.magnitude());
-                    followerMotor.setVoltage(voltage.magnitude());
-                },
-                // Tell SysId how to record a frame of data for each motor on the mechanism being
-                // characterized.
-                log -> {
-                    log.motor("elevator-motor")
-                        .voltage(
-                            appliedVoltage.mut_replace(leaderMotor.get() * RobotController.getBatteryVoltage(), Volts)
-                        )
-                        .angularPosition(
-                            angle.mut_replace(leaderMotor.getPosition().getValueAsDouble(), Rotations)
-                        )
-                        .angularVelocity(
-                            velocity.mut_replace(leaderMotor.getVelocity().getValueAsDouble(), RotationsPerSecond)
-                        );
-                },
-                this));
+    new SysIdRoutine(
+        new SysIdRoutine.Config(
+            ramp,        // Use default ramp rate (1 V/s)
+            Volts.of(2), // Reduce dynamic step voltage to 4 to prevent brownout
+            timeout,        // Use default timeout (10 s)
+                        // Log state with Phoenix SignalLogger class
+            (state) -> SignalLogger.writeString("state", state.toString())
+        ),
+        new SysIdRoutine.Mechanism(
+            (volts) -> {
+                leaderMotor.setControl(m_voltReq.withOutput(volts.in(Volts)));
+                followerMotor.setControl(m_voltReq.withOutput(volts.in(Volts)));
+            },
+            null,
+            this
+        )
+    );
     
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return sysIdRoutine.quasistatic(direction);
