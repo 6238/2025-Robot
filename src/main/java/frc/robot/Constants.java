@@ -119,4 +119,16 @@ public final class Constants {
     public static final Matrix<N3, N1> VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {2, 0, 2, 0, 2.5});
   }
+
+  public final class Winch {
+    public static final int MOTOR_ID = 50;
+    public static final double TARGET_VOLTAGE = 10.0; // TODO: will need tuning --ajs 2025-02-08
+    public static final double TOLERANCE = 0.1;
+
+    public final class Gains {
+      public static final double kP = 0.0;
+      public static final double kI = 0.0;
+      public static final double kD = 0.0;
+    }
+  }
 }
