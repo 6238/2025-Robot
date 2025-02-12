@@ -56,13 +56,13 @@ public final class Constants {
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = (42.464355+1.552734)/81.25;
+      public static final double ELEVATOR_GEAR_RATIO = (42.464355 + 1.552734) / 81.25;
 
       // Min and Max Height for the Elevator
       public static final double ELEVATOR_MIN_HEIGHT = 1.0;
       public static final double ELEVATOR_MAX_HEIGHT = 60.0;
 
-      //TODO: find heights
+      // TODO: find heights
       public static final double L1 = 3.0;
       public static final double L2 = 10.0;
       public static final double L3 = 31;
