@@ -22,6 +22,7 @@ import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -39,6 +40,7 @@ public class RobotContainer {
   SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
   ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  WinchSubsystem winch = new WinchSubsystem();
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
@@ -132,7 +134,19 @@ public class RobotContainer {
         .onTrue(
             Commands.sequence(
                 algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
+    
+    driverXbox
+        .povUp()
+        .onTrue(winch.toGrab());
+    driverXbox
+        .povRight()
+        .onTrue(winch.toStow());
 
+    driverXbox
+        .povRight()
+        .onTrue(winch.toPull());
+
+      
     new Trigger(HALUtil::getFPGAButton)
         .onTrue(new InstantCommand(() -> m_elevator.resetEncoder(), m_elevator));
   }
