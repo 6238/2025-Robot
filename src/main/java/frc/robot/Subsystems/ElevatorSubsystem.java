@@ -31,6 +31,7 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,6 +47,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State(0, 0);
+
+    private final DigitalInput m_bottomSwitch = new DigitalInput(0);
 
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
@@ -105,12 +108,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void resetEncoder() {
         leaderMotor.setPosition(0);
         followerMotor.setPosition(0);
-        DataLogManager.log("Reset Elevator Encoder");
     }
 
     @Override
     public void periodic() {
-        leaderMotor.setControl(m_request.withPosition(goal.position));
+        if (m_bottomSwitch.get()) {
+            resetEncoder();
+        }
+
+        leaderMotor.setControl(m_request.withPosition(goal.position).withLimitReverseMotion(m_bottomSwitch.get()));
         SmartDashboard.putNumber("elevator height", leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
         SmartDashboard.putNumber("elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     }

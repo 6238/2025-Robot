@@ -46,14 +46,14 @@ public final class Constants {
     public final class Gains {
       // From SysID routine
       public static final double kS = 0.16002; // voltage to overcome static friction
-      public static final double kG = 0.19416; // voltage to overcome gravity
+      public static final double kG = 0.22416; // voltage to overcome gravity
       public static final double kV = 0.10967; // volts per 1 rps
       public static final double kA = 0.001425; // volts per 1 rps/s
 
       // PID for correcting errors
-      public static final double kP = 0.75;
-      public static final double kI = 0.02;
-      public static final double kD = 0.0;
+      public static final double kP = 1.25;
+      public static final double kI = 0.025;
+      public static final double kD = 0.00;
     }
 
     public final class ElevatorHeights {
@@ -63,7 +63,6 @@ public final class Constants {
       public static final double ELEVATOR_MIN_HEIGHT = 1.0;
       public static final double ELEVATOR_MAX_HEIGHT = 60.0;
 
-      //TODO: find heights
       public static final double L1 = 3.0;
       public static final double L2 = 10.0;
       public static final double L3 = 31;
@@ -74,8 +73,8 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 25.0;
-    public static final double MAX_ACCEL = 50.0;
+    public static final double MAX_VELOCITY = 17.5;
+    public static final double MAX_ACCEL = 40.0;
     public static final double JERK = 500.0;
   }
 
