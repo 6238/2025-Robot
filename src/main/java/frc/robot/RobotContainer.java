@@ -5,8 +5,6 @@
 package frc.robot;
 
 import java.io.File;
-
-import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -28,7 +26,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.util.Logging;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
@@ -51,35 +48,37 @@ public class RobotContainer {
     Logging.initializeCommandSchedulerHooks();
 
     configureTriggers();
-    
-    NamedCommands.registerCommand ("Elevator_Algae_L2", Commands.sequence(
-      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)
-    ));
 
-    NamedCommands.registerCommand ("Elevator_Algae_L2", Commands.sequence(
-      m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4)
-    ));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L2",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
 
-    NamedCommands.registerCommand("Reverse_From_Reef", new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L2",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4)));
 
-    NamedCommands.registerCommand("Intake_Algae", Commands.sequence(
-      algaeSubsystem.intakeUntilStalled(),
-      algaeSubsystem.holdAlgae()
-    ));
+    NamedCommands.registerCommand(
+        "Reverse_From_Reef",
+        new RemoveAlgaeCommand(
+            swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL));
 
-    NamedCommands.registerCommand("Shoot_Algae", Commands.sequence(
-      algaeSubsystem.startOutake(),
-      new WaitCommand(0.5),
-      algaeSubsystem.stopMotors()
-    ));
+    NamedCommands.registerCommand(
+        "Intake_Algae",
+        Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
 
-    Command driveCommand = swerve.driveCommand(
-      () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
-      () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), 0.02),
-      () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08));
-      
-      swerve.setDefaultCommand(driveCommand);
-    
+    NamedCommands.registerCommand(
+        "Shoot_Algae",
+        Commands.sequence(
+            algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
+
+    Command driveCommand =
+        swerve.driveCommand(
+            () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
+            () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), 0.02),
+            () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08));
+
+    swerve.setDefaultCommand(driveCommand);
+
     // Initialize autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Path", autoChooser);
@@ -95,15 +94,10 @@ public class RobotContainer {
   private void configureTriggers() {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand());
-    
-    driverXbox.a()
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
-    driverXbox.b()
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    driverXbox.a().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
-    driverXbox.x()
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+    driverXbox.b().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
 
     driverXbox.y()
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
@@ -112,7 +106,7 @@ public class RobotContainer {
     
     driverXbox.start().onTrue(swerve.zeroYawCommand()); 
 
-    driverXbox.rightTrigger().onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
+    driverXbox.y().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
 
     driverXbox.leftBumper().onTrue(Commands.sequence(
       algaeSubsystem.intakeUntilStalled(),
@@ -130,6 +124,11 @@ public class RobotContainer {
     ));
 
     new Trigger(HALUtil::getFPGAButton).onTrue(new InstantCommand( () -> m_elevator.resetEncoder(), m_elevator ));
+    driverXbox.start().onTrue(swerve.zeroYawCommand());
+
+    driverXbox
+        .rightTrigger()
+        .onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
   }
 
   public Command getAutonomousCommand() {
