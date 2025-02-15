@@ -31,8 +31,6 @@ public class WinchSubsystem extends SubsystemBase {
     UNKNOWN,
     /** Fully retracted to lift the robot */
     PULL,
-    /** Middle position - won't interfere with elevator */
-    STOW,
     /** Fully outward to grab onto cage */
     GRAB
   }
@@ -40,8 +38,7 @@ public class WinchSubsystem extends SubsystemBase {
   private Map<Position, Double> POSITIONS =
       Map.ofEntries(
           entry(Position.GRAB, 0.0),
-          entry(Position.STOW, 15*50.0),
-          entry(Position.PULL, 15*40.0)); // TODO: these are bogus and should be set
+          entry(Position.PULL, 15*50.0));
 
   private Position currentPosition = Position.UNKNOWN;
 
@@ -75,18 +72,6 @@ public class WinchSubsystem extends SubsystemBase {
         .until(this.isAtGrabPosition());
   }
 
-  /** Sends the arm to the stowed position. */
-  public Command toStow() {
-    return startEnd(
-            () -> {
-              motor.setControl(positionRequest.withPosition(POSITIONS.get(Position.STOW)));
-            },
-            () -> {
-              motor.setControl(neutralRequest);
-            })
-        .until(this.isAtStowPosition());
-  }
-
   public Command toPull() {
     return startEnd(
             () -> {
@@ -104,10 +89,6 @@ public class WinchSubsystem extends SubsystemBase {
 
   private boolean isAtPosition(Position pos) {
     return Math.abs(motor.getPosition().getValueAsDouble() - POSITIONS.get(pos)) <= Winch.TOLERANCE;
-  }
-
-  public Trigger isAtStowPosition() {
-    return new Trigger(() -> this.isAtPosition(Position.STOW));
   }
 
   public Trigger isAtPullPosition() {
