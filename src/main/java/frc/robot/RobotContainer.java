@@ -138,12 +138,9 @@ public class RobotContainer {
     driverXbox
         .povUp()
         .onTrue(winch.toGrab());
-    driverXbox
-        .povRight()
-        .onTrue(winch.toStow());
 
     driverXbox
-        .povRight()
+        .povDown()
         .onTrue(winch.toPull());
 
       
