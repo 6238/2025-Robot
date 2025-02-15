@@ -1,22 +1,23 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.MutAngle;
-import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,9 +25,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
+import java.util.function.DoubleSupplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private TalonFX elevatorMotor;
+  private TalonFX leaderMotor;
+  private TalonFX followerMotor;
 
   private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State(0, 0);
@@ -34,11 +37,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
   public ElevatorSubsystem() {
-    elevatorMotor = new TalonFX(IDs.ELEVATOR_MOTOR);
+    leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
+    followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
 
     Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
+
+    elevatorMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     motorConfig.GravityType = GravityTypeValue.Elevator_Static;
     motorConfig.kS = Gains.kS;
@@ -55,9 +61,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         160; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = 1600;
 
-    elevatorMotor.getConfigurator().apply(elevatorMotorConfigs);
+    leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
+    followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
 
-    elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+    leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+    followerMotor.setNeutralMode(NeutralModeValue.Brake);
+
+    this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
   }
 
   public Command setHeightCommand(double givenHeight) {
@@ -75,52 +85,54 @@ public class ElevatorSubsystem extends SubsystemBase {
     goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
   }
 
+  public Command increaseHeight(DoubleSupplier speed) {
+    return runOnce(
+        () -> {
+          goal.position += goal.position + speed.getAsDouble();
+        });
+  }
+
+  public void resetEncoder() {
+    leaderMotor.setPosition(0);
+    followerMotor.setPosition(0);
+    DataLogManager.log("Reset Elevator Encoder");
+  }
+
   @Override
   public void periodic() {
-    elevatorMotor.setControl(m_request.withPosition(goal.position));
+    leaderMotor.setControl(m_request.withPosition(goal.position));
     SmartDashboard.putNumber(
         "elevator height",
-        elevatorMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+        leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
   }
 
   public boolean reachedState() {
-    double error = elevatorMotor.getPosition().getValueAsDouble() - setpoint.position;
+    double error = leaderMotor.getPosition().getValueAsDouble() - setpoint.position;
     return Math.abs(error) < ElevatorHeights.REACH_STATE_THRES;
   }
 
   /* SYSID */
+  private Time timeout = Time.ofRelativeUnits(10, Seconds);
+  private Velocity<VoltageUnit> ramp = Volts.per(Seconds).ofBaseUnits(0.5);
 
-  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-  private final MutVoltage appliedVoltage = Volts.mutable(0);
-  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-  private final MutAngle angle = Radians.mutable(0);
-  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-  private final MutAngularVelocity velocity = RadiansPerSecond.mutable(0);
+  private final VoltageOut m_voltReq = new VoltageOut(0.0);
 
   private final SysIdRoutine sysIdRoutine =
       new SysIdRoutine(
-          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-          new SysIdRoutine.Config(),
+          new SysIdRoutine.Config(
+              ramp, // Use default ramp rate (1 V/s)
+              Volts.of(2), // Reduce dynamic step voltage to 4 to prevent brownout
+              timeout, // Use default timeout (10 s)
+              // Log state with Phoenix SignalLogger class
+              (state) -> SignalLogger.writeString("state", state.toString())),
           new SysIdRoutine.Mechanism(
-              voltage -> {
-                elevatorMotor.setVoltage(voltage.magnitude());
+              (volts) -> {
+                leaderMotor.setControl(m_voltReq.withOutput(volts.in(Volts)));
+                followerMotor.setControl(m_voltReq.withOutput(volts.in(Volts)));
               },
-              // Tell SysId how to record a frame of data for each motor on the mechanism being
-              // characterized.
-              log -> {
-                log.motor("elevator-motor")
-                    .voltage(
-                        appliedVoltage.mut_replace(
-                            elevatorMotor.get() * RobotController.getBatteryVoltage(), Volts))
-                    .angularPosition(
-                        angle.mut_replace(
-                            elevatorMotor.getPosition().getValueAsDouble(), Rotations))
-                    .angularVelocity(
-                        velocity.mut_replace(
-                            elevatorMotor.getVelocity().getValueAsDouble(), RotationsPerSecond));
-              },
+              null,
               this));
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
