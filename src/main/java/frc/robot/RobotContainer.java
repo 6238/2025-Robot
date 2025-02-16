@@ -18,17 +18,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.Logging;
 import java.io.File;
 
@@ -135,16 +131,11 @@ public class RobotContainer {
         .onTrue(
             Commands.sequence(
                 algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
-    
-    driverXbox
-        .povUp()
-        .onTrue(winch.toGrab());
 
-    driverXbox
-        .povDown()
-        .onTrue(winch.toPull());
+    driverXbox.povUp().onTrue(winch.toGrab());
 
-      
+    driverXbox.povDown().onTrue(winch.toPull());
+
     new Trigger(HALUtil::getFPGAButton)
         .onTrue(new InstantCommand(() -> m_elevator.resetEncoder(), m_elevator));
   }

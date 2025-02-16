@@ -17,7 +17,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -60,8 +59,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     motorConfig.kD = Gains.kD;
 
     var motionMagicConfigs = elevatorMotorConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration = Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicCruiseVelocity =
+        Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicAcceleration =
+        Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = Elevator.JERK;
 
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
@@ -103,10 +104,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if (limit.get()) {
-        resetEncoder();
+      resetEncoder();
     }
-    
-    leaderMotor.setControl(m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+
+    leaderMotor.setControl(
+        m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
     SmartDashboard.putNumber(
         "elevator height",
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
