@@ -23,6 +23,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
+import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -150,5 +151,9 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
+  }
+
+  public void OnDisable() {
+    m_elevator.setHeight(ElevatorHeights.L1);
   }
 }

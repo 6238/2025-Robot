@@ -18,10 +18,12 @@ import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
@@ -35,6 +37,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State(0, 0);
 
   final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+
+  final DigitalInput limit = new DigitalInput(0);
 
   public ElevatorSubsystem() {
     leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
@@ -56,10 +60,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     motorConfig.kD = Gains.kD;
 
     var motionMagicConfigs = elevatorMotorConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration =
-        160; // Target acceleration of 160 rps/s (0.5 seconds)
-    motionMagicConfigs.MotionMagicJerk = 1600;
+    motionMagicConfigs.MotionMagicCruiseVelocity = Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicAcceleration = Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicJerk = Elevator.JERK;
 
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
@@ -95,12 +98,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void resetEncoder() {
     leaderMotor.setPosition(0);
     followerMotor.setPosition(0);
-    DataLogManager.log("Reset Elevator Encoder");
   }
 
   @Override
   public void periodic() {
-    leaderMotor.setControl(m_request.withPosition(goal.position));
+    if (limit.get()) {
+        resetEncoder();
+    }
+    
+    leaderMotor.setControl(m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
     SmartDashboard.putNumber(
         "elevator height",
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);

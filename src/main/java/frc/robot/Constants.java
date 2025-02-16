@@ -45,13 +45,13 @@ public final class Constants {
     public final class Gains {
       // From SysID routine
       public static final double kS = 0.16002; // voltage to overcome static friction
-      public static final double kG = 0.19416; // voltage to overcome gravity
+      public static final double kG = 0.22416; // voltage to overcome gravity
       public static final double kV = 0.10967; // volts per 1 rps
       public static final double kA = 0.001425; // volts per 1 rps/s
 
       // PID for correcting errors
-      public static final double kP = 0.75;
-      public static final double kI = 0.02;
+      public static final double kP = 1.5;
+      public static final double kI = 0.04;
       public static final double kD = 0.0;
     }
 
@@ -60,13 +60,13 @@ public final class Constants {
 
       // Min and Max Height for the Elevator
       public static final double ELEVATOR_MIN_HEIGHT = 1.0;
-      public static final double ELEVATOR_MAX_HEIGHT = 60.0;
+      public static final double ELEVATOR_MAX_HEIGHT = 86.5;
 
       // TODO: find heights
       public static final double L1 = 3.0;
-      public static final double L2 = 10.0;
-      public static final double L3 = 31;
-      public static final double L4 = 47.5;
+      public static final double L2 = 31;
+      public static final double L3 = 47.5;
+      public static final double L4 = 86.5; // MAX HEIGHT
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
@@ -75,7 +75,7 @@ public final class Constants {
     // Motion Profile
     public static final double MAX_VELOCITY = 25.0;
     public static final double MAX_ACCEL = 50.0;
-    public static final double JERK = 500.0;
+    public static final double JERK = 1000.0;
   }
 
   public final class AlgaeEndEffector {
@@ -121,7 +121,7 @@ public final class Constants {
   }
 
   public final class Winch {
-    public static final int MOTOR_ID = 50;
+    public static final int MOTOR_ID = 60;
     public static final double TARGET_VOLTAGE = 10.0; // TODO: will need tuning --ajs 2025-02-08
     public static final double TOLERANCE = 0.1;
 
