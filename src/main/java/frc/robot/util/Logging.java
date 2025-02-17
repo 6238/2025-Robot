@@ -8,13 +8,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.BuildConstants;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /** This class logs pertinent metadata to NetworkTables. */
+@SuppressWarnings("unused")
 public class Logging {
   /** Private constructor because this should never be instantiated. */
   private Logging() {}
@@ -66,9 +66,10 @@ public class Logging {
   }
 
   public static void initializeCommandSchedulerHooks() {
-    CommandScheduler.getInstance().onCommandInitialize(initializeHook());
-    CommandScheduler.getInstance().onCommandFinish(finishHook());
-    CommandScheduler.getInstance().onCommandInterrupt(initializeHook());
+    // Disabled because very noisy
+    // CommandScheduler.getInstance().onCommandInitialize(initializeHook());
+    // CommandScheduler.getInstance().onCommandFinish(finishHook());
+    // CommandScheduler.getInstance().onCommandInterrupt(initializeHook());
   }
 
   private static Consumer<Command> initializeHook() {
