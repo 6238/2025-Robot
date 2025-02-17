@@ -64,8 +64,8 @@ public class RobotContainer {
 
     Command driveCommand =
         swerve.driveCommand(
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), 0.02),
+            () -> MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02),
+            () -> MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02),
             () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08));
 
     swerve.setDefaultCommand(driveCommand);
