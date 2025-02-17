@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -47,7 +49,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   boolean upToSpeed = false;
-  boolean velocityControl = false;
+  boolean velocityControl = true;
   double speedSetpoint = 0.0;
 
   public boolean motorStopped() {
@@ -57,6 +59,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
                 > (0.5 * speedSetpoint)
             || Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint)
                 > (0.5 * speedSetpoint));
+  }
+
+  public BooleanSupplier hasBall() {
+    return () -> velocityControl == false;
   }
 
   private void setMotorSpeed(double speed) {

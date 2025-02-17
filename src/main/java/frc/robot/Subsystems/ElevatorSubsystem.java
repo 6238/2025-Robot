@@ -26,6 +26,8 @@ import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
+
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -41,9 +43,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private NeutralModeValue neutralModeValue = NeutralModeValue.Brake;
 
-  public ElevatorSubsystem() {
+  private BooleanSupplier hasBall;
+
+  public ElevatorSubsystem(BooleanSupplier hasBall) {
     leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
     followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
+
+    this.hasBall = hasBall;
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
 
@@ -78,6 +84,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command setHeightCommand(double givenHeight) {
     return run(() -> setHeight(givenHeight));
+  }
+
+  public void brake() {
+    leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+    followerMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public double getHeight() {
@@ -117,12 +128,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (limit.get()) {
+    if (limit.get() && leaderMotor.getPosition().getValueAsDouble() != 0) {
       resetEncoder();
     }
 
-    leaderMotor.setControl(
-        m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+    if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
+      if (hasBall.getAsBoolean()) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
+      } else {
+        leaderMotor.setVoltage(Elevator.Gains.kG);
+      }
+    } else {
+      leaderMotor.setControl(
+          m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+    }
     SmartDashboard.putNumber(
         "elevator height",
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);

@@ -44,31 +44,32 @@ public final class Constants {
   public final class Elevator {
     public final class Gains {
       // From SysID routine
-      public static final double kS = 0.16002; // voltage to overcome static friction
-      public static final double kG = 0.21416; // voltage to overcome gravity
-      public static final double kV = 0.10967; // volts per 1 rps
-      public static final double kA = 0.001425; // volts per 1 rps/s
+      public static final double kS = 0.041645; // voltage to overcome static friction
+      public static final double kG = 0.37517; // voltage to overcome gravity
+      public static final double kV = 0.12811; // volts per 1 rps
+      public static final double kA = 0.0060141; // volts per 1 rps/s
+
+      public static final double kg_Ball = 0.45;
 
       // PID for correcting errors
-      public static final double kP = 2.65;
-      public static final double kI = 0.07;
-      public static final double kD = 0.01;
+      public static final double kP = 5;
+      public static final double kI = 0.05;
+      public static final double kD = 0;
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = (69.88) / 81.25;
+      public static final double ELEVATOR_GEAR_RATIO = (45.1236) / 80;
 
       // Min and Max Height for the Elevator
       public static final double ELEVATOR_MIN_HEIGHT = 1.0;
-      public static final double ELEVATOR_MAX_HEIGHT = 81.25;
+      public static final double ELEVATOR_MAX_HEIGHT = 55;
 
-      // TODO: find heights
       public static final double L1 = 6.0;
-      public static final double L1_25 = 13.0;
-      public static final double L1_5 = 19.0;
-      public static final double L2 = 35.5;
-      public static final double L3 = 49;
-      public static final double L4 = 81.25; // MAX HEIGHT
+      public static final double L1_25 = 10.0;
+      public static final double L1_5 = 17.0;
+      public static final double L2 = 27.5;
+      public static final double L3 = 35;
+      public static final double L4 = 63; // MAX HEIGHT
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
@@ -76,8 +77,8 @@ public final class Constants {
 
     // Motion Profile
     public static final double MAX_VELOCITY = 30.0;
-    public static final double MAX_ACCEL = 50.0;
-    public static final double JERK = 900.0;
+    public static final double MAX_ACCEL = 40.0;
+    public static final double JERK = 500.0;
   }
 
   public final class AlgaeEndEffector {

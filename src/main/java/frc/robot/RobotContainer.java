@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.hal.HALUtil;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
@@ -39,9 +41,9 @@ public class RobotContainer {
 
   SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
-  ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   WinchSubsystem winch = new WinchSubsystem();
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
+  ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
 
   CommandXboxController driverXbox = new CommandXboxController(0);
 
@@ -50,7 +52,6 @@ public class RobotContainer {
   public RobotContainer() {
     DataLogManager.start();
     Logging.logMetadata();
-    Logging.initializeCommandSchedulerHooks();
 
     configureTriggers();
 
@@ -157,7 +158,7 @@ public class RobotContainer {
     driverXbox.povDown().onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton)
-        .onTrue(toggleBrakeMode());
+        .onTrue(toggleBrakeMode().ignoringDisable(true));
   }
 
   public Command toggleBrakeMode() {
@@ -172,5 +173,10 @@ public class RobotContainer {
 
   public void OnDisable() {
     m_elevator.setHeight(ElevatorHeights.L1);
+    m_elevator.brake();
+  }
+
+  public void OnEnable() {
+    m_elevator.brake();
   }
 }
