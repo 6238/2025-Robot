@@ -65,7 +65,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Reverse_From_Reef",
         Commands.deadline(new WaitCommand(1),
-            new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL),
+            new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)
         )
     );
 
