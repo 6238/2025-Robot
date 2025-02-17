@@ -36,7 +36,7 @@ public class WinchSubsystem extends SubsystemBase {
   }
 
   private Map<Position, Double> POSITIONS =
-      Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, 15 * 50.0));
+      Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, -218.0));
 
   private Position currentPosition = Position.UNKNOWN;
 

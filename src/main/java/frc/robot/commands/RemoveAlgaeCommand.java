@@ -43,7 +43,7 @@ public class RemoveAlgaeCommand extends Command {
   public void execute() {
     SmartDashboard.putNumber("speed_supplier", speed_supplier.getAsDouble());
     m_driveSubsystem.drive(
-        new Translation2d(0, AlgaeEndEffector.REEF_REMOVAL_SPEED * speed_supplier.getAsDouble()),
+        new Translation2d(-AlgaeEndEffector.REEF_REMOVAL_SPEED * speed_supplier.getAsDouble(), 0),
         0,
         false);
 

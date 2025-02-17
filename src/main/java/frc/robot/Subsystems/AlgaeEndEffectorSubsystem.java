@@ -27,7 +27,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     var slot0Configs = talonFXConfigs.Slot0;
 
-    slot0Configs.kP = 7.0; // An error of 1 rotation results in 2.4 V output
+    slot0Configs.kP = 8.5; // An error of 1 rotation results in 2.4 V output
     slot0Configs.kI = 0.2; // no output for integrated error
     slot0Configs.kD = 0.2; // A velocity of 1 rps results in 0.1 V output
 
