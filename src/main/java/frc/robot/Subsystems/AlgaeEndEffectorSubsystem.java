@@ -19,6 +19,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final PositionVoltage p_request;
   final VelocityVoltage v_request;
 
+  boolean upToSpeed = false;
+  boolean velocityControl = false;
+  double speedSetpoint = 0.0;
+
   public AlgaeEndEffectorSubsystem() {
     leftMotor = new TalonFX(AlgaeEndEffector.LEFT_MOTOR_ID);
     rightMotor = new TalonFX(AlgaeEndEffector.RIGHT_MOTOR_ID);
@@ -46,12 +50,15 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     v_request = new VelocityVoltage(0).withSlot(1);
   }
 
-  boolean upToSpeed = false;
-  boolean velocityControl = false;
-  double speedSetpoint = 0.0;
+  /** If either motor's velocity is within percentError of speedSetpoint */
+  public boolean upToSpeed(double percentError) {
+    double maxError = speedSetpoint * percentError;
+    double leftError = Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint);
+    double rightError = Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint);
+    return leftError < maxError || rightError < maxError;
+  }
 
   public boolean motorStopped() {
-    // System.out.println("test");
     return upToSpeed
         && (Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint)
                 > (0.5 * speedSetpoint)
@@ -60,7 +67,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void setMotorSpeed(double speed) {
-    upToSpeed = false;
+    upToSpeed = upToSpeed(0.1);
     velocityControl = true;
     speedSetpoint = speed;
     leftMotor.setControl(v_request.withVelocity(-speed));
@@ -68,6 +75,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void setMotorPositions(double positionL, double positionR) {
+    upToSpeed = false;
     velocityControl = false;
     leftMotor.setControl(p_request.withPosition(positionL));
     rightMotor.setControl(p_request.withPosition(positionR));
@@ -115,15 +123,16 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("intakespeed", -leftMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("intakeSpeedLeft", -leftMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("intakeSpeedRight", rightMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("intaketargetSpeed", speedSetpoint);
     SmartDashboard.putBoolean("intakeUpToSpeed", upToSpeed);
-    if (velocityControl
-        && (Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint)
-                < (0.1 * speedSetpoint)
-            || Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint)
-                < (0.1 * speedSetpoint))) {
+    SmartDashboard.putBoolean("intakeVelocityControl", velocityControl);
+
+    if (velocityControl && upToSpeed(0.1)) {
       upToSpeed = true;
-      // System.err.println("up to speed");
+    } else {
+      // upToSpeed = false; // is this breaking?
     }
   }
 }
