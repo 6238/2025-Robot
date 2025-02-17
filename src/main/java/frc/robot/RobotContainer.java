@@ -55,6 +55,22 @@ public class RobotContainer {
     configureTriggers();
 
     NamedCommands.registerCommand(
+        "Elevator_Algae_L1",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1)));
+
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1_25",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
+
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1_5",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
+    
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L2",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
+
+    NamedCommands.registerCommand(
         "Elevator_Algae_L3",
         Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
 
@@ -141,12 +157,12 @@ public class RobotContainer {
     driverXbox.povDown().onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton)
-        .onTrue(resetEncoders());
+        .onTrue(toggleBrakeMode());
   }
 
-  public Command resetEncoders() {
+  public Command toggleBrakeMode() {
     return Commands.runOnce(() -> {
-        m_elevator.resetEncoder();
+        m_elevator.toggleBrakeMode();
     }, m_elevator);
   }
 

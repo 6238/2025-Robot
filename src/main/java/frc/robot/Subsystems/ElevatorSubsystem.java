@@ -39,6 +39,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   final DigitalInput limit = new DigitalInput(0);
 
+  private NeutralModeValue neutralModeValue = NeutralModeValue.Brake;
+
   public ElevatorSubsystem() {
     leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
     followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
@@ -68,8 +70,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
 
-    leaderMotor.setNeutralMode(NeutralModeValue.Brake);
-    followerMotor.setNeutralMode(NeutralModeValue.Brake);
+    leaderMotor.setNeutralMode(neutralModeValue);
+    followerMotor.setNeutralMode(neutralModeValue);
 
     this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
   }
@@ -99,6 +101,18 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void resetEncoder() {
     leaderMotor.setPosition(0);
     followerMotor.setPosition(0);
+  }
+
+  public void toggleBrakeMode() {
+    if (neutralModeValue == NeutralModeValue.Coast) {
+      neutralModeValue = NeutralModeValue.Brake;
+      leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+      followerMotor.setNeutralMode(NeutralModeValue.Brake);
+      return;
+    }
+    neutralModeValue = NeutralModeValue.Coast;
+    leaderMotor.setNeutralMode(NeutralModeValue.Coast);
+    followerMotor.setNeutralMode(NeutralModeValue.Coast);
   }
 
   @Override
