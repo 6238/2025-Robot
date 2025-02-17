@@ -10,6 +10,8 @@ import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,11 +54,11 @@ public class RobotContainer {
     configureTriggers();
 
     NamedCommands.registerCommand(
-        "Elevator_Algae_L2",
+        "Elevator_Algae_L3",
         Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
 
     NamedCommands.registerCommand(
-        "Elevator_Algae_L2",
+        "Elevator_Algae_L4",
         Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4)));
 
     NamedCommands.registerCommand(
@@ -136,7 +138,13 @@ public class RobotContainer {
     driverXbox.povDown().onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton)
-        .onTrue(new InstantCommand(() -> m_elevator.resetEncoder(), m_elevator));
+        .onTrue(resetEncoders());
+  }
+
+  public Command resetEncoders() {
+    return Commands.runOnce(() -> {
+        m_elevator.resetEncoder();
+    }, m_elevator);
   }
 
   public Command getAutonomousCommand() {

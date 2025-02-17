@@ -60,7 +60,7 @@ public final class Constants {
 
       // Min and Max Height for the Elevator
       public static final double ELEVATOR_MIN_HEIGHT = 1.0;
-      public static final double ELEVATOR_MAX_HEIGHT = 86.5;
+      public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
       // TODO: find heights
       public static final double L1 = 6.0;
@@ -68,7 +68,7 @@ public final class Constants {
       public static final double L1_5 = 19.0;
       public static final double L2 = 35.5;
       public static final double L3 = 49;
-      public static final double L4 = 86.5; // MAX HEIGHT
+      public static final double L4 = 81.25; // MAX HEIGHT
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
