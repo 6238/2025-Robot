@@ -1,3 +1,8 @@
 package frc.robot.util;
 
-public class BatteryIdentification {}
+import edu.wpi.first.wpilibj.SerialPort;
+
+public class BatteryIdentification {
+    public void SETUP() {
+    }
+}

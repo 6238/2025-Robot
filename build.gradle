@@ -12,10 +12,6 @@ java {
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
-repositories {
-    mavenCentral()
-}
-
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
@@ -78,8 +74,6 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    implementation 'com.fazecast:jSerialComm:[2.0.0,3.0.0)'
 }
 
 test {
