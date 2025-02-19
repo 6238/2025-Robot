@@ -88,6 +88,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void disableOutput() {
+    speedSetpoint = 0;
+    velocityControl = true;
     leftMotor.set(0);
     rightMotor.set(0);
   }

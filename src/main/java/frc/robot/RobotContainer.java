@@ -145,13 +145,15 @@ public class RobotContainer {
     driverXbox
         .leftBumper()
         .onTrue(
-            Commands.sequence(
-                algaeSubsystem.intakeUntilStalled(),
-                Commands.parallel(
-                    // algaeSubsystem.stopMotors()
+            Commands.either(
+                Commands.sequence(
+                    algaeSubsystem.intakeUntilStalled(),
                     algaeSubsystem.holdAlgae()
-                    // new RemoveAlgaeCommand(swerve, algaeSubsystem)
-                    )));
+                ),
+                algaeSubsystem.stopMotors(),
+                algaeSubsystem.hasBall())
+        );
+            
 
     driverXbox
         .rightBumper()
