@@ -92,7 +92,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getHeight() {
-    return goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO;
+    return leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO;
   }
 
   //// sets the height to a clamped value
