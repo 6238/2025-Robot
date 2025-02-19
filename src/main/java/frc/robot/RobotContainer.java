@@ -121,11 +121,12 @@ public class RobotContainer {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
 
-    driverXbox.a().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
     driverXbox.povRight().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
 
     driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
+
+    driverXbox.a().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
     driverXbox.b().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
 
