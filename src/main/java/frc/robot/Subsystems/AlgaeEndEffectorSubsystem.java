@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -20,7 +22,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final VelocityVoltage v_request;
 
   boolean upToSpeed = false;
-  boolean velocityControl = false;
+  boolean velocityControl = true;
   double speedSetpoint = 0.0;
 
   public AlgaeEndEffectorSubsystem() {
@@ -49,7 +51,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     p_request = new PositionVoltage(0).withSlot(0);
     v_request = new VelocityVoltage(0).withSlot(1);
   }
-
+  
   /** If either motor's velocity is within percentError of speedSetpoint */
   public boolean upToSpeed(double percentError) {
     double maxError = speedSetpoint * percentError;
@@ -64,6 +66,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
                 > (0.5 * speedSetpoint)
             || Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint)
                 > (0.5 * speedSetpoint));
+  }
+
+  public BooleanSupplier hasBall() {
+    return () -> velocityControl == false;
   }
 
   private void setMotorSpeed(double speed) {

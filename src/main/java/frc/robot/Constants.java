@@ -44,40 +44,42 @@ public final class Constants {
   public final class Elevator {
     public final class Gains {
       // From SysID routine
-      public static final double kS = 0.16002; // voltage to overcome static friction
-      public static final double kG = 0.21416; // voltage to overcome gravity
-      public static final double kV = 0.10967; // volts per 1 rps
-      public static final double kA = 0.001425; // volts per 1 rps/s
+      public static final double kS = 0.041645; // voltage to overcome static friction
+      public static final double kG = 0.42517; // voltage to overcome gravity
+      public static final double kV = 0.12811; // volts per 1 rps
+      public static final double kA = 0.0060141; // volts per 1 rps/s
+
+      public static final double kg_Ball = 0.465;
+      public static final double kg_Top = 0.6;
 
       // PID for correcting errors
-      public static final double kP = 2.65;
-      public static final double kI = 0.07;
-      public static final double kD = 0.01;
+      public static final double kP = 5;
+      public static final double kI = 0.05;
+      public static final double kD = 0;
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = (69.88) / 81.25;
+      public static final double ELEVATOR_GEAR_RATIO = (45.1236) / 80;
 
       // Min and Max Height for the Elevator
       public static final double ELEVATOR_MIN_HEIGHT = 1.0;
-      public static final double ELEVATOR_MAX_HEIGHT = 86.5;
+      public static final double ELEVATOR_MAX_HEIGHT = 68.5;
 
-      // TODO: find heights
-      public static final double L1 = 6.0;
-      public static final double L1_25 = 13.0;
-      public static final double L1_5 = 19.0;
-      public static final double L2 = 35.5;
-      public static final double L3 = 49;
-      public static final double L4 = 86.5; // MAX HEIGHT
+      public static final double L1 = 2.0;
+      public static final double L1_25 = 10.0;
+      public static final double L1_5 = 17.0;
+      public static final double L2 = 27.5;
+      public static final double L3 = 40;
+      public static final double L4 = 68.5; // MAX HEIGHT
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 30.0;
-    public static final double MAX_ACCEL = 50.0;
-    public static final double JERK = 900.0;
+    public static final double MAX_VELOCITY = 35.0;
+    public static final double MAX_ACCEL = 35.0;
+    public static final double JERK = 800.0;
   }
 
   public final class AlgaeEndEffector {
@@ -86,36 +88,52 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 25;
+    public static final double INTAKE_SPEED = 32.5;
     public static final double OUTAKE_SPEED = 60;
 
     public static final double OUTAKE_WAIT = 3.0;
 
-    public static final double REEF_REMOVAL_SPEED = 1;
+    public static final double REEF_REMOVAL_SPEED = 0.65;
     public static final Distance REEF_REMOVAL_DIST = Inches.of(12);
     public static final double REEF_REMOVAL_CONTROLLER_VAL = 0.75;
   }
 
   public final class Vision {
-    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.AVERAGE_BEST_TARGETS;
+    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
       new CameraSettings(
-          "Arducam_A",
+          "BR_Rico",
           new Transform3d(
-              new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(10.5)),
+              new Translation3d(Inches.of(13.5), Inches.of(-13.5), Inches.of(10.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
-                  Degrees.of(150).in(Radians)))),
+                  Degrees.of(180+55).in(Radians)))),
       new CameraSettings(
-          "Arducam_B",
+          "BL_Private",
           new Transform3d(
               new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
-                  Degrees.of(210).in(Radians))))
+                  Degrees.of(180-55).in(Radians)))),
+      // new CameraSettings(
+      //   "FR",
+      //   new Transform3d(
+      //       new Translation3d(Inches.of(13.5), Inches.of(-13.5), Inches.of(10.5)),
+      //       new Rotation3d(
+      //           Degrees.of(0).in(Radians),
+      //           Degrees.of(0).in(Radians),
+      //           Degrees.of(-65).in(Radians)))),
+      // new CameraSettings(
+      //     "FL_",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(10.5)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(65).in(Radians)))),
     };
 
     public static final Matrix<N3, N1> VISION_STDDEV =

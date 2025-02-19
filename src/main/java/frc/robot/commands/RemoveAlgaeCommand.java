@@ -51,7 +51,7 @@ public class RemoveAlgaeCommand extends Command {
     dist = Math.sqrt(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
     SmartDashboard.putNumber("dist", dist);
     m_elevatorSubsystem.setHeight(
-        Units.metersToInches(dist * Math.sin(Math.toRadians(35))) + startHeight);
+        Units.metersToInches(dist * Math.sin(Math.toRadians(35))) / 6 + startHeight);
   }
 
   // Called once the command ends or is interrupted.

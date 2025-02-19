@@ -26,6 +26,8 @@ import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
+
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -39,9 +41,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   final DigitalInput limit = new DigitalInput(0);
 
-  public ElevatorSubsystem() {
+  private NeutralModeValue neutralModeValue = NeutralModeValue.Brake;
+
+  private BooleanSupplier hasBall;
+
+  public ElevatorSubsystem(BooleanSupplier hasBall) {
     leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
     followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
+
+    this.hasBall = hasBall;
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
 
@@ -68,8 +76,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
 
-    leaderMotor.setNeutralMode(NeutralModeValue.Brake);
-    followerMotor.setNeutralMode(NeutralModeValue.Brake);
+    leaderMotor.setNeutralMode(neutralModeValue);
+    followerMotor.setNeutralMode(neutralModeValue);
 
     this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
   }
@@ -78,8 +86,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     return run(() -> setHeight(givenHeight));
   }
 
+  public void brake() {
+    leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+    followerMotor.setNeutralMode(NeutralModeValue.Brake);
+  }
+
   public double getHeight() {
-    return goal.position;
+    return goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO;
   }
 
   //// sets the height to a clamped value
@@ -101,19 +114,53 @@ public class ElevatorSubsystem extends SubsystemBase {
     followerMotor.setPosition(0);
   }
 
+  public void toggleBrakeMode() {
+    if (neutralModeValue == NeutralModeValue.Coast) {
+      neutralModeValue = NeutralModeValue.Brake;
+      leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+      followerMotor.setNeutralMode(NeutralModeValue.Brake);
+      return;
+    }
+    neutralModeValue = NeutralModeValue.Coast;
+    leaderMotor.setNeutralMode(NeutralModeValue.Coast);
+    followerMotor.setNeutralMode(NeutralModeValue.Coast);
+  }
+
   @Override
   public void periodic() {
-    if (limit.get()) {
+    if (limit.get() && leaderMotor.getPosition().getValueAsDouble() != 0) {
       resetEncoder();
     }
 
-    leaderMotor.setControl(
-        m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+    if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
+      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 60) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Top);
+      } else if (hasBall.getAsBoolean()) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
+      } else {
+        leaderMotor.setVoltage(Elevator.Gains.kG);
+      }
+    } else {
+      leaderMotor.setControl(
+          m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+    }
     SmartDashboard.putNumber(
         "elevator height",
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    SmartDashboard.putNumber(
+          "leader_motor",
+          leaderMotor.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber(
+      "follower_motor",
+      followerMotor.getSupplyCurrent().getValueAsDouble());
+      SmartDashboard.putNumber(
+        "leader_motor_voltage",
+        leaderMotor.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber(
+      "follower_motor_voltage",
+      followerMotor.getMotorVoltage().getValueAsDouble());
   }
 
   public boolean reachedState() {
