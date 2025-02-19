@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -41,7 +40,7 @@ public final class Constants {
     public static final Button OUTTAKE = Button.kRightBumper;
     public static final Button INTAKE = Button.kLeftBumper;
 
-    public static final Axis ELEVATOR_LOWER = Axis.kLeftTrigger; 
+    public static final Axis ELEVATOR_LOWER = Axis.kLeftTrigger;
     public static final Axis ELEVATOR_RAISE = Axis.kLeftTrigger;
     public static final double ELEVAOTR_ADJUST_THRESHOLD = 0.25;
     public static final double ELEVAOTR_ADJUST_SPEED_DECREASE = 10;
@@ -121,7 +120,8 @@ public final class Constants {
   }
 
   public final class Vision {
-    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    public static final PoseStrategy VISION_POSE_STRATEGY =
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
       new CameraSettings(
@@ -131,7 +131,7 @@ public final class Constants {
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
-                  Degrees.of(180+55).in(Radians)))),
+                  Degrees.of(180 + 55).in(Radians)))),
       new CameraSettings(
           "BL_Private",
           new Transform3d(
@@ -139,7 +139,7 @@ public final class Constants {
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
-                  Degrees.of(180-55).in(Radians)))),
+                  Degrees.of(180 - 55).in(Radians)))),
       // new CameraSettings(
       //   "FR",
       //   new Transform3d(

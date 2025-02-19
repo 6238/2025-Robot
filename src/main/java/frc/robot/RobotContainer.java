@@ -50,8 +50,16 @@ public class RobotContainer {
 
     Command driveCommand =
         swerve.driveCommand(
-            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value) * (1 - m_elevator.getHeight() / 140), 0.02),
-            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value) * (1 - m_elevator.getHeight() / 140), 0.02),
+            () ->
+                MathUtil.applyDeadband(
+                    -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
+                        * (1 - m_elevator.getHeight() / 140),
+                    0.02),
+            () ->
+                MathUtil.applyDeadband(
+                    -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value)
+                        * (1 - m_elevator.getHeight() / 140),
+                    0.02),
             () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value), 0.08));
 
     swerve.setDefaultCommand(driveCommand);
@@ -72,46 +80,64 @@ public class RobotContainer {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
 
-    driverXbox.button(ControlMapping.ELEVATOR_L2.value).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
-    driverXbox.button(ControlMapping.ELEVATOR_L3.value).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-    driverXbox.axisLessThan(ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_GROUND_THRESHOLD).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
-    driverXbox.axisGreaterThan(ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_TOP_THRESHOLD).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
+    driverXbox
+        .button(ControlMapping.ELEVATOR_L2.value)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    driverXbox
+        .button(ControlMapping.ELEVATOR_L3.value)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+    driverXbox
+        .axisLessThan(
+            ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_GROUND_THRESHOLD)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+    driverXbox
+        .axisGreaterThan(
+            ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_TOP_THRESHOLD)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
-    driverXbox.axisGreaterThan(ControlMapping.ELEVATOR_LOWER.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD).whileTrue(
-      m_elevator.increaseHeight(() -> -driverXbox.getRawAxis(ControlMapping.ELEVATOR_LOWER.value) / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE)
-    );
-    driverXbox.axisGreaterThan(ControlMapping.ELEVATOR_RAISE.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD).whileTrue(
-        m_elevator.increaseHeight(() -> driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE.value) / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE)
-    );
+    driverXbox
+        .axisGreaterThan(
+            ControlMapping.ELEVATOR_LOWER.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
+        .whileTrue(
+            m_elevator.increaseHeight(
+                () ->
+                    -driverXbox.getRawAxis(ControlMapping.ELEVATOR_LOWER.value)
+                        / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE));
+    driverXbox
+        .axisGreaterThan(
+            ControlMapping.ELEVATOR_RAISE.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
+        .whileTrue(
+            m_elevator.increaseHeight(
+                () ->
+                    driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE.value)
+                        / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE));
 
-    driverXbox.button(ControlMapping.INTAKE.value).onTrue(
-        Commands.either(
+    driverXbox
+        .button(ControlMapping.INTAKE.value)
+        .onTrue(
+            Commands.either(
+                Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()),
+                algaeSubsystem.stopMotors(),
+                algaeSubsystem.hasBall()));
+
+    driverXbox
+        .button(ControlMapping.OUTTAKE.value)
+        .onTrue(
             Commands.sequence(
-                algaeSubsystem.intakeUntilStalled(),
-                algaeSubsystem.holdAlgae()
-            ),
-            algaeSubsystem.stopMotors(),
-            algaeSubsystem.hasBall()
-        )
-    );
-
-    driverXbox.button(ControlMapping.OUTTAKE.value).onTrue(
-        Commands.sequence(algaeSubsystem.startOutake(),
-        new WaitCommand(0.5),
-        algaeSubsystem.stopMotors()
-    ));
+                algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
 
     driverXbox.povUp().onTrue(winch.toGrab());
     driverXbox.povDown().onTrue(winch.toPull());
 
-    new Trigger(HALUtil::getFPGAButton)
-        .onTrue(toggleBrakeMode().ignoringDisable(true));
+    new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }
 
   public Command toggleBrakeMode() {
-    return Commands.runOnce(() -> {
-        m_elevator.toggleBrakeMode();
-    }, m_elevator);
+    return Commands.runOnce(
+        () -> {
+          m_elevator.toggleBrakeMode();
+        },
+        m_elevator);
   }
 
   public Command getAutonomousCommand() {

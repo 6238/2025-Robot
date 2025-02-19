@@ -26,7 +26,6 @@ import frc.robot.Constants.Elevator;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -149,18 +148,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    SmartDashboard.putNumber("leader_motor", leaderMotor.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("follower_motor", followerMotor.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber(
-          "leader_motor",
-          leaderMotor.getSupplyCurrent().getValueAsDouble());
+        "leader_motor_voltage", leaderMotor.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber(
-      "follower_motor",
-      followerMotor.getSupplyCurrent().getValueAsDouble());
-      SmartDashboard.putNumber(
-        "leader_motor_voltage",
-        leaderMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber(
-      "follower_motor_voltage",
-      followerMotor.getMotorVoltage().getValueAsDouble());
+        "follower_motor_voltage", followerMotor.getMotorVoltage().getValueAsDouble());
   }
 
   public boolean reachedState() {
