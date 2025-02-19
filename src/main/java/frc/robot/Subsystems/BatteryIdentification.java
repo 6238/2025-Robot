@@ -15,10 +15,6 @@ public class BatteryIdentification extends SubsystemBase {
         hasRead = false;
     }
 
-    public void startRead() {
-        serialPort.writeString("read"); // SEND REQUEST TO READ
-    }
-
     public void readIfAvaliable() {
         if (serialPort.getBytesReceived() >= 17 && !hasRead) { // BATTERY MESSAGE AVALIABLE
             DataLogManager.log("BATTERY: " + serialPort.readString()); // LOG BATTERY NAME

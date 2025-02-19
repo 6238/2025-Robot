@@ -48,8 +48,6 @@ public class RobotContainer {
     DataLogManager.start();
     Logging.logMetadata();
 
-    batteryIdentification.startRead();
-
     configureTriggers();
 
     Command driveCommand =
