@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -150,5 +151,13 @@ public final class Constants {
       public static final double kI = 0.0;
       public static final double kD = 0.0;
     }
+  }
+
+  public final class AutoMoveGeneration {
+    public static final double BARGE_X_BLUE = 6.5;
+    public static final double BARGE_X_RED = 11.0;
+
+    public static final double BARGE_SPEED = 0.8;
+    public static final double BARGE_THRESHOLD = 0.2;
   }
 }
