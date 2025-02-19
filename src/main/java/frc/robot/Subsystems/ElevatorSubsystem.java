@@ -92,7 +92,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getHeight() {
-    return goal.position;
+    return goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO;
   }
 
   //// sets the height to a clamped value
@@ -133,7 +133,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
-      if (hasBall.getAsBoolean()) {
+      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 60) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Top);
+      } else if (hasBall.getAsBoolean()) {
         leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
       } else {
         leaderMotor.setVoltage(Elevator.Gains.kG);
@@ -147,6 +149,18 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    SmartDashboard.putNumber(
+          "leader_motor",
+          leaderMotor.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber(
+      "follower_motor",
+      followerMotor.getSupplyCurrent().getValueAsDouble());
+      SmartDashboard.putNumber(
+        "leader_motor_voltage",
+        leaderMotor.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber(
+      "follower_motor_voltage",
+      followerMotor.getMotorVoltage().getValueAsDouble());
   }
 
   public boolean reachedState() {

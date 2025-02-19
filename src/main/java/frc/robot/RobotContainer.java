@@ -10,9 +10,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -97,8 +99,8 @@ public class RobotContainer {
 
     Command driveCommand =
         swerve.driveCommand(
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), 0.02),
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), 0.02),
+            () -> MathUtil.applyDeadband(-driverXbox.getLeftY() * (1 - m_elevator.getHeight() / 140), 0.02),
+            () -> MathUtil.applyDeadband(-driverXbox.getLeftX() * (1 - m_elevator.getHeight() / 140), 0.02),
             () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08));
 
     swerve.setDefaultCommand(driveCommand);
@@ -117,11 +119,12 @@ public class RobotContainer {
    */
   private void configureTriggers() {
     // Controls
-    driverXbox.start().onTrue(swerve.zeroYawCommand());
+    driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
 
     driverXbox.a().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
     driverXbox.povRight().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
+
     driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
 
     driverXbox.b().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
@@ -131,6 +134,8 @@ public class RobotContainer {
     driverXbox.y().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
 
     driverXbox.start().onTrue(swerve.zeroYawCommand());
+
+    driverXbox.leftTrigger(0.9).onTrue(Commands.runOnce(() -> m_elevator.resetEncoder(), m_elevator).ignoringDisable(true));
 
     driverXbox
         .rightTrigger()
