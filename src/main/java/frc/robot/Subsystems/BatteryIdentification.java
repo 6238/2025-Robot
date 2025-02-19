@@ -19,7 +19,7 @@ public class BatteryIdentification extends SubsystemBase {
   public void readIfAvaliable() {
     if (serialPort.getBytesReceived() >= 17 && !hasRead) { // BATTERY MESSAGE AVALIABLE
       NetworkTableInstance.getDefault()
-        .getStringTopic("/Metadata/BATTERY_NAME")
+        .getStringTopic("/Metadata/BatteryName")
         .publish()
         .set(serialPort.readString()); // LOG BATTERY NAME
       hasRead = true;
