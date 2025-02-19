@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlMapping;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.subsystems.BatteryIdentification;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -37,6 +38,7 @@ public class RobotContainer {
   WinchSubsystem winch = new WinchSubsystem();
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
   ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+  BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
 
@@ -45,6 +47,8 @@ public class RobotContainer {
   public RobotContainer() {
     DataLogManager.start();
     Logging.logMetadata();
+
+    batteryIdentification.startRead();
 
     configureTriggers();
 
