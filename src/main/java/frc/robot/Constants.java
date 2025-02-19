@@ -13,6 +13,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.util.CameraSettings;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -22,6 +24,27 @@ public final class Constants {
   public final class IDs {
     public static final int ELEVATOR_LEADER_MOTOR = 50;
     public static final int ELEVATOR_FOLLOWER_MOTOR = 51;
+  }
+
+  public final class ControlMapping {
+    public static final Axis FORWARD_BACKWARD = Axis.kLeftY;
+    public static final Axis LEFT_RIGHT = Axis.kLeftX;
+    public static final Axis TURN = Axis.kRightX;
+
+    public static final Axis ELEVATOR_BOTTOM_TOP = Axis.kRightY;
+    public static final double ELEVATOR_GROUND_THRESHOLD = -0.75;
+    public static final double ELEVATOR_TOP_THRESHOLD = 0.75;
+
+    public static final Button ELEVATOR_L2 = Button.kLeftStick;
+    public static final Button ELEVATOR_L3 = Button.kRightStick;
+
+    public static final Button OUTTAKE = Button.kRightBumper;
+    public static final Button INTAKE = Button.kLeftBumper;
+
+    public static final Axis ELEVATOR_LOWER = Axis.kLeftTrigger; 
+    public static final Axis ELEVATOR_RAISE = Axis.kLeftTrigger;
+    public static final double ELEVAOTR_ADJUST_THRESHOLD = 0.25;
+    public static final double ELEVAOTR_ADJUST_SPEED_DECREASE = 10;
   }
 
   /** The robot's maximum angular velocity. */
@@ -66,12 +89,10 @@ public final class Constants {
       public static final double ELEVATOR_MIN_HEIGHT = 1.0;
       public static final double ELEVATOR_MAX_HEIGHT = 68.5;
 
-      public static final double L1 = 2.0;
-      public static final double L1_25 = 10.0;
-      public static final double L1_5 = 17.0;
+      public static final double GROUND = 2.0;
       public static final double L2 = 27.5;
       public static final double L3 = 40;
-      public static final double L4 = 68.5; // MAX HEIGHT
+      public static final double TOP = 68.5; // MAX HEIGHT
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;

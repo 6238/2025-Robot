@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.ControlMapping;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
@@ -57,51 +58,11 @@ public class RobotContainer {
 
     configureTriggers();
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1)));
-
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1_25",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
-
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1_5",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
-    
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L2",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
-
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L3",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
-
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L4",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4)));
-
-    NamedCommands.registerCommand(
-        "Reverse_From_Reef",
-        Commands.deadline(new WaitCommand(0.25),
-            new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)
-        )
-    );
-
-    NamedCommands.registerCommand(
-        "Intake_Algae",
-        Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
-
-    NamedCommands.registerCommand(
-        "Shoot_Algae",
-        Commands.sequence(
-            algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
-
     Command driveCommand =
         swerve.driveCommand(
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftY() * (1 - m_elevator.getHeight() / 140), 0.02),
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftX() * (1 - m_elevator.getHeight() / 140), 0.02),
-            () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08));
+            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value) * (1 - m_elevator.getHeight() / 140), 0.02),
+            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value) * (1 - m_elevator.getHeight() / 140), 0.02),
+            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value), 0.08));
 
     swerve.setDefaultCommand(driveCommand);
 
@@ -121,48 +82,37 @@ public class RobotContainer {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
 
+    driverXbox.button(ControlMapping.ELEVATOR_L2.value).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    driverXbox.button(ControlMapping.ELEVATOR_L3.value).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+    driverXbox.axisLessThan(ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_GROUND_THRESHOLD).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+    driverXbox.axisGreaterThan(ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_TOP_THRESHOLD).onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
-    driverXbox.povRight().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
+    driverXbox.axisGreaterThan(ControlMapping.ELEVATOR_LOWER.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD).whileTrue(
+      m_elevator.increaseHeight(() -> -driverXbox.getRawAxis(ControlMapping.ELEVATOR_LOWER.value) / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE)
+    );
+    driverXbox.axisGreaterThan(ControlMapping.ELEVATOR_RAISE.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD).whileTrue(
+        m_elevator.increaseHeight(() -> driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE.value) / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE)
+    );
 
-    driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
-
-    driverXbox.a().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
-
-    driverXbox.b().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
-
-    driverXbox.x().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-
-    driverXbox.y().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
-
-    driverXbox.start().onTrue(swerve.zeroYawCommand());
-
-    driverXbox.leftTrigger(0.9).onTrue(Commands.runOnce(() -> m_elevator.resetEncoder(), m_elevator).ignoringDisable(true));
-
-    driverXbox
-        .rightTrigger()
-        .onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
-
-    driverXbox
-        .leftBumper()
-        .onTrue(
-            Commands.either(
-                Commands.sequence(
-                    algaeSubsystem.intakeUntilStalled(),
-                    algaeSubsystem.holdAlgae()
-                ),
-                algaeSubsystem.stopMotors(),
-                algaeSubsystem.hasBall())
-        );
+    driverXbox.button(ControlMapping.INTAKE.value).onTrue(
+        Commands.either(
+            Commands.sequence(
+                algaeSubsystem.intakeUntilStalled(),
+                algaeSubsystem.holdAlgae()
+            ),
+            algaeSubsystem.stopMotors(),
+            algaeSubsystem.hasBall()
+        )
+    );
             
 
-    driverXbox
-        .rightBumper()
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
+    driverXbox.button(ControlMapping.OUTTAKE.value).onTrue(
+        Commands.sequence(algaeSubsystem.startOutake(),
+        new WaitCommand(0.5),
+        algaeSubsystem.stopMotors()
+    ));
 
     driverXbox.povUp().onTrue(winch.toGrab());
-
     driverXbox.povDown().onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton)
@@ -180,7 +130,7 @@ public class RobotContainer {
   }
 
   public void OnDisable() {
-    m_elevator.setHeight(ElevatorHeights.L1);
+    m_elevator.setHeight(ElevatorHeights.GROUND);
     m_elevator.brake();
   }
 
