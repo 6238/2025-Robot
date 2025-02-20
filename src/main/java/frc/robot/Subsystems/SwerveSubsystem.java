@@ -4,6 +4,9 @@
 
 package frc.robot.Subsystems;
 
+import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
+import static frc.robot.Constants.Swerve.MAX_SPEED;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -18,21 +21,14 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.Swerve.*;
-
 import java.io.File;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
-
 import org.photonvision.EstimatedRobotPose;
-
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.imu.NavXSwerve;
@@ -79,9 +75,7 @@ public class SwerveSubsystem extends SubsystemBase {
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
-      swerveDrive =
-          new SwerveParser(directory)
-              .createSwerveDrive(MAX_SPEED);
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -90,7 +84,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     setupPathPlanner();
   }
-
 
   /**
    * The primary method for controlling the drivebase. Takes a {@link Translation2d} and a rotation
@@ -115,22 +108,29 @@ public class SwerveSubsystem extends SubsystemBase {
         false); // Open loop is disabled since it shouldn't be used most of the time.
   }
 
-  public Command debugDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
-                              DoubleSupplier headingY)
-  {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
-    return run(() -> {
+  public Command debugDriveCommand(
+      DoubleSupplier translationX,
+      DoubleSupplier translationY,
+      DoubleSupplier headingX,
+      DoubleSupplier headingY) {
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for
+    // this kind of control.
+    return run(
+        () -> {
+          Translation2d scaledInputs =
+              SwerveMath.scaleTranslation(
+                  new Translation2d(translationX.getAsDouble(), translationY.getAsDouble()), 0.8);
 
-      Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
-                                                                                 translationY.getAsDouble()), 0.8);
-
-      // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
-                                                                      headingX.getAsDouble(),
-                                                                      headingY.getAsDouble(),
-                                                                      swerveDrive.getOdometryHeading().getRadians(),
-                                                                      swerveDrive.getMaximumChassisVelocity()));
-    });
+          // Make the robot move
+          driveFieldOriented(
+              swerveDrive.swerveController.getTargetSpeeds(
+                  scaledInputs.getX(),
+                  scaledInputs.getY(),
+                  headingX.getAsDouble(),
+                  headingY.getAsDouble(),
+                  swerveDrive.getOdometryHeading().getRadians(),
+                  swerveDrive.getMaximumChassisVelocity()));
+        });
   }
 
   public Command driveCommandOnce(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
@@ -206,6 +206,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /**
    * Add vision pose (with standard deviation matrix)
+   *
    * @param pose
    * @param stdev
    */
@@ -215,6 +216,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /**
    * Add vision pose
+   *
    * @param pose
    */
   public void addVisionPose(EstimatedRobotPose pose) {
@@ -373,35 +375,42 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /** Setup AutoBuilder for PathPlanner. */
- public void setupPathPlanner() {
+  public void setupPathPlanner() {
     try {
       RobotConfig config = RobotConfig.fromGUISettings();
       // Configure AutoBuilder last
       AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getFieldVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> driveFieldOriented(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(1.0, 0.0005, 0.02), // Translation PID constants
-                    new PIDConstants(1.0, 0.0005, 0.02) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
+          this::getPose, // Robot pose supplier
+          this::resetOdometry, // Method to reset odometry (will be called if your auto has a
+          // starting pose)
+          this::getFieldVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+          (speeds, feedforwards) ->
+              driveFieldOriented(
+                  speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds.
+          // Also optionally outputs individual module feedforwards
+          new PPHolonomicDriveController( // PPHolonomicController is the built in path following
+              // controller for holonomic drive trains
+              new PIDConstants(1.0, 0.0005, 0.02), // Translation PID constants
+              new PIDConstants(1.0, 0.0005, 0.02) // Rotation PID constants
+              ),
+          config, // The robot configuration
+          () -> {
             // Boolean supplier that controls when the path will be mirrored for the red alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
+              return alliance.get() == DriverStation.Alliance.Red;
             }
             return false;
-            },
-            this // Reference to this subsystem to set requirements
-        );
-    } catch(Exception e){
-        DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder. Try checking version numbers and clean /deploy/* on the rio", e.getStackTrace());
+          },
+          this // Reference to this subsystem to set requirements
+          );
+    } catch (Exception e) {
+      DriverStation.reportError(
+          "Failed to load PathPlanner config and configure AutoBuilder. Try checking version numbers and clean /deploy/* on the rio",
+          e.getStackTrace());
     }
   }
 
@@ -449,8 +458,7 @@ public class SwerveSubsystem extends SubsystemBase {
           double rotation = rotationSpeed.getAsDouble() * MAX_ANGULAR_VELOCITY;
 
           Translation2d translation =
-              new Translation2d(
-                  sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
+              new Translation2d(sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
           this.drive(translation, rotation, true);
         });
   }

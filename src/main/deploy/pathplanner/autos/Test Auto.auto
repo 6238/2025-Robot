@@ -5,9 +5,46 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Algae_L2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake_Algae"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "test"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Reverse_From_Reef"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "test"
+            "pathName": "test2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_Algae"
           }
         }
       ]

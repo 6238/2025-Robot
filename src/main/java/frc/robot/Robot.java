@@ -23,13 +23,17 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.OnDisable();
+  }
 
   @Override
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    m_robotContainer.OnEnable();
+  }
 
   @Override
   public void autonomousInit() {
