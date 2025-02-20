@@ -24,8 +24,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.util.Logging;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -52,26 +54,23 @@ import java.util.function.DoubleSupplier;
  * here.
  */
 public class RobotContainer {
-  ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-  Supplier<Matter> matter = () -> m_elevator.getMatter();
-
-  SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
-  WinchSubsystem winch = new WinchSubsystem();
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
   ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+  Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
+  SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"), elevator_matter);
+  VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
+  WinchSubsystem winch = new WinchSubsystem();
   BatteryIdentification batteryIdentification = new BatteryIdentification();
+  
 
   CommandXboxController driverXbox = new CommandXboxController(0);
 
   DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
-      -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
-          * (1 - m_elevator.getHeight() / 140),
+      -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value),
       0.02);
 
   DoubleSupplier swerve_y = () -> MathUtil.applyDeadband(
-      -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value)
-          * (1 - m_elevator.getHeight() / 140),
+      -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value),
       0.02);
 
   DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(
@@ -175,16 +174,16 @@ public class RobotContainer {
         .axisGreaterThan(
             ControlMapping.ELEVATOR_RAISE_LOWER.value, ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
         .whileTrue(
-            m_elevator.increaseHeight(
+          new RepeatCommand(m_elevator.increaseHeight(
                 () -> -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
-                    / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE));
+                    / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE)));
     driverXbox // RAISE
         .axisLessThan(
             ControlMapping.ELEVATOR_RAISE_LOWER.value, -ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
         .whileTrue(
-            m_elevator.increaseHeight(
+          new RepeatCommand(m_elevator.increaseHeight(
                 () -> -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
-                    / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE));
+                    / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE)));
 
     driverXbox
         .button(ControlMapping.INTAKE.value)

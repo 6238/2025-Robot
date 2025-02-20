@@ -152,14 +152,14 @@ public final class Constants {
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
                   Degrees.of(180 + 55).in(Radians)))),
-      new CameraSettings(
-          "BL_Private",
-          new Transform3d(
-              new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(-55).in(Radians),
-                  Degrees.of(180 - 55).in(Radians)))),
+      // new CameraSettings(
+      //     "BL_Private",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(-55).in(Radians),2
+      //             Degrees.of(180 - 55).in(Radians)))),
       new CameraSettings(
         "FR_Kowalski",
         new Transform3d(
@@ -177,6 +177,9 @@ public final class Constants {
                 Degrees.of(65).in(Radians),
                 Degrees.of(90).in(Radians)))),
     };
+
+    public static final String ALGAECAM_NAME = "ALGAE_CAM";
+    public static final double VISION_TURN_kP = 0.75;
 
     public static final Matrix<N3, N1> VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {3, 0, 3, 0, 4});

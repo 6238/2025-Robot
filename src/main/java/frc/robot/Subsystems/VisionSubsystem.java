@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.proto.Photon;
 
 public class VisionSubsystem extends SubsystemBase {
   private AprilTagFieldLayout fieldLayout;
@@ -18,11 +20,15 @@ public class VisionSubsystem extends SubsystemBase {
   // Keep track of cameras and poses
   private ArrayList<Camera> cameras = new ArrayList<>();
 
+  public PhotonCamera algaeCam;
+
   private SwerveSubsystem swerve;
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
     this.swerve = swerve;
+
+    algaeCam = new PhotonCamera(Vision.ALGAECAM_NAME);
 
     try {
       fieldLayout =

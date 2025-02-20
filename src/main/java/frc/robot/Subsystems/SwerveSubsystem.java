@@ -54,7 +54,8 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory) {
+  public SwerveSubsystem(File directory, Supplier<Matter> matter) {
+    elevatorMatter = matter;
     // // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     // // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     // // The encoder resolution per motor revolution is 1 per motor revolution.
@@ -109,7 +110,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     // todo: all this is dead code and i wanna test it
     ChassisSpeeds velocity = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
-    List<Matter> objects = List.of(Constants.Swerve.CHASSIS); // elevatorMatter.get() is uninit rn
+    List<Matter> objects = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
     double totalMass = objects.stream().mapToDouble((x) -> x.mass).sum(); // yagsl shoud calc this
     Translation2d limitedTranslation =
         SwerveMath.limitVelocity(
@@ -122,10 +123,10 @@ public class SwerveSubsystem extends SubsystemBase {
             swerveDrive.swerveDriveConfiguration);
 
     swerveDrive.drive(
-        translation, // limitedTranslation goes here but i dont think it will work
-        rotation,
-        fieldRelative,
-        false); // Open loop is disabled since it shouldn't be used most of the time.
+      limitedTranslation, // limitedTranslation goes here but i dont think it will work
+      rotation,
+      fieldRelative,
+      false); // Open loop is disabled since it shouldn't be used most of the time.
   }
 
   public Command debugDriveCommand(
