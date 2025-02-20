@@ -25,13 +25,18 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import java.io.File;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import org.photonvision.EstimatedRobotPose;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.imu.NavXSwerve;
+import swervelib.math.Matter;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -39,7 +44,8 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase {
-
+  // intentionally uninit since elevator isnt exist
+  private Supplier<Matter> elevatorMatter;
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
 
@@ -101,8 +107,22 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param fieldRelative Drive mode. True for field-relative, false for robot-relative.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+    // todo: all this is dead code and i wanna test it
+    ChassisSpeeds velocity = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
+    List<Matter> objects = List.of(Constants.Swerve.CHASSIS); // elevatorMatter.get() is uninit rn
+    double totalMass = objects.stream().mapToDouble((x) -> x.mass).sum(); // yagsl shoud calc this
+    Translation2d limitedTranslation =
+        SwerveMath.limitVelocity(
+            translation,
+            velocity,
+            getPose(),
+            Constants.LOOP_TIME,
+            totalMass,
+            objects,
+            swerveDrive.swerveDriveConfiguration);
+
     swerveDrive.drive(
-        translation,
+        translation, // limitedTranslation goes here but i dont think it will work
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.

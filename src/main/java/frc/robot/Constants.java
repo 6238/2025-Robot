@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Radians;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -14,9 +15,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.util.CameraSettings;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import swervelib.math.Matter;
 
 /** Constants for the robot. */
 public final class Constants {
+
+  public static final double LOOP_TIME = 0.02;
 
   public final class IDs {
     public static final int ELEVATOR_LEADER_MOTOR = 50;
@@ -25,7 +29,7 @@ public final class Constants {
 
   /** The robot's maximum angular velocity. */
   public final class Swerve {
-
+    public static final Matter CHASSIS = new Matter(new Translation3d(0.0, 0.0, 0.1), 60.0);
     public static final double MAX_ANGULAR_VELOCITY = 2.0 * Math.PI; // 2pi rad/sec = 1 rev/sec
 
     /**
@@ -72,6 +76,15 @@ public final class Constants {
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
+    }
+
+    public final class DYNAMICS {
+      // COM = centre o' mass
+      // TODO; these are not even remotely correct
+      public static final double TOTAL_MASS = 65.0;
+      public static final double COM_HEIGHT_MIN = 0.3;
+      public static final double COM_HEIGHT_MAX = 1.3;
+      public static final Translation2d COM_LOCATION = new Translation2d();
     }
 
     // Motion Profile
