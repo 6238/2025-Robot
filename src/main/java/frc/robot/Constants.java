@@ -166,7 +166,7 @@ public final class Constants {
     };
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {4, 0, 4, 0, 5});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {3, 0, 3, 0, 4});
   }
 
   public final class Winch {
