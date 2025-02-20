@@ -4,27 +4,19 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
@@ -68,7 +60,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Elevator_Algae_L1_5",
         Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
-    
+
     NamedCommands.registerCommand(
         "Elevator_Algae_L2",
         Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
@@ -83,10 +75,10 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Reverse_From_Reef",
-        Commands.deadline(new WaitCommand(0.25),
-            new RemoveAlgaeCommand(swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)
-        )
-    );
+        Commands.deadline(
+            new WaitCommand(0.25),
+            new RemoveAlgaeCommand(
+                swerve, m_elevator, () -> Constants.AlgaeEndEffector.REEF_REMOVAL_CONTROLLER_VAL)));
 
     NamedCommands.registerCommand(
         "Intake_Algae",
@@ -99,8 +91,12 @@ public class RobotContainer {
 
     Command driveCommand =
         swerve.driveCommand(
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftY() * (1 - m_elevator.getHeight() / 140), 0.02),
-            () -> MathUtil.applyDeadband(-driverXbox.getLeftX() * (1 - m_elevator.getHeight() / 140), 0.02),
+            () ->
+                MathUtil.applyDeadband(
+                    -driverXbox.getLeftY() * (1 - m_elevator.getHeight() / 140), 0.02),
+            () ->
+                MathUtil.applyDeadband(
+                    -driverXbox.getLeftX() * (1 - m_elevator.getHeight() / 140), 0.02),
             () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08));
 
     swerve.setDefaultCommand(driveCommand);
@@ -121,10 +117,13 @@ public class RobotContainer {
     // Controls
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
 
+    driverXbox
+        .povRight()
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
 
-    driverXbox.povRight().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
-
-    driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
+    driverXbox
+        .povLeft()
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
 
     driverXbox.a().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
@@ -136,7 +135,10 @@ public class RobotContainer {
 
     driverXbox.start().onTrue(swerve.zeroYawCommand());
 
-    driverXbox.leftTrigger(0.9).onTrue(Commands.runOnce(() -> m_elevator.resetEncoder(), m_elevator).ignoringDisable(true));
+    driverXbox
+        .leftTrigger(0.9)
+        .onTrue(
+            Commands.runOnce(() -> m_elevator.resetEncoder(), m_elevator).ignoringDisable(true));
 
     driverXbox
         .rightTrigger()
@@ -163,14 +165,15 @@ public class RobotContainer {
 
     driverXbox.povDown().onTrue(winch.toPull());
 
-    new Trigger(HALUtil::getFPGAButton)
-        .onTrue(toggleBrakeMode().ignoringDisable(true));
+    new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }
 
   public Command toggleBrakeMode() {
-    return Commands.runOnce(() -> {
-        m_elevator.toggleBrakeMode();
-    }, m_elevator);
+    return Commands.runOnce(
+        () -> {
+          m_elevator.toggleBrakeMode();
+        },
+        m_elevator);
   }
 
   public Command getAutonomousCommand() {

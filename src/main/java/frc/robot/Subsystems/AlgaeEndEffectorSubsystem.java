@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -13,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeEndEffector;
+import java.util.function.BooleanSupplier;
 
 public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final TalonFX leftMotor;
@@ -51,7 +50,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     p_request = new PositionVoltage(0).withSlot(0);
     v_request = new VelocityVoltage(0).withSlot(1);
   }
-  
+
   /** If either motor's velocity is within percentError of speedSetpoint */
   public boolean upToSpeed(double percentError) {
     double maxError = speedSetpoint * percentError;

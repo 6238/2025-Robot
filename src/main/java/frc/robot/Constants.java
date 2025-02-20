@@ -99,7 +99,8 @@ public final class Constants {
   }
 
   public final class Vision {
-    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    public static final PoseStrategy VISION_POSE_STRATEGY =
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
       new CameraSettings(
@@ -109,7 +110,7 @@ public final class Constants {
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
-                  Degrees.of(180+55).in(Radians)))),
+                  Degrees.of(180 + 55).in(Radians)))),
       new CameraSettings(
           "BL_Private",
           new Transform3d(
@@ -117,7 +118,7 @@ public final class Constants {
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
-                  Degrees.of(180-55).in(Radians)))),
+                  Degrees.of(180 - 55).in(Radians)))),
       // new CameraSettings(
       //   "FR",
       //   new Transform3d(
