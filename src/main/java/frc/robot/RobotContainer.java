@@ -41,6 +41,8 @@ import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.Logging;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
@@ -58,6 +60,20 @@ public class RobotContainer {
   CommandXboxController driverXbox = new CommandXboxController(0);
   AutonTeleController autonTeleController = new AutonTeleController(driverXbox);
 
+  DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
+      -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
+          * (1 - m_elevator.getHeight() / 140),
+      0.02);
+
+  DoubleSupplier swerve_y = () -> MathUtil.applyDeadband(
+      -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value)
+          * (1 - m_elevator.getHeight() / 140),
+      0.02);
+
+  DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(
+    -driverXbox.getRawAxis(ControlMapping.TURN.value), 
+    0.08);
+
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
@@ -72,17 +88,9 @@ public class RobotContainer {
 
     Command driveCommand =
         swerve.driveCommand(
-            () ->
-                MathUtil.applyDeadband(
-                    -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
-                        * (1 - m_elevator.getHeight() / 140),
-                    0.02),
-            () ->
-                MathUtil.applyDeadband(
-                    -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value)
-                        * (1 - m_elevator.getHeight() / 140),
-                    0.02),
-            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value), 0.08));
+            swerve_x,
+            swerve_y,
+            swerve_turn);
 
     swerve.setDefaultCommand(driveCommand);
 
@@ -150,23 +158,6 @@ public class RobotContainer {
     driverXbox
         .button(ControlMapping.ELEVATOR_L4.value)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
-    
-    driverXbox
-        .leftStick()
-        .onTrue(new GoToBarge(
-          swerve, 
-          () ->
-              MathUtil.applyDeadband(
-                  -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
-                      * (1 - m_elevator.getHeight() / 140),
-                  0.02),
-          () ->
-              MathUtil.applyDeadband(
-                  -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value)
-                      * (1 - m_elevator.getHeight() / 140),
-                  0.02),
-          () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value), 0.08)   
-        ));
 
     driverXbox // LOWER
         .axisGreaterThan(
