@@ -150,11 +150,19 @@ public final class Constants {
       new CameraSettings(
         "FR_Kowalski",
         new Transform3d(
-            new Translation3d(Inches.of(9), Inches.of(7.5), Inches.of(26)),
+            new Translation3d(Inches.of(9.5), Inches.of(6), Inches.of(26.5)),
             new Rotation3d(
                 Degrees.of(0).in(Radians),
                 Degrees.of(0).in(Radians),
                 Degrees.of(270).in(Radians)))),
+      new CameraSettings(
+        "FL_Skipper",
+        new Transform3d(
+            new Translation3d(Inches.of(-14.5), Inches.of(0), Inches.of(11.5)),
+            new Rotation3d(
+                Degrees.of(0).in(Radians),
+                Degrees.of(65).in(Radians),
+                Degrees.of(90).in(Radians)))),
     };
 
     public static final Matrix<N3, N1> VISION_STDDEV =
