@@ -148,18 +148,10 @@ public final class Constants {
                 Degrees.of(0).in(Radians),
                 Degrees.of(0).in(Radians),
                 Degrees.of(270).in(Radians)))),
-      // new CameraSettings(
-      //     "FL_",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(10.5)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(65).in(Radians)))),
     };
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {2, 0, 2, 0, 2.5});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {4, 0, 4, 0, 5});
   }
 
   public final class Winch {
