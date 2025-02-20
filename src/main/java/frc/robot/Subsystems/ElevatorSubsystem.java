@@ -102,9 +102,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command increaseHeight(DoubleSupplier speed) {
+    double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
+    double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
     return runOnce(
         () -> {
-          goal.position += goal.position + speed.getAsDouble();
+          double height = goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO + speed.getAsDouble();
+          goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
         });
   }
 
@@ -148,12 +151,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
-    SmartDashboard.putNumber("leader_motor", leaderMotor.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("follower_motor", followerMotor.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "leader_motor_voltage", leaderMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "follower_motor_voltage", followerMotor.getMotorVoltage().getValueAsDouble());
   }
 
   public boolean reachedState() {

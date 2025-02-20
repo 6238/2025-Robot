@@ -3,12 +3,14 @@ package frc.robot.commands;
 import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
 import static frc.robot.Constants.Swerve.MAX_SPEED;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoMoveGeneration;
+import frc.robot.Constants.ControlMapping;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -47,7 +49,7 @@ public class GoToBarge extends Command {
 
     Translation2d translation =
         new Translation2d(
-            sign * AutoMoveGeneration.BARGE_SPEED * MAX_SPEED, sign * yInput * MAX_SPEED);
+            sign * AutoMoveGeneration.BARGE_SPEED * MAX_SPEED / 2, sign * yInput * MAX_SPEED);
     m_swerve.drive(translation, rotation, true);
   }
 
@@ -58,7 +60,7 @@ public class GoToBarge extends Command {
   }
 
   private boolean tryingToDrive() {
-    return Math.abs(m_xAxisSupplier.getAsDouble()) > 0;
+    return Math.abs(m_xAxisSupplier.getAsDouble()) > 0.2;
   }
 
   // Returns true when the command should end.

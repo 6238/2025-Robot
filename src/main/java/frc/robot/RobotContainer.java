@@ -5,10 +5,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlMapping;
 import frc.robot.Constants.Elevator.ElevatorHeights;
+import frc.robot.commands.GoToBarge;
+import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.BatteryIdentification;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -66,6 +71,39 @@ public class RobotContainer {
 
     swerve.setDefaultCommand(driveCommand);
 
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND)));
+
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1_25",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
+
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1_5",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
+    
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L2",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
+
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L3",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
+
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L4",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP)));
+
+    NamedCommands.registerCommand(
+        "Intake_Algae",
+        Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
+
+    NamedCommands.registerCommand(
+        "Shoot_Algae",
+        Commands.sequence(
+            algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
+
     // Initialize autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auton Path", autoChooser);
@@ -80,8 +118,12 @@ public class RobotContainer {
    */
   private void configureTriggers() {
     // Controls
-    driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
-
+    driverXbox.back().onTrue(Commands.runOnce(() -> m_elevator.resetEncoder()).ignoringDisable(true)); // left menu button
+    driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
+    
+    driverXbox
+      .button(ControlMapping.ELEVATOR_L1.value)
+      .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
     driverXbox
         .button(ControlMapping.ELEVATOR_L2.value)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
@@ -89,29 +131,41 @@ public class RobotContainer {
         .button(ControlMapping.ELEVATOR_L3.value)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
     driverXbox
-        .axisLessThan(
-            ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_GROUND_THRESHOLD)
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
-    driverXbox
-        .axisGreaterThan(
-            ControlMapping.ELEVATOR_BOTTOM_TOP.value, ControlMapping.ELEVATOR_TOP_THRESHOLD)
+        .button(ControlMapping.ELEVATOR_L4.value)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
+    
+    driverXbox
+        .leftStick()
+        .onTrue(new GoToBarge(
+          swerve, 
+          () ->
+              MathUtil.applyDeadband(
+                  -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
+                      * (1 - m_elevator.getHeight() / 140),
+                  0.02),
+          () ->
+              MathUtil.applyDeadband(
+                  -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value)
+                      * (1 - m_elevator.getHeight() / 140),
+                  0.02),
+          () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value), 0.08)   
+        ));
 
-    driverXbox
+    driverXbox // LOWER
         .axisGreaterThan(
-            ControlMapping.ELEVATOR_LOWER.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
+            ControlMapping.ELEVATOR_RAISE_LOWER.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
         .whileTrue(
             m_elevator.increaseHeight(
                 () ->
-                    -driverXbox.getRawAxis(ControlMapping.ELEVATOR_LOWER.value)
+                    -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
                         / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE));
-    driverXbox
-        .axisGreaterThan(
-            ControlMapping.ELEVATOR_RAISE.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
+    driverXbox // RAISE
+        .axisLessThan(
+            ControlMapping.ELEVATOR_RAISE_LOWER.value, -ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
         .whileTrue(
             m_elevator.increaseHeight(
                 () ->
-                    driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE.value)
+                    -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
                         / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE));
 
     driverXbox
@@ -120,7 +174,7 @@ public class RobotContainer {
             Commands.either(
                 Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()),
                 algaeSubsystem.stopMotors(),
-                algaeSubsystem.hasBall()));
+                () -> !algaeSubsystem.hasBall().getAsBoolean()));
 
     driverXbox
         .button(ControlMapping.OUTTAKE.value)

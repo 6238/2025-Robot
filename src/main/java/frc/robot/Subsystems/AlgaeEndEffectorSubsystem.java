@@ -120,8 +120,13 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
                 rightMotor.getPosition().getValueAsDouble()));
   }
 
+  private void setDuty(double speed) {
+    leftMotor.set(-speed);
+    rightMotor.set(speed);
+  }
+
   public Command startOutake() {
-    return runOnce(() -> setMotorSpeed(-AlgaeEndEffector.OUTAKE_SPEED));
+    return runOnce(() -> setDuty(-1));
   }
 
   public Command stopMotors() {
@@ -130,11 +135,6 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("intakeSpeedLeft", -leftMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("intakeSpeedRight", rightMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("intaketargetSpeed", speedSetpoint);
-    SmartDashboard.putBoolean("intakeUpToSpeed", upToSpeed);
-    SmartDashboard.putBoolean("intakeVelocityControl", velocityControl);
 
     if (velocityControl && upToSpeed(0.1)) {
       upToSpeed = true;

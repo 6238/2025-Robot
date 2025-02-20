@@ -30,20 +30,19 @@ public final class Constants {
     public static final Axis LEFT_RIGHT = Axis.kLeftX;
     public static final Axis TURN = Axis.kRightX;
 
-    public static final Axis ELEVATOR_BOTTOM_TOP = Axis.kRightY;
-    public static final double ELEVATOR_GROUND_THRESHOLD = -0.75;
-    public static final double ELEVATOR_TOP_THRESHOLD = 0.75;
+    public static final Button ELEVATOR_L1 = Button.kA;
+    public static final Button ELEVATOR_L2 = Button.kB;
+    public static final Button ELEVATOR_L3 = Button.kX;
+    public static final Button ELEVATOR_L4 = Button.kY;
 
-    public static final Button ELEVATOR_L2 = Button.kLeftStick;
-    public static final Button ELEVATOR_L3 = Button.kRightStick;
+    public static final Button MOVE_TO_BARGE_BUTTON = Button.kY;
 
     public static final Button OUTTAKE = Button.kRightBumper;
     public static final Button INTAKE = Button.kLeftBumper;
 
-    public static final Axis ELEVATOR_LOWER = Axis.kLeftTrigger;
-    public static final Axis ELEVATOR_RAISE = Axis.kLeftTrigger;
+    public static final Axis ELEVATOR_RAISE_LOWER = Axis.kRightY;
     public static final double ELEVAOTR_ADJUST_THRESHOLD = 0.25;
-    public static final double ELEVAOTR_ADJUST_SPEED_DECREASE = 10;
+    public static final double ELEVAOTR_ADJUST_SPEED_DECREASE = 50;
   }
 
   /** The robot's maximum angular velocity. */
@@ -89,6 +88,8 @@ public final class Constants {
       public static final double ELEVATOR_MAX_HEIGHT = 68.5;
 
       public static final double GROUND = 2.0;
+      public static final double L1_25 = 10.0;
+      public static final double L1_5 = 17.0;
       public static final double L2 = 27.5;
       public static final double L3 = 40;
       public static final double TOP = 68.5; // MAX HEIGHT
@@ -110,7 +111,6 @@ public final class Constants {
     public static final double STALL_THRESHOLD = 0.1;
 
     public static final double INTAKE_SPEED = 32.5;
-    public static final double OUTAKE_SPEED = 60;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -140,14 +140,14 @@ public final class Constants {
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
                   Degrees.of(180 - 55).in(Radians)))),
-      // new CameraSettings(
-      //   "FR",
-      //   new Transform3d(
-      //       new Translation3d(Inches.of(13.5), Inches.of(-13.5), Inches.of(10.5)),
-      //       new Rotation3d(
-      //           Degrees.of(0).in(Radians),
-      //           Degrees.of(0).in(Radians),
-      //           Degrees.of(-65).in(Radians)))),
+      new CameraSettings(
+        "FR_Kowalski",
+        new Transform3d(
+            new Translation3d(Inches.of(9), Inches.of(7.5), Inches.of(26)),
+            new Rotation3d(
+                Degrees.of(0).in(Radians),
+                Degrees.of(0).in(Radians),
+                Degrees.of(270).in(Radians)))),
       // new CameraSettings(
       //     "FL_",
       //     new Transform3d(
@@ -175,8 +175,8 @@ public final class Constants {
   }
 
   public final class AutoMoveGeneration {
-    public static final double BARGE_X_BLUE = 6.5;
-    public static final double BARGE_X_RED = 11.0;
+    public static final double BARGE_X_BLUE = 7.5;
+    public static final double BARGE_X_RED = 10.5;
 
     public static final double BARGE_SPEED = 0.8;
     public static final double BARGE_THRESHOLD = 0.2;
