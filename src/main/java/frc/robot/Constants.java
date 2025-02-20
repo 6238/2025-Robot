@@ -42,14 +42,14 @@ public final class Constants {
     public static final Button ELEVATOR_L3 = Button.kX;
     public static final Button ELEVATOR_L4 = Button.kY;
 
-    public static final Button MOVE_TO_BARGE_BUTTON = Button.kY;
+    public static final Button MOVE_TO_BARGE_BUTTON = Button.kLeftStick;
 
     public static final Button OUTTAKE = Button.kRightBumper;
     public static final Button INTAKE = Button.kLeftBumper;
 
     public static final Axis ELEVATOR_RAISE_LOWER = Axis.kRightY;
-    public static final double ELEVAOTR_ADJUST_THRESHOLD = 0.25;
-    public static final double ELEVAOTR_ADJUST_SPEED_DECREASE = 50;
+    public static final double ELEVATOR_ADJUST_THRESHOLD = 0.25;
+    public static final double ELEVATOR_ADJUST_SPEED_DECREASE = 50;
   }
 
   /** The robot's maximum angular velocity. */
@@ -183,7 +183,6 @@ public final class Constants {
 
   public class PathfindingConfig {
     public static final double DRIVE_RESUME_DEADBAND = 0.05;
-    public static final double TURN_RESUME_DEADBAND = 0.05;
 
     /*
      * Values were from path planner
@@ -192,16 +191,16 @@ public final class Constants {
      * 
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d SOURCE_ONE = new Pose2d(
-      1.247,
-      6.988,
-      Rotation2d.fromDegrees(125)
+    public static final Pose2d BARGE_TOP = new Pose2d(
+      7.250,
+      6,
+      Rotation2d.fromDegrees(0)
     );
 
-    public static final Pose2d SOURCE_TWO = new Pose2d(
-      1.247,
-      1.083,
-      Rotation2d.fromDegrees(-125)
+    public static final Pose2d BARGE_BOTTOM = new Pose2d(
+      7.250,
+      2,
+      Rotation2d.fromDegrees(0)
     );
   }
 }

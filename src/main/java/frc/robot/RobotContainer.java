@@ -45,7 +45,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**
- * This class is where almost all of the robot is defined - logic and subsystems are all set up
+ * This class is where almost all of the robot is defined - logic and subsystems
+ * are all set up
  * here.
  */
 public class RobotContainer {
@@ -58,7 +59,6 @@ public class RobotContainer {
   BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
-  AutonTeleController autonTeleController = new AutonTeleController(driverXbox);
 
   DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
       -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
@@ -71,26 +71,26 @@ public class RobotContainer {
       0.02);
 
   DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(
-    -driverXbox.getRawAxis(ControlMapping.TURN.value), 
-    0.08);
+      -driverXbox.getRawAxis(ControlMapping.TURN.value),
+      0.08);
 
   private final SendableChooser<Command> autoChooser;
+  AutonTeleController autonTeleController = new AutonTeleController(swerve, swerve_x, swerve_y, swerve_turn);
 
   public RobotContainer() {
     Pathfinding.setPathfinder(new LocalADStar());
 
     DataLogManager.start();
     Logging.logMetadata();
-    
+
     PathfindingCommand.warmupCommand().schedule();
 
     configureTriggers();
 
-    Command driveCommand =
-        swerve.driveCommand(
-            swerve_x,
-            swerve_y,
-            swerve_turn);
+    Command driveCommand = swerve.driveCommand(
+        swerve_x,
+        swerve_y,
+        swerve_turn);
 
     swerve.setDefaultCommand(driveCommand);
 
@@ -105,7 +105,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Elevator_Algae_L1_5",
         Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
-    
+
     NamedCommands.registerCommand(
         "Elevator_Algae_L2",
         Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
@@ -134,24 +134,31 @@ public class RobotContainer {
 
   /**
    * This method is where all of the robot's logic is defined. We link {@link
-   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons and subsystem
-   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The advantage of
-   * configuring all the robot's logic here is that it's easy to find, and therefore easy to modify,
+   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons
+   * and subsystem
+   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The
+   * advantage of
+   * configuring all the robot's logic here is that it's easy to find, and
+   * therefore easy to modify,
    * what the robot does when something happens and why.
    */
   private void configureTriggers() {
     // Controls
     autonTeleController.SetupPoseCommands();
-    
-    driverXbox.back().onTrue(Commands.runOnce(() -> m_elevator.resetEncoder()).ignoringDisable(true)); // left menu button
+
+    driverXbox.back().onTrue(Commands.runOnce(() -> m_elevator.resetEncoder()).ignoringDisable(true)); // left menu
+                                                                                                       // button
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
-    
+
     driverXbox
-      .button(ControlMapping.ELEVATOR_L1.value)
-      .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+        .button(ControlMapping.ELEVATOR_L1.value)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
     driverXbox
-        .button(ControlMapping.ELEVATOR_L2.value)
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+        .povDown()
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
+    driverXbox
+        .povUp()
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
     driverXbox
         .button(ControlMapping.ELEVATOR_L3.value)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
@@ -161,20 +168,18 @@ public class RobotContainer {
 
     driverXbox // LOWER
         .axisGreaterThan(
-            ControlMapping.ELEVATOR_RAISE_LOWER.value, ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
+            ControlMapping.ELEVATOR_RAISE_LOWER.value, ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
         .whileTrue(
             m_elevator.increaseHeight(
-                () ->
-                    -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
-                        / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE));
+                () -> -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
+                    / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE));
     driverXbox // RAISE
         .axisLessThan(
-            ControlMapping.ELEVATOR_RAISE_LOWER.value, -ControlMapping.ELEVAOTR_ADJUST_THRESHOLD)
+            ControlMapping.ELEVATOR_RAISE_LOWER.value, -ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
         .whileTrue(
             m_elevator.increaseHeight(
-                () ->
-                    -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
-                        / ControlMapping.ELEVAOTR_ADJUST_SPEED_DECREASE));
+                () -> -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
+                    / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE));
 
     driverXbox
         .button(ControlMapping.INTAKE.value)
@@ -190,8 +195,8 @@ public class RobotContainer {
             Commands.sequence(
                 algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
 
-    driverXbox.povUp().onTrue(winch.toGrab());
-    driverXbox.povDown().onTrue(winch.toPull());
+    driverXbox.povLeft().onTrue(winch.toGrab());
+    driverXbox.povRight().onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }
