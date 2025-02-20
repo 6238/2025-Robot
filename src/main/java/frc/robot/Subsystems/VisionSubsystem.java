@@ -26,7 +26,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     try {
       fieldLayout =
-          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
+          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
       System.out.println("Loaded apriltag field from: " + fieldLayout);
     } catch (IOException e) {
       DataLogManager.log(
