@@ -28,6 +28,7 @@ import frc.robot.Constants.Elevator.DYNAMICS;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.math.Matter;
 
@@ -42,9 +43,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   final DigitalInput limit = new DigitalInput(0);
 
-  public ElevatorSubsystem() {
+  private NeutralModeValue neutralModeValue = NeutralModeValue.Brake;
+
+  private BooleanSupplier hasBall;
+
+  public ElevatorSubsystem(BooleanSupplier hasBall) {
     leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
     followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
+
+    this.hasBall = hasBall;
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
 
@@ -71,8 +78,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
 
-    leaderMotor.setNeutralMode(NeutralModeValue.Brake);
-    followerMotor.setNeutralMode(NeutralModeValue.Brake);
+    leaderMotor.setNeutralMode(neutralModeValue);
+    followerMotor.setNeutralMode(neutralModeValue);
 
     this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
   }
@@ -83,6 +90,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public double getTargetHeight() {
     return goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO;
+  }
+  
+  public void brake() {
+    leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+    followerMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public double getHeight() {
@@ -101,9 +113,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command increaseHeight(DoubleSupplier speed) {
+    double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
+    double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
     return runOnce(
         () -> {
-          goal.position += goal.position + speed.getAsDouble();
+          double height = goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO + speed.getAsDouble();
+          goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
         });
   }
 
@@ -126,20 +141,42 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     return new Matter(centerOfMass, mass);
   }
+  
+  public void toggleBrakeMode() {
+    if (neutralModeValue == NeutralModeValue.Coast) {
+      neutralModeValue = NeutralModeValue.Brake;
+      leaderMotor.setNeutralMode(NeutralModeValue.Brake);
+      followerMotor.setNeutralMode(NeutralModeValue.Brake);
+      return;
+    }
+    neutralModeValue = NeutralModeValue.Coast;
+    leaderMotor.setNeutralMode(NeutralModeValue.Coast);
+    followerMotor.setNeutralMode(NeutralModeValue.Coast);
+  }
 
   @Override
   public void periodic() {
-    if (limit.get()) {
+    if (limit.get() && leaderMotor.getPosition().getValueAsDouble() != 0) {
       resetEncoder();
     }
 
-    leaderMotor.setControl(
-        m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
-
-    SmartDashboard.putNumber("elevatorHeight", getHeight());
-    SmartDashboard.putNumber("elevatorTarget", getTargetHeight());
-    SmartDashboard.putNumber("elevatorVerticalAccel", getVerticalAcceleration());
-    
+    if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
+      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 60) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Top);
+      } else if (hasBall.getAsBoolean()) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
+      } else {
+        leaderMotor.setVoltage(Elevator.Gains.kG);
+      }
+    } else {
+      leaderMotor.setControl(
+          m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+    }
+    SmartDashboard.putNumber(
+        "elevator height",
+        leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    SmartDashboard.putNumber(
+        "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
   }
 
   public boolean reachedState() {

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeEndEffector;
+import java.util.function.BooleanSupplier;
 
 public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final TalonFX leftMotor;
@@ -18,6 +19,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   final PositionVoltage p_request;
   final VelocityVoltage v_request;
+
+  boolean upToSpeed = false;
+  boolean velocityControl = true;
+  double speedSetpoint = 0.0;
 
   public AlgaeEndEffectorSubsystem() {
     leftMotor = new TalonFX(AlgaeEndEffector.LEFT_MOTOR_ID);
@@ -46,12 +51,15 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     v_request = new VelocityVoltage(0).withSlot(1);
   }
 
-  boolean upToSpeed = false;
-  boolean velocityControl = false;
-  double speedSetpoint = 0.0;
+  /** If either motor's velocity is within percentError of speedSetpoint */
+  public boolean upToSpeed(double percentError) {
+    double maxError = speedSetpoint * percentError;
+    double leftError = Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint);
+    double rightError = Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint);
+    return leftError < maxError || rightError < maxError;
+  }
 
   public boolean motorStopped() {
-    // System.out.println("test");
     return upToSpeed
         && (Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint)
                 > (0.5 * speedSetpoint)
@@ -59,8 +67,12 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
                 > (0.5 * speedSetpoint));
   }
 
+  public BooleanSupplier hasBall() {
+    return () -> velocityControl == false;
+  }
+
   private void setMotorSpeed(double speed) {
-    upToSpeed = false;
+    upToSpeed = upToSpeed(0.1);
     velocityControl = true;
     speedSetpoint = speed;
     leftMotor.setControl(v_request.withVelocity(-speed));
@@ -68,12 +80,15 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void setMotorPositions(double positionL, double positionR) {
+    upToSpeed = false;
     velocityControl = false;
     leftMotor.setControl(p_request.withPosition(positionL));
     rightMotor.setControl(p_request.withPosition(positionR));
   }
 
   private void disableOutput() {
+    speedSetpoint = 0;
+    velocityControl = true;
     leftMotor.set(0);
     rightMotor.set(0);
   }
@@ -105,8 +120,13 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
                 rightMotor.getPosition().getValueAsDouble()));
   }
 
+  private void setDuty(double speed) {
+    leftMotor.set(-speed);
+    rightMotor.set(speed);
+  }
+
   public Command startOutake() {
-    return runOnce(() -> setMotorSpeed(-AlgaeEndEffector.OUTAKE_SPEED));
+    return runOnce(() -> setDuty(-1));
   }
 
   public Command stopMotors() {
@@ -115,15 +135,11 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("intakespeed", -leftMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putBoolean("intakeUpToSpeed", upToSpeed);
-    if (velocityControl
-        && (Math.abs(leftMotor.getVelocity().getValueAsDouble() + speedSetpoint)
-                < (0.1 * speedSetpoint)
-            || Math.abs(rightMotor.getVelocity().getValueAsDouble() - speedSetpoint)
-                < (0.1 * speedSetpoint))) {
+
+    if (velocityControl && upToSpeed(0.1)) {
       upToSpeed = true;
-      // System.err.println("up to speed");
+    } else {
+      // upToSpeed = false; // is this breaking?
     }
   }
 }
