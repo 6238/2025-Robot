@@ -89,6 +89,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     return leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO;
   }
 
+  public double getVerticalAcceleration() {
+    return leaderMotor.getAcceleration().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO;
+  }
+
   //// sets the height to a clamped value
   public void setHeight(Double height) {
     double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
@@ -117,7 +121,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     Translation3d centerOfMass =
         new Translation3d(DYNAMICS.COM_LOCATION.getX(), DYNAMICS.COM_LOCATION.getY(), heightCOM);
 
-    double acceleration = leaderMotor.getAcceleration().getValueAsDouble();
+    double acceleration = getVerticalAcceleration();
     double mass = DYNAMICS.TOTAL_MASS; // todo: inertia
 
     return new Matter(centerOfMass, mass);
@@ -131,11 +135,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leaderMotor.setControl(
         m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
-    SmartDashboard.putNumber(
-        "elevator height",
-        leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
-    SmartDashboard.putNumber(
-        "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+
+    SmartDashboard.putNumber("elevatorHeight", getHeight());
+    SmartDashboard.putNumber("elevatorTarget", getTargetHeight());
+    SmartDashboard.putNumber("elevatorVerticalAccel", getVerticalAcceleration());
+    
   }
 
   public boolean reachedState() {
