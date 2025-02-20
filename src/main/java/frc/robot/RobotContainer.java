@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.util.Logging;
-import frc.robot.Subsystems.SwerveSubsystem;
-import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.AutonTeleController;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
