@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.hal.HALUtil;
@@ -15,6 +18,12 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.util.Logging;
+import frc.robot.Subsystems.SwerveSubsystem;
+import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.util.AutonTeleController;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -31,6 +40,7 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.Logging;
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
@@ -46,12 +56,17 @@ public class RobotContainer {
   BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
+  AutonTeleController autonTeleController = new AutonTeleController(driverXbox);
 
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+    Pathfinding.setPathfinder(new LocalADStar());
+
     DataLogManager.start();
     Logging.logMetadata();
+    
+    PathfindingCommand.warmupCommand().schedule();
 
     configureTriggers();
 
@@ -118,6 +133,8 @@ public class RobotContainer {
    */
   private void configureTriggers() {
     // Controls
+    autonTeleController.SetupPoseCommands();
+    
     driverXbox.back().onTrue(Commands.runOnce(() -> m_elevator.resetEncoder()).ignoringDisable(true)); // left menu button
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
     
