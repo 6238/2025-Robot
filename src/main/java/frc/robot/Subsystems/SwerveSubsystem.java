@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import org.photonvision.EstimatedRobotPose;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -42,6 +41,8 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+
+
 
 public class SwerveSubsystem extends SubsystemBase {
   // intentionally uninit since elevator isnt exist
@@ -54,7 +55,8 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory) {
+  public SwerveSubsystem(File directory, Supplier<Matter> mattSupplier) {
+    elevatorMatter = mattSupplier;
     // // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     // // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     // // The encoder resolution per motor revolution is 1 per motor revolution.
@@ -109,7 +111,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     // todo: all this is dead code and i wanna test it
     ChassisSpeeds velocity = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
-    List<Matter> objects = List.of(Constants.Swerve.CHASSIS); // elevatorMatter.get() is uninit rn
+    List<Matter> objects = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
     double totalMass = objects.stream().mapToDouble((x) -> x.mass).sum(); // yagsl shoud calc this
     Translation2d limitedTranslation =
         SwerveMath.limitVelocity(

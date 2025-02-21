@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.util.Logging;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -52,14 +53,11 @@ import java.util.function.DoubleSupplier;
  * here.
  */
 public class RobotContainer {
-  ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-  Supplier<Matter> matter = () -> m_elevator.getMatter();
-
-  SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
-  WinchSubsystem winch = new WinchSubsystem();
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
   ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+  SwerveSubsystem swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"), m_elevator.getMatterSupplier());
+  VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
+  WinchSubsystem winch = new WinchSubsystem();
   BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
