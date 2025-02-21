@@ -4,12 +4,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Radians;
 
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -44,9 +40,9 @@ public final class Constants {
     public static final Button ELEVATOR_L1 = Button.kA;
     public static final Button ELEVATOR_L2 = Button.kB;
     public static final Button ELEVATOR_L3 = Button.kX;
-    public static final Button ELEVATOR_L4 = Button.kY;
+    public static final Button ELEVATOR_L4 = Button.kLeftStick;
 
-    public static final Button MOVE_TO_BARGE_BUTTON = Button.kLeftStick;
+    public static final Button MOVE_TO_BARGE_BUTTON = Button.kY;
 
     public static final Button OUTTAKE = Button.kRightBumper;
     public static final Button INTAKE = Button.kLeftBumper;
@@ -72,6 +68,13 @@ public final class Constants {
     public static final double STEERING_GEAR_RATIO = 10.29;
     public static final double DRIVER_ENCODER_RESOLUTION = 1.0;
     public static final double STEERING_ENCODER_RESOLUTION = 1.0;
+
+    /* Turn PID */
+    public static final double TURN_kP = 0.75;
+    public static final double TURN_kI = 0;
+    public static final double TURN_kD = 0;
+
+    public static final double TURN_THRESHOLD = 3;
   }
 
   public final class Elevator {
@@ -161,28 +164,28 @@ public final class Constants {
       //             Degrees.of(-55).in(Radians),2
       //             Degrees.of(180 - 55).in(Radians)))),
       new CameraSettings(
-        "FR_Kowalski",
-        new Transform3d(
-            new Translation3d(Inches.of(9.5), Inches.of(6), Inches.of(26.5)),
-            new Rotation3d(
-                Degrees.of(0).in(Radians),
-                Degrees.of(0).in(Radians),
-                Degrees.of(270).in(Radians)))),
+          "FR_Kowalski",
+          new Transform3d(
+              new Translation3d(Inches.of(9.5), Inches.of(6), Inches.of(26.5)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(270).in(Radians)))),
       new CameraSettings(
-        "FL_Skipper",
-        new Transform3d(
-            new Translation3d(Inches.of(-14.5), Inches.of(0), Inches.of(11.5)),
-            new Rotation3d(
-                Degrees.of(0).in(Radians),
-                Degrees.of(65).in(Radians),
-                Degrees.of(90).in(Radians)))),
+          "FL_Skipper",
+          new Transform3d(
+              new Translation3d(Inches.of(-14.5), Inches.of(0), Inches.of(11.5)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(65).in(Radians),
+                  Degrees.of(90).in(Radians)))),
     };
 
     public static final String ALGAECAM_NAME = "ALGAE_CAM";
     public static final double VISION_TURN_kP = 0.75;
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {3, 0, 3, 0, 4});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {7, 0, 7, 0, 10});
   }
 
   public final class Winch {
@@ -212,19 +215,11 @@ public final class Constants {
      * Values were from path planner
      * X and Y are in Meters
      * Rotation is Rotation2d
-     * 
+     *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_TOP = new Pose2d(
-      7.250,
-      6,
-      Rotation2d.fromDegrees(0)
-    );
+    public static final Pose2d BARGE_TOP = new Pose2d(7.250, 6, Rotation2d.fromDegrees(0));
 
-    public static final Pose2d BARGE_BOTTOM = new Pose2d(
-      7.250,
-      2,
-      Rotation2d.fromDegrees(0)
-    );
+    public static final Pose2d BARGE_BOTTOM = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
   }
 }
