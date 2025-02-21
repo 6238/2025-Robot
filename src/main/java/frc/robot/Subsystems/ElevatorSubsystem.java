@@ -31,7 +31,6 @@ import frc.robot.Constants.IDs;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import swervelib.math.Matter;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -93,7 +92,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public double getTargetHeight() {
     return goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO;
   }
-  
+
   public void brake() {
     leaderMotor.setNeutralMode(NeutralModeValue.Brake);
     followerMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -120,7 +119,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     return runOnce(
         () -> {
           double height = goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO + speed.getAsDouble();
-          goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
+          goal.position =
+              Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
         });
   }
 
@@ -141,12 +141,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     double acceleration = getVerticalAcceleration();
     double mass = DYNAMICS.TOTAL_MASS; // todo: inertia
 
-    return new Matter(centerOfMass, mass); 
+    return new Matter(centerOfMass, mass);
   }
+
   public Supplier<Matter> getMatterSupplier() {
     return () -> getMatter();
   }
-  
+
   public void toggleBrakeMode() {
     if (neutralModeValue == NeutralModeValue.Coast) {
       neutralModeValue = NeutralModeValue.Brake;

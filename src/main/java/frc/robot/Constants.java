@@ -4,11 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Radians;
 
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -161,21 +156,21 @@ public final class Constants {
                   Degrees.of(-55).in(Radians),
                   Degrees.of(180 - 55).in(Radians)))),
       new CameraSettings(
-        "FR_Kowalski",
-        new Transform3d(
-            new Translation3d(Inches.of(9.5), Inches.of(6), Inches.of(26.5)),
-            new Rotation3d(
-                Degrees.of(0).in(Radians),
-                Degrees.of(0).in(Radians),
-                Degrees.of(270).in(Radians)))),
+          "FR_Kowalski",
+          new Transform3d(
+              new Translation3d(Inches.of(9.5), Inches.of(6), Inches.of(26.5)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(270).in(Radians)))),
       new CameraSettings(
-        "FL_Skipper",
-        new Transform3d(
-            new Translation3d(Inches.of(-14.5), Inches.of(0), Inches.of(11.5)),
-            new Rotation3d(
-                Degrees.of(0).in(Radians),
-                Degrees.of(65).in(Radians),
-                Degrees.of(90).in(Radians)))),
+          "FL_Skipper",
+          new Transform3d(
+              new Translation3d(Inches.of(-14.5), Inches.of(0), Inches.of(11.5)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(65).in(Radians),
+                  Degrees.of(90).in(Radians)))),
     };
 
     public static final Matrix<N3, N1> VISION_STDDEV =
@@ -209,19 +204,11 @@ public final class Constants {
      * Values were from path planner
      * X and Y are in Meters
      * Rotation is Rotation2d
-     * 
+     *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_TOP = new Pose2d(
-      7.250,
-      6,
-      Rotation2d.fromDegrees(0)
-    );
+    public static final Pose2d BARGE_TOP = new Pose2d(7.250, 6, Rotation2d.fromDegrees(0));
 
-    public static final Pose2d BARGE_BOTTOM = new Pose2d(
-      7.250,
-      2,
-      Rotation2d.fromDegrees(0)
-    );
+    public static final Pose2d BARGE_BOTTOM = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
   }
 }

@@ -42,11 +42,10 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-
-
 public class SwerveSubsystem extends SubsystemBase {
   // intentionally uninit since elevator isnt exist
   private Supplier<Matter> elevatorMatter;
+
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
 
@@ -155,22 +154,29 @@ public class SwerveSubsystem extends SubsystemBase {
         });
   }
 
-  public Command driveCommandOnce(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
-                              DoubleSupplier headingY)
-  {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
-    return runOnce(() -> {
+  public Command driveCommandOnce(
+      DoubleSupplier translationX,
+      DoubleSupplier translationY,
+      DoubleSupplier headingX,
+      DoubleSupplier headingY) {
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for
+    // this kind of control.
+    return runOnce(
+        () -> {
+          Translation2d scaledInputs =
+              SwerveMath.scaleTranslation(
+                  new Translation2d(translationX.getAsDouble(), translationY.getAsDouble()), 0.8);
 
-      Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
-                                                                                 translationY.getAsDouble()), 0.8);
-
-      // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
-                                                                      headingX.getAsDouble(),
-                                                                      headingY.getAsDouble(),
-                                                                      swerveDrive.getOdometryHeading().getRadians(),
-                                                                      swerveDrive.getMaximumChassisVelocity()));
-    });
+          // Make the robot move
+          driveFieldOriented(
+              swerveDrive.swerveController.getTargetSpeeds(
+                  scaledInputs.getX(),
+                  scaledInputs.getY(),
+                  headingX.getAsDouble(),
+                  headingY.getAsDouble(),
+                  swerveDrive.getOdometryHeading().getRadians(),
+                  swerveDrive.getMaximumChassisVelocity()));
+        });
   }
 
   /**
