@@ -131,7 +131,7 @@ public class RobotContainer {
   private void configureTriggers() {
     // Controls
     driverXbox
-      .button(ControlMapping.MOVE_TO_BARGE_BUTTON.value)
+      .axisGreaterThan(ControlMapping.MOVE_TO_BARGE_AXIS.value, ControlMapping.MOVE_TO_BARGE_THRESHOLD)
       .onTrue(
         Commands.sequence(
           Commands.either(

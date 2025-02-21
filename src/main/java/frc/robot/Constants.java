@@ -40,9 +40,10 @@ public final class Constants {
     public static final Button ELEVATOR_L1 = Button.kA;
     public static final Button ELEVATOR_L2 = Button.kB;
     public static final Button ELEVATOR_L3 = Button.kX;
-    public static final Button ELEVATOR_L4 = Button.kLeftStick;
+    public static final Button ELEVATOR_L4 = Button.kY;
 
-    public static final Button MOVE_TO_BARGE_BUTTON = Button.kY;
+    public static final Axis MOVE_TO_BARGE_AXIS = Axis.kLeftTrigger;
+    public static final double MOVE_TO_BARGE_THRESHOLD = 0.5;
 
     public static final Button OUTTAKE = Button.kRightBumper;
     public static final Button INTAKE = Button.kLeftBumper;
