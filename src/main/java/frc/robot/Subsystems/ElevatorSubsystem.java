@@ -19,6 +19,7 @@ import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -156,27 +157,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (limit.get() && leaderMotor.getPosition().getValueAsDouble() != 0) {
-    //   resetEncoder();
-    // }
+    if (limit.get() && leaderMotor.getPosition().getValueAsDouble() != 0) {
+      resetEncoder();
+    }
 
-    // if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
-    //   if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 60) {
-    //     leaderMotor.setVoltage(Elevator.Gains.kg_Top);
-    //   } else if (hasBall.getAsBoolean()) {
-    //     leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
-    //   } else {
-    //     leaderMotor.setVoltage(Elevator.Gains.kG);
-    //   }
-    // } else {
-    //   leaderMotor.setControl(
-    //       m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
-    // }
-    // SmartDashboard.putNumber(
-    //     "elevator height",
-    //     leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
-    // SmartDashboard.putNumber(
-    //     "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
+      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 60) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Top);
+      } else if (hasBall.getAsBoolean()) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
+      } else {
+        leaderMotor.setVoltage(Elevator.Gains.kG);
+      }
+    } else {
+      leaderMotor.setControl(
+          m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+    }
+    SmartDashboard.putNumber(
+        "elevator height",
+        leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    SmartDashboard.putNumber(
+        "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
   }
 
   public boolean reachedState() {

@@ -14,7 +14,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class AutonTeleController {
-  CommandXboxController driverXbox = new CommandXboxController(1);
+  CommandXboxController driverXbox;
   DoubleSupplier xSupplier;
   DoubleSupplier ySupplier;
   DoubleSupplier turnSupplier;

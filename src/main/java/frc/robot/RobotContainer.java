@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlMapping;
@@ -53,6 +54,7 @@ public class RobotContainer {
   BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
+  CommandGenericHID operatorController = new CommandGenericHID(2);
 
   DoubleSupplier swerve_x =
       () ->
@@ -130,8 +132,8 @@ public class RobotContainer {
    */
   private void configureTriggers() {
     // Controls
-    driverXbox
-      .axisGreaterThan(ControlMapping.MOVE_TO_BARGE_AXIS.value, ControlMapping.MOVE_TO_BARGE_THRESHOLD)
+    operatorController
+      .button(ControlMapping.MOVE_TO_BARGE)
       .onTrue(
         Commands.sequence(
           Commands.either(
@@ -151,18 +153,23 @@ public class RobotContainer {
     // button
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
-    driverXbox
-        .button(ControlMapping.ELEVATOR_L1.value)
+    operatorController
+        .button(ControlMapping.ELEVATOR_L1)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
-    driverXbox
-        .povDown()
+    operatorController
+        .button(ControlMapping.ELEVATOR_L1_25)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
-    driverXbox.povUp().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
-    driverXbox
-        .button(ControlMapping.ELEVATOR_L3.value)
+    operatorController
+        .button(ControlMapping.ELEVATOR_L1_5)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
+    operatorController
+        .button(ControlMapping.ELEVATOR_L2)
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    operatorController
+        .button(ControlMapping.ELEVATOR_L3)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-    driverXbox
-        .button(ControlMapping.ELEVATOR_L4.value)
+    operatorController
+        .button(ControlMapping.ELEVATOR_L4)
         .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
     driverXbox // LOWER
@@ -198,8 +205,8 @@ public class RobotContainer {
             Commands.sequence(
                 algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
 
-    driverXbox.povLeft().onTrue(winch.toGrab());
-    driverXbox.povRight().onTrue(winch.toPull());
+    operatorController.button(ControlMapping.CLIMB_GRAB).onTrue(winch.toGrab());
+    operatorController.button(ControlMapping.CLIMB_PULL).onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }
