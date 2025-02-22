@@ -2,10 +2,11 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.util.CameraSettings;
@@ -109,17 +111,13 @@ public final class Constants {
       public static final double L3 = 45;
       public static final double TOP = 72.25; // MAX HEIGHT
 
-      // TODO
       public static final double REACH_STATE_THRES = 0.1;
     }
 
     public final class DYNAMICS {
       // COM = centre o' mass
-      // TODO; these are not even remotely correct
-      public static final double TOTAL_MASS = 65.0;
-      public static final double COM_HEIGHT_MIN = 0.3;
-      public static final double COM_HEIGHT_MAX = 1.3;
-      public static final Translation2d COM_LOCATION = new Translation2d();
+      public static final double TOTAL_MASS = Mass.ofBaseUnits(30, Pounds).in(Kilogram);
+      public static final Translation2d COM_LOCATION = new Translation2d(0, 6);
     }
 
     // Motion Profile
@@ -208,17 +206,9 @@ public final class Constants {
     public static final double BARGE_SPEED = 0.8;
     public static final double BARGE_THRESHOLD = 0.2;
 
-    public static final Pose2d REEF_CENTER_BLUE = new Pose2d(
-      4.485,
-      4.042,
-      new Rotation2d()
-    );
+    public static final Pose2d REEF_CENTER_BLUE = new Pose2d(4.485, 4.042, new Rotation2d());
 
-    public static final Pose2d REEF_CENTER_RED = new Pose2d(
-      4.485,
-      4.042,
-      new Rotation2d()
-    );
+    public static final Pose2d REEF_CENTER_RED = new Pose2d(4.485, 4.042, new Rotation2d());
   }
 
   public class PathfindingConfig {

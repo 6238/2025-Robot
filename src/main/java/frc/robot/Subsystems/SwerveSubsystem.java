@@ -87,7 +87,8 @@ public class SwerveSubsystem extends SubsystemBase {
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(
-        false); // sHeading correction should only be used while controlling the robot via angle.
+        false); // sHeading correction should only be used while controlling the robot via
+    // angle.
 
     setupPathPlanner();
   }
@@ -112,18 +113,18 @@ public class SwerveSubsystem extends SubsystemBase {
     ChassisSpeeds velocity = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
     List<Matter> objects = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
     double totalMass = objects.stream().mapToDouble((x) -> x.mass).sum(); // yagsl shoud calc this
-    // Translation2d limitedTranslation =
-    //     SwerveMath.limitVelocity(
-    //         translation,
-    //         velocity,
-    //         getPose(),
-    //         Constants.LOOP_TIME,
-    //         totalMass,
-    //         objects,
-    //         swerveDrive.swerveDriveConfiguration);
+    Translation2d limitedTranslation =
+        SwerveMath.limitVelocity(
+            translation,
+            velocity,
+            getPose(),
+            Constants.LOOP_TIME,
+            totalMass,
+            objects,
+            swerveDrive.swerveDriveConfiguration);
 
     swerveDrive.drive(
-        translation, // limitedTranslation goes here but i dont think it will work
+        limitedTranslation,
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.
@@ -134,7 +135,8 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier translationY,
       DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for
     // this kind of control.
     return run(
         () -> {
@@ -159,7 +161,8 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier translationY,
       DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for
     // this kind of control.
     return runOnce(
         () -> {
@@ -423,7 +426,8 @@ public class SwerveSubsystem extends SubsystemBase {
               ),
           config, // The robot configuration
           () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // Boolean supplier that controls when the path will be mirrored for the red
+            // alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 

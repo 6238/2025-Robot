@@ -34,8 +34,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
-import frc.robot.util.LiftToReef;
 import frc.robot.util.Logging;
+import frc.robot.util.ReefUtils;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -135,39 +135,53 @@ public class RobotContainer {
   private void configureTriggers() {
     // Controls
     driverXbox
-      .button(ControlMapping.MOVE_TO_BARGE.value)
-      .onTrue(
-        Commands.sequence(
-          Commands.either(
-              autonTeleController.GoToPose(PathfindingConfig.BARGE_TOP),
-              autonTeleController.GoToPose(PathfindingConfig.BARGE_BOTTOM),
-              () -> swerve.getPose().getY() >= 4),
-          Commands.parallel(
-            new TurnToAngle(swerve, () -> 0),
-            m_elevator.setHeightCommand(ElevatorHeights.TOP)
-          )
-        ).until(() -> autonTeleController.isDriverInputting()));
+        .button(ControlMapping.MOVE_TO_BARGE.value)
+        .onTrue(
+            Commands.sequence(
+                    Commands.either(
+                        autonTeleController.GoToPose(PathfindingConfig.BARGE_TOP),
+                        autonTeleController.GoToPose(PathfindingConfig.BARGE_BOTTOM),
+                        () -> swerve.getPose().getY() >= 4),
+                    Commands.parallel(
+                        new TurnToAngle(swerve, () -> 0, swerve_x, swerve_y),
+                        m_elevator.setHeightCommand(ElevatorHeights.TOP)))
+                .until(() -> autonTeleController.isDriverInputting()));
 
     driverXbox
         .back()
         .onTrue(
-            Commands.runOnce(() -> m_elevator.resetEncoder()).ignoringDisable(true)); // left menu
-    // button
+            Commands.runOnce(() -> m_elevator.resetEncoder())
+                .ignoringDisable(true)); // left menu button
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
     driverXbox
         .button(ControlMapping.LIFT_TO_REEF.value)
-        .onTrue(Commands.runOnce(() -> {
-            m_elevator.setHeight(LiftToReef.ReefHeight(swerve.getPose()));
-        }, m_elevator));
-    
+        .whileTrue(
+            Commands.parallel(
+                    Commands.runOnce(
+                        () -> {
+                          m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
+                        },
+                        m_elevator),
+                    new TurnToAngle(
+                        swerve,
+                        () -> {
+                          return ReefUtils.AngleToReef(swerve.getPose());
+                        },
+                        swerve_x,
+                        swerve_y))
+                .until(() -> swerve_turn.getAsDouble() < 0.1));
+
     driverXbox
         .button(ControlMapping.GROUND.value)
         .onTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
-    
+
     driverXbox
         .button(ControlMapping.CHASE_CORAL.value)
-        .whileTrue(new AimAtAlgae(visionSubsystem, swerve));
+        .whileTrue(
+            Commands.parallel(
+                new AimAtAlgae(visionSubsystem, swerve),
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND)));
 
     driverXbox // LOWER
         .axisGreaterThan(
