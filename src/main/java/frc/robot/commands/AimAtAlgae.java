@@ -1,5 +1,10 @@
 package frc.robot.commands;
 
+import java.util.List;
+
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,16 +31,16 @@ public class AimAtAlgae extends Command {
     targetVisible = false;
     double targetYaw = 0.0;
     double minPitch = Double.MAX_VALUE;
-    var results = vision.algaeCam.getAllUnreadResults();
+    List<PhotonPipelineResult> results = vision.algaeCam.getAllUnreadResults();
+
     if (!results.isEmpty()) {
-      var result = results.get(results.size() - 1);
+      PhotonPipelineResult result = results.get(results.size() - 1);
       if (result.hasTargets()) {
-        for (var target : result.getTargets()) {
-          if (target.pitch < minPitch) {
-            targetYaw = target.getYaw();
-            minPitch = target.pitch;
-            targetVisible = true;
-          }
+        PhotonTrackedTarget target = result.getTargets().get(0); // Lowest Algae
+        if (target.pitch < minPitch) {
+          targetYaw = target.getYaw();
+          minPitch = target.pitch;
+          targetVisible = true;
         }
       }
     }

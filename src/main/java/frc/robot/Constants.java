@@ -147,37 +147,29 @@ public final class Constants {
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
       new CameraSettings(
-          "BR_Rico",
+          "BR",
           new Transform3d(
               new Translation3d(Inches.of(13.5), Inches.of(-13.5), Inches.of(10.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-55).in(Radians),
                   Degrees.of(180 + 55).in(Radians)))),
-      // new CameraSettings(
-      //     "BL_Private",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(-55).in(Radians),2
-      //             Degrees.of(180 - 55).in(Radians)))),
       new CameraSettings(
-          "FR_Kowalski",
+          "BL",
           new Transform3d(
-              new Translation3d(Inches.of(9.5), Inches.of(6), Inches.of(26.5)),
+              new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(-55).in(Radians),
+                  Degrees.of(180 - 55).in(Radians)))),
+      new CameraSettings(
+          "FR",
+          new Transform3d(
+              new Translation3d(Inches.of(14.5), Inches.of(6), Inches.of(26.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(0).in(Radians),
                   Degrees.of(270).in(Radians)))),
-      new CameraSettings(
-          "FL_Skipper",
-          new Transform3d(
-              new Translation3d(Inches.of(-14.5), Inches.of(0), Inches.of(11.5)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(65).in(Radians),
-                  Degrees.of(90).in(Radians)))),
     };
 
     public static final String ALGAECAM_NAME = "ALGAE_CAM";

@@ -137,8 +137,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     Translation3d centerOfMass =
         new Translation3d(DYNAMICS.COM_LOCATION.getX(), DYNAMICS.COM_LOCATION.getY(), heightCOM);
 
-    double acceleration = getVerticalAcceleration();
-    double mass = DYNAMICS.TOTAL_MASS; // todo: inertia
+    double mass = DYNAMICS.TOTAL_MASS;
 
     return new Matter(centerOfMass, mass);
   }
