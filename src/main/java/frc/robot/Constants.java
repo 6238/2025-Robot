@@ -37,20 +37,10 @@ public final class Constants {
     public static final Axis LEFT_RIGHT = Axis.kLeftX;
     public static final Axis TURN = Axis.kRightX;
 
-    // public static final Button ELEVATOR_L1 = Button.kA;
-    // public static final Button ELEVATOR_L2 = Button.kB;
-    // public static final Button ELEVATOR_L3 = Button.kX;
-    // public static final Button ELEVATOR_L4 = Button.kY;
-    public static final int ELEVATOR_L1 = 13;
-    public static final int ELEVATOR_L1_25 = 14;
-    public static final int ELEVATOR_L1_5 = 10;
-    public static final int ELEVATOR_L2 = 9;
-    public static final int ELEVATOR_L3 = 5;
-    public static final int ELEVATOR_L4 = 1;
-
-    public static final int MOVE_TO_BARGE = 16;
-    public static final int CLIMB_PULL = 8;
-    public static final int CLIMB_GRAB = 4;
+    public static final Button GROUND = Button.kA;
+    public static final Button MOVE_TO_BARGE = Button.kX;
+    public static final Button LIFT_TO_REEF = Button.kB;
+    public static final Button CHASE_CORAL = Button.kB;
 
     public static final Axis MOVE_TO_BARGE_AXIS = Axis.kLeftTrigger;
     public static final double MOVE_TO_BARGE_THRESHOLD = 0.5;
