@@ -51,7 +51,7 @@ public final class Constants {
     public static final Button GROUND = Button.kA;
     public static final Button MOVE_TO_BARGE = Button.kX;
     public static final Button LIFT_TO_REEF = Button.kB;
-    public static final Button CHASE_CORAL = Button.kB;
+    public static final Button CHASE_CORAL = Button.kY;
 
     public static final Axis MOVE_TO_BARGE_AXIS = Axis.kLeftTrigger;
     public static final double MOVE_TO_BARGE_THRESHOLD = 0.5;
@@ -158,23 +158,23 @@ public final class Constants {
       new CameraSettings(
           "BR",
           new Transform3d(
-              new Translation3d(Inches.of(13.5), Inches.of(-13.5), Inches.of(10.5)),
+              new Translation3d(Inches.of(-10.5), Inches.of(-10.5), Inches.of(10)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
-                  Degrees.of(-55).in(Radians),
-                  Degrees.of(180 + 55).in(Radians)))),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(180 + 45).in(Radians)))),
       new CameraSettings(
           "BL",
           new Transform3d(
-              new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
+              new Translation3d(Inches.of(-10.5), Inches.of(10.5), Inches.of(10)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
-                  Degrees.of(-55).in(Radians),
-                  Degrees.of(180 - 55).in(Radians)))),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(180 - 45).in(Radians)))),
       new CameraSettings(
           "FR",
           new Transform3d(
-              new Translation3d(Inches.of(14.5), Inches.of(6), Inches.of(26.5)),
+              new Translation3d(Inches.of(3.5), Inches.of(-14.5), Inches.of(15.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(0).in(Radians),
@@ -185,7 +185,7 @@ public final class Constants {
     public static final double VISION_TURN_kP = 0.75;
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {7, 0, 7, 0, 10});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {12, 0, 12, 0, 16});
   }
 
   public final class Winch {
