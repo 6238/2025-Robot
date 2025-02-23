@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.hal.HALUtil;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.RemoveAlgaeCommand;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
@@ -115,15 +117,15 @@ public class RobotContainer {
    */
   private void configureTriggers() {
     // Controls
-    driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
+    // driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true));
 
-    driverXbox
-        .povRight()
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
+    // driverXbox
+    //     .povRight()
+    //     .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
 
-    driverXbox
-        .povLeft()
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
+    // driverXbox
+    //     .povLeft()
+    //     .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
 
     driverXbox.a().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1));
 
@@ -133,39 +135,47 @@ public class RobotContainer {
 
     driverXbox.y().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L4));
 
-    driverXbox.start().onTrue(swerve.zeroYawCommand());
+    // driverXbox.start().onTrue(swerve.zeroYawCommand());
 
-    driverXbox
-        .leftTrigger(0.9)
-        .onTrue(
-            Commands.runOnce(() -> m_elevator.resetEncoder(), m_elevator).ignoringDisable(true));
+    // driverXbox
+    //     .leftTrigger(0.9)
+    //     .onTrue(
+    //         Commands.runOnce(() -> m_elevator.resetEncoder(), m_elevator).ignoringDisable(true));
 
-    driverXbox
-        .rightTrigger()
-        .onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
+    // driverXbox
+    //     .rightTrigger()
+    //     .onTrue(new RemoveAlgaeCommand(swerve, m_elevator, () -> driverXbox.getRightTriggerAxis()));
 
-    driverXbox
-        .leftBumper()
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.intakeUntilStalled(),
-                Commands.parallel(
-                    // algaeSubsystem.stopMotors()
-                    algaeSubsystem.holdAlgae()
-                    // new RemoveAlgaeCommand(swerve, algaeSubsystem)
-                    )));
+    // driverXbox
+    //     .leftBumper()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             algaeSubsystem.intakeUntilStalled(),
+    //             Commands.parallel(
+    //                 // algaeSubsystem.stopMotors()
+    //                 algaeSubsystem.holdAlgae()
+    //                 // new RemoveAlgaeCommand(swerve, algaeSubsystem)
+    //                 )));
 
-    driverXbox
-        .rightBumper()
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
+    // driverXbox
+    //     .rightBumper()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
 
-    driverXbox.povUp().onTrue(winch.toGrab());
+    // driverXbox.povUp().onTrue(winch.toGrab());
 
-    driverXbox.povDown().onTrue(winch.toPull());
+    // driverXbox.povDown().onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
+
+    driverXbox.leftBumper().onTrue(Commands.run(() -> SignalLogger.start()));
+    driverXbox.rightBumper().onTrue(Commands.run(() -> SignalLogger.stop()));
+
+    driverXbox.povUp().onTrue(m_elevator.sysIdDynamic(Direction.kForward));
+    driverXbox.povDown().onTrue(m_elevator.sysIdDynamic(Direction.kReverse));
+    driverXbox.povLeft().onTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
+    driverXbox.povRight().onTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
   }
 
   public Command toggleBrakeMode() {
