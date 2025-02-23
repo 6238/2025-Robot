@@ -10,6 +10,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.hal.HALUtil;
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlMapping;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.PathfindingConfig;
+import frc.robot.Constants.Swerve;
 import frc.robot.commands.AimAtAlgae;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
@@ -52,7 +54,7 @@ public class RobotContainer {
   ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
   Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
   SwerveSubsystem swerve =
-      new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"), elevator_matter);
+      new SwerveSubsystem(Constants.SWERVE_DIRECTORIES.get(RoboRioDataJNI.getSerialNumber()), elevator_matter);
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
   WinchSubsystem winch = new WinchSubsystem();
   BatteryIdentification batteryIdentification = new BatteryIdentification();
