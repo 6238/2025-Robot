@@ -54,8 +54,8 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory, Supplier<Matter> mattSupplier) {
-    elevatorMatter = mattSupplier;
+  public SwerveSubsystem(File directory, Supplier<Matter> matter) {
+    elevatorMatter = matter;
     // // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     // // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     // // The encoder resolution per motor revolution is 1 per motor revolution.
@@ -87,7 +87,8 @@ public class SwerveSubsystem extends SubsystemBase {
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(
-        false); // sHeading correction should only be used while controlling the robot via angle.
+        false); // sHeading correction should only be used while controlling the robot via
+    // angle.
 
     setupPathPlanner();
   }
@@ -123,7 +124,7 @@ public class SwerveSubsystem extends SubsystemBase {
             swerveDrive.swerveDriveConfiguration);
 
     swerveDrive.drive(
-        translation, // limitedTranslation goes here but i dont think it will work
+        limitedTranslation,
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.
@@ -134,7 +135,8 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier translationY,
       DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for
     // this kind of control.
     return run(
         () -> {
@@ -423,7 +425,8 @@ public class SwerveSubsystem extends SubsystemBase {
               ),
           config, // The robot configuration
           () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // Boolean supplier that controls when the path will be mirrored for the red
+            // alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 

@@ -2,6 +2,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
 import static java.util.Map.entry;
 
@@ -17,6 +19,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.util.CameraSettings;
@@ -32,8 +35,8 @@ public final class Constants {
 
   public static final Map<String, File> SWERVE_DIRECTORIES =
       Map.ofEntries(
-          entry("032B1F73", new File(Filesystem.getDeployDirectory(), "swerve")),
-          entry("03182373", new File(Filesystem.getDeployDirectory(), "swerve2")));
+          entry("032B1F73", new File(Filesystem.getDeployDirectory(), "swerve2")),
+          entry("03182373", new File(Filesystem.getDeployDirectory(), "swerve")));
 
   public final class IDs {
     public static final int ELEVATOR_LEADER_MOTOR = 50;
@@ -45,12 +48,13 @@ public final class Constants {
     public static final Axis LEFT_RIGHT = Axis.kLeftX;
     public static final Axis TURN = Axis.kRightX;
 
-    public static final Button ELEVATOR_L1 = Button.kA;
-    public static final Button ELEVATOR_L2 = Button.kB;
-    public static final Button ELEVATOR_L3 = Button.kX;
-    public static final Button ELEVATOR_L4 = Button.kY;
+    public static final Button GROUND = Button.kA;
+    public static final Button MOVE_TO_BARGE = Button.kX;
+    public static final Button LIFT_TO_REEF = Button.kB;
+    public static final Button CHASE_CORAL = Button.kB;
 
-    public static final Button MOVE_TO_BARGE_BUTTON = Button.kLeftStick;
+    public static final Axis MOVE_TO_BARGE_AXIS = Axis.kLeftTrigger;
+    public static final double MOVE_TO_BARGE_THRESHOLD = 0.5;
 
     public static final Button OUTTAKE = Button.kRightBumper;
     public static final Button INTAKE = Button.kLeftBumper;
@@ -76,6 +80,13 @@ public final class Constants {
     public static final double STEERING_GEAR_RATIO = 10.29;
     public static final double DRIVER_ENCODER_RESOLUTION = 1.0;
     public static final double STEERING_ENCODER_RESOLUTION = 1.0;
+
+    /* Turn PID */
+    public static final double TURN_kP = 0.75;
+    public static final double TURN_kI = 0;
+    public static final double TURN_kD = 0;
+
+    public static final double TURN_THRESHOLD = 3;
   }
 
   public final class Elevator {
@@ -99,38 +110,34 @@ public final class Constants {
       public static final double ELEVATOR_GEAR_RATIO = (45.1236) / 80;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 1.0;
-      public static final double ELEVATOR_MAX_HEIGHT = 68.5;
+      public static final double ELEVATOR_MIN_HEIGHT = 4;
+      public static final double ELEVATOR_MAX_HEIGHT = 72.25;
 
-      public static final double GROUND = 2.0;
-      public static final double L1_25 = 10.0;
-      public static final double L1_5 = 17.0;
-      public static final double L2 = 27.5;
-      public static final double L3 = 40;
-      public static final double TOP = 68.5; // MAX HEIGHT
+      public static final double GROUND = 9.0;
+      public static final double L1_25 = 14.0;
+      public static final double L1_5 = 20.0;
+      public static final double L2 = 31.5;
+      public static final double L3 = 45;
+      public static final double TOP = 72.25; // MAX HEIGHT
 
-      // TODO
       public static final double REACH_STATE_THRES = 0.1;
     }
 
     public final class DYNAMICS {
       // COM = centre o' mass
-      // TODO; these are not even remotely correct
-      public static final double TOTAL_MASS = 65.0;
-      public static final double COM_HEIGHT_MIN = 0.3;
-      public static final double COM_HEIGHT_MAX = 1.3;
-      public static final Translation2d COM_LOCATION = new Translation2d();
+      public static final double TOTAL_MASS = Mass.ofBaseUnits(30, Pounds).in(Kilogram);
+      public static final Translation2d COM_LOCATION = new Translation2d(0, 6);
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 35.0;
-    public static final double MAX_ACCEL = 35.0;
+    public static final double MAX_VELOCITY = 20.0;
+    public static final double MAX_ACCEL = 30.0;
     public static final double JERK = 800.0;
   }
 
   public final class AlgaeEndEffector {
-    public static final int LEFT_MOTOR_ID = 40;
-    public static final int RIGHT_MOTOR_ID = 41;
+    public static final int LEFT_MOTOR_ID = 41;
+    public static final int RIGHT_MOTOR_ID = 40;
 
     public static final double STALL_THRESHOLD = 0.1;
 
@@ -149,7 +156,7 @@ public final class Constants {
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
       new CameraSettings(
-          "BR_Rico",
+          "BR",
           new Transform3d(
               new Translation3d(Inches.of(13.5), Inches.of(-13.5), Inches.of(10.5)),
               new Rotation3d(
@@ -157,7 +164,7 @@ public final class Constants {
                   Degrees.of(-55).in(Radians),
                   Degrees.of(180 + 55).in(Radians)))),
       new CameraSettings(
-          "BL_Private",
+          "BL",
           new Transform3d(
               new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
               new Rotation3d(
@@ -165,25 +172,20 @@ public final class Constants {
                   Degrees.of(-55).in(Radians),
                   Degrees.of(180 - 55).in(Radians)))),
       new CameraSettings(
-          "FR_Kowalski",
+          "FR",
           new Transform3d(
-              new Translation3d(Inches.of(9.5), Inches.of(6), Inches.of(26.5)),
+              new Translation3d(Inches.of(14.5), Inches.of(6), Inches.of(26.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(0).in(Radians),
                   Degrees.of(270).in(Radians)))),
-      new CameraSettings(
-          "FL_Skipper",
-          new Transform3d(
-              new Translation3d(Inches.of(-14.5), Inches.of(0), Inches.of(11.5)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(65).in(Radians),
-                  Degrees.of(90).in(Radians)))),
     };
 
+    public static final String ALGAECAM_NAME = "ALGAE_CAM";
+    public static final double VISION_TURN_kP = 0.75;
+
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {3, 0, 3, 0, 4});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {7, 0, 7, 0, 10});
   }
 
   public final class Winch {
@@ -204,6 +206,10 @@ public final class Constants {
 
     public static final double BARGE_SPEED = 0.8;
     public static final double BARGE_THRESHOLD = 0.2;
+
+    public static final Pose2d REEF_CENTER_BLUE = new Pose2d(4.485, 4.042, new Rotation2d());
+
+    public static final Pose2d REEF_CENTER_RED = new Pose2d(4.485, 4.042, new Rotation2d());
   }
 
   public class PathfindingConfig {
