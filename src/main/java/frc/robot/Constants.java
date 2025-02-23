@@ -211,11 +211,4 @@ public final class Constants {
 
     public static final Pose2d BARGE_BOTTOM = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
   }
-
-  public final class BatteryId {
-    public static final int PDH_ID = 0;
-    // jason will be our database and if you have a problem, rename it to .sql
-    public static final String FILE_LOCATION =
-        "\\home\\lvuser\\battery_logs\\mr_{{NAME}}_log.json";
-  }
 }
