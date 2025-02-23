@@ -13,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.VoltageUnit;
@@ -33,6 +34,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import swervelib.math.Matter;
 
+@Logged
 public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX leaderMotor;
   private TalonFX followerMotor;

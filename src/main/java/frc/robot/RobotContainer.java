@@ -9,11 +9,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -50,6 +50,7 @@ import swervelib.math.Matter;
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
  * here.
  */
+@Logged
 public class RobotContainer {
 //   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
 //   ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
@@ -81,8 +82,6 @@ public class RobotContainer {
 
   public RobotContainer() {
     Pathfinding.setPathfinder(new LocalADStar());
-
-    DataLogManager.start();
     Logging.logMetadata();
 
     PathfindingCommand.warmupCommand().schedule();

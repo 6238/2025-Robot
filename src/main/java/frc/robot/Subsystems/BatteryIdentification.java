@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+@Logged
 public class BatteryIdentification extends SubsystemBase {
   SerialPort serialPort;
   boolean hasRead = false;
