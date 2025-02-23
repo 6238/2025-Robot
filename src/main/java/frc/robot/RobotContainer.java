@@ -12,6 +12,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,11 +29,11 @@ import frc.robot.Constants.PathfindingConfig;
 import frc.robot.commands.AimAtAlgae;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
-import frc.robot.subsystems.BatteryIdentification;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
+import frc.robot.util.Logging;
 import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
 import frc.robot.util.ReefUtils;
@@ -70,6 +71,7 @@ public class RobotContainer {
       () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value), 0.08);
 
   private final SendableChooser<Command> autoChooser;
+  
   AutonTeleController autonTeleController =
       new AutonTeleController(driverXbox, swerve, swerve_x, swerve_y, swerve_turn);
 
@@ -192,6 +194,7 @@ public class RobotContainer {
                     () ->
                         -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
                             / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE)));
+    
     driverXbox // RAISE
         .axisLessThan(
             ControlMapping.ELEVATOR_RAISE_LOWER.value, -ControlMapping.ELEVATOR_ADJUST_THRESHOLD)

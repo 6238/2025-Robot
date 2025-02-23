@@ -161,8 +161,7 @@ public class SwerveSubsystem extends SubsystemBase {
       DoubleSupplier translationY,
       DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
-    // correction for
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for
     // this kind of control.
     return runOnce(
         () -> {

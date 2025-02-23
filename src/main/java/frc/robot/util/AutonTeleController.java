@@ -11,7 +11,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class AutonTeleController {
-  CommandXboxController driverXbox;
+  CommandXboxController driverXbox
   DoubleSupplier xSupplier;
   DoubleSupplier ySupplier;
   DoubleSupplier turnSupplier;
@@ -27,7 +27,7 @@ public class AutonTeleController {
     this.ySupplier = ySupplier;
     this.turnSupplier = turnSupplier;
   }
-
+  
   public boolean isDriverInputting() {
     return Math.abs(xSupplier.getAsDouble()) > PathfindingConfig.DRIVE_RESUME_DEADBAND
         && Math.abs(xSupplier.getAsDouble()) > PathfindingConfig.DRIVE_RESUME_DEADBAND
@@ -39,6 +39,7 @@ public class AutonTeleController {
         new PathConstraints(2.0, 3.0, Units.degreesToRadians(360), Units.degreesToRadians(540));
 
     Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+    
     return pathfindingCommand;
   }
 }

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
+import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,10 +18,13 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.util.CameraSettings;
+import java.io.File;
+import java.util.Map;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import swervelib.math.Matter;
 
@@ -28,6 +32,11 @@ import swervelib.math.Matter;
 public final class Constants {
 
   public static final double LOOP_TIME = 0.02;
+
+  public static final Map<String, File> SWERVE_DIRECTORIES =
+      Map.ofEntries(
+          entry("032B1F73", new File(Filesystem.getDeployDirectory(), "swerve2")),
+          entry("03182373", new File(Filesystem.getDeployDirectory(), "swerve")));
 
   public final class IDs {
     public static final int ELEVATOR_LEADER_MOTOR = 50;
