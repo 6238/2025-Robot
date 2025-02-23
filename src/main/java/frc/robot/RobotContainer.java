@@ -29,6 +29,7 @@ import frc.robot.Constants.PathfindingConfig;
 import frc.robot.commands.AimAtAlgae;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.subsystems.BatteryIdentification;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
