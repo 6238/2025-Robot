@@ -172,10 +172,10 @@ public class RobotContainer {
     driverXbox.leftBumper().onTrue(Commands.run(() -> SignalLogger.start()));
     driverXbox.rightBumper().onTrue(Commands.run(() -> SignalLogger.stop()));
 
-    driverXbox.povUp().onTrue(m_elevator.sysIdDynamic(Direction.kForward));
-    driverXbox.povDown().onTrue(m_elevator.sysIdDynamic(Direction.kReverse));
-    driverXbox.povLeft().onTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
-    driverXbox.povRight().onTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
+    driverXbox.povUp().whileTrue(m_elevator.sysIdDynamic(Direction.kForward));
+    driverXbox.povDown().whileTrue(m_elevator.sysIdDynamic(Direction.kReverse));
+    driverXbox.povLeft().whileTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
+    driverXbox.povRight().whileTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
   }
 
   public Command toggleBrakeMode() {
