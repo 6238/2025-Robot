@@ -12,7 +12,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,14 +23,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlMapping;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
-import frc.robot.subsystems.BatteryIdentification;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
-import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
-import java.io.File;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -42,11 +39,10 @@ public class RobotContainer {
   ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
   SwerveSubsystem swerve =
       new SwerveSubsystem(
-          new File(Filesystem.getDeployDirectory(), "swerve"), m_elevator.getMatterSupplier());
+          Constants.SWERVE_DIRECTORIES.get(RobotController.getSerialNumber()),
+          m_elevator.getMatterSupplier());
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
   WinchSubsystem winch = new WinchSubsystem();
-  BatteryIdentification batteryIdentification = new BatteryIdentification();
-
   CommandXboxController driverXbox = new CommandXboxController(0);
 
   DoubleSupplier swerve_x =
@@ -67,8 +63,6 @@ public class RobotContainer {
       () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value), 0.08);
 
   private final SendableChooser<Command> autoChooser;
-  AutonTeleController autonTeleController =
-      new AutonTeleController(swerve, swerve_x, swerve_y, swerve_turn);
 
   public RobotContainer() {
     Pathfinding.setPathfinder(new LocalADStar());
@@ -130,9 +124,6 @@ public class RobotContainer {
    * what the robot does when something happens and why.
    */
   private void configureTriggers() {
-    // Controls
-    autonTeleController.SetupPoseCommands();
-
     driverXbox
         .back()
         .onTrue(
