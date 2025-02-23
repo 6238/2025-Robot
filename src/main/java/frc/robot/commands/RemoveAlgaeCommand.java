@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,6 +13,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.util.function.DoubleSupplier;
 
+@Logged
 public class RemoveAlgaeCommand extends Command {
   private final SwerveSubsystem m_driveSubsystem;
   private final ElevatorSubsystem m_elevatorSubsystem;

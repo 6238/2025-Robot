@@ -11,6 +11,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,6 +44,7 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+@Logged
 public class SwerveSubsystem extends SubsystemBase {
   // intentionally uninit since elevator isnt exist
   private Supplier<Matter> elevatorMatter;
@@ -208,6 +211,7 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @return {@link SwerveDriveKinematics} of the swerve drive.
    */
+  @NotLogged // SwerveDriveKinematics isn't
   public SwerveDriveKinematics getKinematics() {
     return swerveDrive.kinematics;
   }

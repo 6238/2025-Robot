@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Vision;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 
+@Logged
 public class VisionSubsystem extends SubsystemBase {
   private AprilTagFieldLayout fieldLayout;
 

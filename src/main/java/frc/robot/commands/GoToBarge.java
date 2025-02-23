@@ -3,6 +3,7 @@ package frc.robot.commands;
 import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
 import static frc.robot.Constants.Swerve.MAX_SPEED;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,6 +14,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
+@Logged
 public class GoToBarge extends Command {
   DoubleSupplier m_xAxisSupplier;
   DoubleSupplier m_yAxisSupplier;

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -20,13 +21,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Winch;
 import java.util.Map;
 
+@Logged
 public class WinchSubsystem extends SubsystemBase {
 
   private final TalonFX motor = new TalonFX(Winch.MOTOR_ID);
   private final PositionVoltage positionRequest = new PositionVoltage(0.0);
   private final NeutralOut neutralRequest = new NeutralOut();
 
-  private enum Position {
+  public static enum Position {
     /** Initial state */
     UNKNOWN,
     /** Fully retracted to lift the robot */
@@ -35,7 +37,7 @@ public class WinchSubsystem extends SubsystemBase {
     GRAB
   }
 
-  private Map<Position, Double> POSITIONS =
+  public static final Map<Position, Double> POSITIONS =
       Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, -270.0));
 
   private Position currentPosition = Position.UNKNOWN;
