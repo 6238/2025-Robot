@@ -31,7 +31,6 @@ import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import swervelib.math.Matter;
 
 @Logged
@@ -144,7 +143,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     return new Matter(centerOfMass, mass);
   }
-  
+
   public void toggleBrakeMode() {
     if (neutralModeValue == NeutralModeValue.Coast) {
       neutralModeValue = NeutralModeValue.Brake;

@@ -43,7 +43,6 @@ public class RemoveAlgaeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("speed_supplier", speed_supplier.getAsDouble());
     m_driveSubsystem.drive(
         new Translation2d(-AlgaeEndEffector.REEF_REMOVAL_SPEED * speed_supplier.getAsDouble(), 0),
         0,
@@ -51,7 +50,6 @@ public class RemoveAlgaeCommand extends Command {
 
     Transform2d diff = startPose.minus(m_driveSubsystem.getPose());
     dist = Math.sqrt(Math.pow(diff.getX(), 2) + Math.pow(diff.getY(), 2));
-    SmartDashboard.putNumber("dist", dist);
     m_elevatorSubsystem.setHeight(
         Units.metersToInches(dist * Math.sin(Math.toRadians(35))) / 6 + startHeight);
   }

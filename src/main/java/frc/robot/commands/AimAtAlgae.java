@@ -1,24 +1,27 @@
 package frc.robot.commands;
 
-import java.util.List;
-
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
-public class AimAtAlgae extends Command {
+import static frc.robot.Constants.Swerve.MAX_SPEED;
+
+import java.util.List;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+@Logged
+public class AimAtAlgae extends TurnToAngle {
   public VisionSubsystem vision;
   public SwerveSubsystem swerve;
+  public static double targetYaw;
+  public static double swerve_x;
+  public static double swerve_y;
   boolean targetVisible = false;
 
   public AimAtAlgae(VisionSubsystem vision, SwerveSubsystem swerve) {
+    super(swerve, () -> targetYaw, () -> swerve_x, () -> swerve_y, true);
     this.vision = vision;
     this.swerve = swerve;
   }
@@ -29,32 +32,19 @@ public class AimAtAlgae extends Command {
   @Override
   public void execute() {
     targetVisible = false;
-    double targetYaw = 0.0;
-    double minPitch = Double.MAX_VALUE;
     List<PhotonPipelineResult> results = vision.algaeCam.getAllUnreadResults();
 
     if (!results.isEmpty()) {
       PhotonPipelineResult result = results.get(results.size() - 1);
       if (result.hasTargets()) {
         PhotonTrackedTarget target = result.getTargets().get(0); // Lowest Algae
-        if (target.pitch < minPitch) {
-          targetYaw = target.getYaw();
-          minPitch = target.pitch;
-          targetVisible = true;
-        }
+        targetYaw = swerve.getPose().getRotation().getDegrees() - target.getYaw();
+        swerve_x = MAX_SPEED/2;
+        targetVisible = true;
       }
     }
 
-    double turn = 0.0;
-
-    if (targetVisible) {
-      turn = -1.0 * targetYaw * Vision.VISION_TURN_kP * Constants.Swerve.MAX_ANGULAR_VELOCITY;
-    }
-
-    swerve.drive(new Translation2d(), turn, false);
-
-    SmartDashboard.putBoolean("Algae Target Visible", targetVisible);
-    SmartDashboard.putNumber("Algae Target Yaw", targetYaw);
+    super.execute();
   }
 
   @Override
@@ -62,6 +52,6 @@ public class AimAtAlgae extends Command {
 
   @Override
   public boolean isFinished() {
-    return !targetVisible;
+    return false;
   }
 }

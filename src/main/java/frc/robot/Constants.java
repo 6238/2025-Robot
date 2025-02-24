@@ -18,8 +18,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.util.CameraSettings;
@@ -82,11 +82,11 @@ public final class Constants {
     public static final double STEERING_ENCODER_RESOLUTION = 1.0;
 
     /* Turn PID */
-    public static final double TURN_kP = 0.75;
-    public static final double TURN_kI = 0;
+    public static final double TURN_kP = 0.175;
+    public static final double TURN_kI = 0.005;
     public static final double TURN_kD = 0;
 
-    public static final double TURN_THRESHOLD = 3;
+    public static final double TURN_THRESHOLD = 10;
   }
 
   public final class Elevator {
@@ -181,8 +181,7 @@ public final class Constants {
                   Degrees.of(270).in(Radians)))),
     };
 
-    public static final String ALGAECAM_NAME = "ALGAE_CAM";
-    public static final double VISION_TURN_kP = 0.75;
+    public static final String ALGAECAM_NAME = "AlgaeCam";
 
     public static final Matrix<N3, N1> VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {12, 0, 12, 0, 16});
@@ -222,8 +221,9 @@ public final class Constants {
      *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_TOP = new Pose2d(7.250, 6, Rotation2d.fromDegrees(0));
-
-    public static final Pose2d BARGE_BOTTOM = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_BLUE = new Pose2d(7.250, 6, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_BLUE_FLIPPED = new Pose2d(10.250, 6, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_RED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
   }
 }
