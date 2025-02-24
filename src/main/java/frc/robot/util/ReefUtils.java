@@ -1,13 +1,12 @@
 package frc.robot.util;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoMoveGeneration;
+import frc.robot.Constants.PathfindingConfig;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 
 public class ReefUtils {
@@ -34,5 +33,21 @@ public class ReefUtils {
     }
 
     return alliance == Alliance.Blue ? ElevatorHeights.L2 : ElevatorHeights.L3;
+  }
+
+  public static Pose2d GetBargePose(Pose2d currentPose2d) {
+    Alliance alliance = DriverStation.getAlliance().get();
+
+    if (alliance == Alliance.Blue) {
+      if (currentPose2d.getX() > 6.15) {
+        return PathfindingConfig.BARGE_BLUE_FLIPPED;
+      }
+      return PathfindingConfig.BARGE_BLUE;
+    }
+
+    if (currentPose2d.getX() > 6.15) {
+      return PathfindingConfig.BARGE_RED;
+    }
+    return PathfindingConfig.BARGE_RED_FLIPPED;
   }
 }

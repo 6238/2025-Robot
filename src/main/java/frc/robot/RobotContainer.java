@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -24,16 +25,22 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlMapping;
-import frc.robot.Constants.PathfindingConfig;
+import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.AimAtAlgae;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.subsystems.BatteryIdentification;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
 import frc.robot.util.ReefUtils;
 import java.io.File;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import swervelib.math.Matter;
 
 /**
@@ -42,16 +49,16 @@ import swervelib.math.Matter;
  */
 @Logged
 public class RobotContainer {
-  //   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
-  //   ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
-  //   Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
+  AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
+  ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+  Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
   SwerveSubsystem swerve =
       new SwerveSubsystem(
           new File(Filesystem.getDeployDirectory(), "swerve2"),
           () -> new Matter(new Translation3d(), 0));
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
-  //   WinchSubsystem winch = new WinchSubsystem();
-  //   BatteryIdentification batteryIdentification = new BatteryIdentification();
+  WinchSubsystem winch = new WinchSubsystem();
+  BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandGenericHID operatorController = new CommandGenericHID(2);
@@ -84,40 +91,40 @@ public class RobotContainer {
 
     swerve.setDefaultCommand(driveCommand);
 
-    // NamedCommands.registerCommand(
-    //     "Elevator_Algae_L1",
-    //
-    // Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND)));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1",
+    
+    Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND)));
 
-    // NamedCommands.registerCommand(
-    //     "Elevator_Algae_L1_25",
-    //
-    // Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1_25",
+    
+    Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
 
-    // NamedCommands.registerCommand(
-    //     "Elevator_Algae_L1_5",
-    //     Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L1_5",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
 
-    // NamedCommands.registerCommand(
-    //     "Elevator_Algae_L2",
-    //     Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L2",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
 
-    // NamedCommands.registerCommand(
-    //     "Elevator_Algae_L3",
-    //     Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L3",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
 
-    // NamedCommands.registerCommand(
-    //     "Elevator_Algae_L4",
-    //     Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP)));
+    NamedCommands.registerCommand(
+        "Elevator_Algae_L4",
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP)));
 
-    // NamedCommands.registerCommand(
-    //     "Intake_Algae",
-    //     Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
+    NamedCommands.registerCommand(
+        "Intake_Algae",
+        Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
 
-    // NamedCommands.registerCommand(
-    //     "Shoot_Algae",
-    //     Commands.sequence(
-    //         algaeSubsystem.startOutake(), new WaitCommand(0.5), algaeSubsystem.stopMotors()));
+    NamedCommands.registerCommand(
+        "Shoot_Algae",
+        Commands.sequence(
+            algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
 
     // Initialize autonomous chooser
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -137,18 +144,8 @@ public class RobotContainer {
         .button(ControlMapping.MOVE_TO_BARGE.value)
         .onTrue(
             Commands.sequence(
-                Commands.either(
-                    Commands.either(
-                        autonTeleController.GoToPose(PathfindingConfig.BARGE_BLUE_FLIPPED), 
-                        autonTeleController.GoToPose(PathfindingConfig.BARGE_BLUE),
-                        () -> swerve.getPose().getX() > 6.15
-                    ),
-                    Commands.either(
-                        autonTeleController.GoToPose(PathfindingConfig.BARGE_RED), 
-                        autonTeleController.GoToPose(PathfindingConfig.BARGE_RED_FLIPPED),
-                        () -> swerve.getPose().getX() > 6.15
-                    ),
-                    () -> DriverStation.getAlliance().get() == Alliance.Blue
+                Commands.defer(
+                    () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())), null
                 ),
                 Commands.parallel(new TurnToAngle(swerve, () -> 
                     ( DriverStation.getAlliance().get() == Alliance.Blue && swerve.getPose().getX() < 6.15) ||
@@ -157,22 +154,22 @@ public class RobotContainer {
                 // m_elevator.setHeightCommand(ElevatorHeights.TOP)))
                 .until(() -> autonTeleController.isDriverInputting()));
 
-    // driverXbox
-    //     .back()
-    //     .onTrue(
-    //         Commands.runOnce(() -> m_elevator.resetEncoder())
-    //             .ignoringDisable(true)); // left menu button
+    driverXbox
+        .back()
+        .onTrue(
+            Commands.runOnce(() -> m_elevator.resetEncoder())
+                .ignoringDisable(true)); // left menu button
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
     driverXbox
         .button(ControlMapping.LIFT_TO_REEF.value)
         .whileTrue(
-            // Commands.parallel(
-                    // Commands.runOnce(
-                    //     () -> {
-                    //       m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
-                    //     },
-                    //     m_elevator),
+            Commands.parallel(
+                    Commands.runOnce(
+                        () -> {
+                          m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
+                        },
+                        m_elevator),
                     new RepeatCommand(
                     new TurnToAngle(
                         swerve,
@@ -180,69 +177,71 @@ public class RobotContainer {
                           return ReefUtils.AngleToReef(swerve.getPose());
                         },
                         swerve_x,
-                        swerve_y)));
+                        swerve_y))
+                        ));
 
-    // driverXbox
-    //     .button(ControlMapping.GROUND.value)
-    //     .onTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
+    driverXbox
+        .button(ControlMapping.GROUND.value)
+        .onTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
 
     driverXbox
         .button(ControlMapping.CHASE_CORAL.value)
-        .whileTrue(new AimAtAlgae(visionSubsystem, swerve));
-    // m_elevator.setHeightCommand(ElevatorHeights.GROUND)));
+        .whileTrue(Commands.parallel(
+          m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+          new AimAtAlgae(visionSubsystem, swerve)
+        ));
 
-    // driverXbox // LOWER
-    //     .axisGreaterThan(
-    //         ControlMapping.ELEVATOR_RAISE_LOWER.value, ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
-    //     .whileTrue(
-    //         new RepeatCommand(
-    //             m_elevator.increaseHeight(
-    //                 () ->
-    //                     -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
-    //                         / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE)));
+    driverXbox // LOWER
+        .axisGreaterThan(
+            ControlMapping.ELEVATOR_RAISE_LOWER.value, ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
+        .whileTrue(
+            new RepeatCommand(
+                m_elevator.increaseHeight(
+                    () ->
+                        -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
+                            / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE)));
 
-    // driverXbox // RAISE
-    //     .axisLessThan(
-    //         ControlMapping.ELEVATOR_RAISE_LOWER.value, -ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
-    //     .whileTrue(
-    //         new RepeatCommand(
-    //             m_elevator.increaseHeight(
-    //                 () ->
-    //                     -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
-    //                         / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE)));
+    driverXbox // RAISE
+        .axisLessThan(
+            ControlMapping.ELEVATOR_RAISE_LOWER.value, -ControlMapping.ELEVATOR_ADJUST_THRESHOLD)
+        .whileTrue(
+            new RepeatCommand(
+                m_elevator.increaseHeight(
+                    () ->
+                        -driverXbox.getRawAxis(ControlMapping.ELEVATOR_RAISE_LOWER.value)
+                            / ControlMapping.ELEVATOR_ADJUST_SPEED_DECREASE)));
 
-    // driverXbox
-    //     .button(ControlMapping.INTAKE.value)
-    //     .onTrue(
-    //         Commands.either(
-    //             Commands.sequence(algaeSubsystem.intakeUntilStalled(),
-    // algaeSubsystem.holdAlgae()),
-    //             algaeSubsystem.stopMotors(),
-    //             () -> !algaeSubsystem.hasBall().getAsBoolean()));
+    driverXbox
+        .button(ControlMapping.INTAKE.value)
+        .onTrue(
+            Commands.either(
+                Commands.sequence(algaeSubsystem.intakeUntilStalled(),
+    algaeSubsystem.holdAlgae()),
+                algaeSubsystem.stopMotors(),
+                () -> !algaeSubsystem.hasBall().getAsBoolean()));
 
-    // driverXbox
-    //     .button(ControlMapping.OUTTAKE.value)
-    //     .onTrue(
-    //         Commands.sequence(
-    //             algaeSubsystem.startOutake(), new WaitCommand(0.5),
-    // algaeSubsystem.stopMotors()));
+    driverXbox
+        .button(ControlMapping.OUTTAKE.value)
+        .onTrue(
+            Commands.sequence(
+                algaeSubsystem.startOutake(), Commands.waitSeconds(0.5),
+    algaeSubsystem.stopMotors()));
 
-    // driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
-    // driverXbox.povRight().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
+    driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
+    driverXbox.povRight().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
 
-    // driverXbox.povUp().onTrue(winch.toGrab());
-    // driverXbox.povDown().onTrue(winch.toPull());
+    driverXbox.povUp().onTrue(winch.toGrab());
+    driverXbox.povDown().onTrue(winch.toPull());
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }
 
   public Command toggleBrakeMode() {
-    return Commands.none();
-    // return Commands.runOnce(
-    //     () -> {
-    //       m_elevator.toggleBrakeMode();
-    //     },
-    //     m_elevator);
+    return Commands.runOnce(
+        () -> {
+          m_elevator.toggleBrakeMode();
+        },
+        m_elevator);
   }
 
   public Command getAutonomousCommand() {
@@ -250,11 +249,11 @@ public class RobotContainer {
   }
 
   public void OnDisable() {
-    // m_elevator.setHeight(ElevatorHeights.GROUND);
-    // m_elevator.brake();
+    m_elevator.setHeight(ElevatorHeights.GROUND);
+    m_elevator.brake();
   }
 
   public void OnEnable() {
-    // m_elevator.brake();
+    m_elevator.brake();
   }
 }

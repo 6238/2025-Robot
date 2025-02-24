@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 

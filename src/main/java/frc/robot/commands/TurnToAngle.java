@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Swerve;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -39,12 +38,7 @@ public class TurnToAngle extends Command {
       DoubleSupplier targetAngle,
       DoubleSupplier swerve_x,
       DoubleSupplier swerve_y) {
-    this.swerve_x = swerve_x;
-    this.swerve_y = swerve_y;
-    this.targetAngle = targetAngle;
-    this.swerve = swerve;
-
-    turn_pid.setTolerance(5);
+    this(swerve, targetAngle, swerve_x, swerve_y, false);
   }
 
   @Override
