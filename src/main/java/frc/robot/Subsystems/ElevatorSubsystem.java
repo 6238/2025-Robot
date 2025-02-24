@@ -13,6 +13,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
@@ -23,12 +25,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Elevator;
+import frc.robot.Constants.Elevator.DYNAMICS;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import swervelib.math.Matter;
 
+@Logged
 public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX leaderMotor;
   private TalonFX followerMotor;
@@ -85,13 +90,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     return run(() -> setHeight(givenHeight));
   }
 
+  public double getTargetHeight() {
+    return goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO;
+  }
+
   public void brake() {
     leaderMotor.setNeutralMode(NeutralModeValue.Brake);
     followerMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public double getHeight() {
-    return goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO;
+    return leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO;
+  }
+
+  public double getVerticalAcceleration() {
+    return leaderMotor.getAcceleration().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO;
   }
 
   //// sets the height to a clamped value
@@ -102,15 +115,33 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command increaseHeight(DoubleSupplier speed) {
+    double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
+    double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
     return runOnce(
         () -> {
-          goal.position += goal.position + speed.getAsDouble();
+          double height = goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO + speed.getAsDouble();
+          goal.position =
+              Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
         });
   }
 
   public void resetEncoder() {
     leaderMotor.setPosition(0);
     followerMotor.setPosition(0);
+  }
+
+  public Matter getMatter() {
+    double elvMin = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
+    double elvMax = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
+
+    double percentHeight = (getHeight() - elvMin) / elvMax;
+    double heightCOM = ((elvMax - elvMin) * percentHeight) + elvMin;
+    Translation3d centerOfMass =
+        new Translation3d(DYNAMICS.COM_LOCATION.getX(), DYNAMICS.COM_LOCATION.getY(), heightCOM);
+
+    double mass = DYNAMICS.TOTAL_MASS;
+
+    return new Matter(centerOfMass, mass);
   }
 
   public void toggleBrakeMode() {
@@ -148,12 +179,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
-    SmartDashboard.putNumber("leader_motor", leaderMotor.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("follower_motor", followerMotor.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "leader_motor_voltage", leaderMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "follower_motor_voltage", followerMotor.getMotorVoltage().getValueAsDouble());
   }
 
   public boolean reachedState() {

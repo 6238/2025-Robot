@@ -62,5 +62,6 @@
     "[java]": {
       "spotlessGradle.format.enable": true,
       "spotlessGradle.diagnostics.enable": true
-    }
+    },
+    "java.search.scope": "main"
 }

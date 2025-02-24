@@ -4,7 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeEndEffector;
 import java.util.function.BooleanSupplier;
 
+@Logged
 public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final TalonFX leftMotor;
   final TalonFX rightMotor;
@@ -87,6 +88,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void disableOutput() {
+    speedSetpoint = 0;
+    velocityControl = true;
     leftMotor.set(0);
     rightMotor.set(0);
   }
@@ -118,8 +121,13 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
                 rightMotor.getPosition().getValueAsDouble()));
   }
 
+  private void setDuty(double speed) {
+    leftMotor.set(-speed);
+    rightMotor.set(speed);
+  }
+
   public Command startOutake() {
-    return runOnce(() -> setMotorSpeed(-AlgaeEndEffector.OUTAKE_SPEED));
+    return runOnce(() -> setDuty(-1));
   }
 
   public Command stopMotors() {
@@ -128,11 +136,6 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("intakeSpeedLeft", -leftMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("intakeSpeedRight", rightMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("intaketargetSpeed", speedSetpoint);
-    SmartDashboard.putBoolean("intakeUpToSpeed", upToSpeed);
-    SmartDashboard.putBoolean("intakeVelocityControl", velocityControl);
 
     if (velocityControl && upToSpeed(0.1)) {
       upToSpeed = true;

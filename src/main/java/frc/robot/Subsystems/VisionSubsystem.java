@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Vision;
@@ -11,22 +13,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
 
+@Logged
 public class VisionSubsystem extends SubsystemBase {
   private AprilTagFieldLayout fieldLayout;
 
   // Keep track of cameras and poses
   private ArrayList<Camera> cameras = new ArrayList<>();
 
-  private SwerveSubsystem swerve;
+  public PhotonCamera algaeCam;
+
+  @NotLogged private SwerveSubsystem swerve;
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
     this.swerve = swerve;
 
+    algaeCam = new PhotonCamera(Vision.ALGAECAM_NAME);
+
     try {
       fieldLayout =
-          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
+          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
       System.out.println("Loaded apriltag field from: " + fieldLayout);
     } catch (IOException e) {
       DataLogManager.log(
