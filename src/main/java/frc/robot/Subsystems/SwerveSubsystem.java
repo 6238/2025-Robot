@@ -421,8 +421,7 @@ public class SwerveSubsystem extends SubsystemBase {
           // starting pose)
           this::getFieldVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speeds, feedforwards) ->
-              drive(
-                  speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds.
+              drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds.
           // Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController( // PPHolonomicController is the built in path following
               // controller for holonomic drive trains

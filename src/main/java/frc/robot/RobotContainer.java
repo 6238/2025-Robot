@@ -14,9 +14,8 @@ import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,9 +25,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlMapping;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.AimAtAlgae;
 import frc.robot.commands.TurnToAngle;
@@ -44,7 +40,6 @@ import frc.robot.util.ReefUtils;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import swervelib.math.Matter;
 
 /**
@@ -97,13 +92,11 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Elevator_Algae_L1",
-    
-    Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND)));
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND)));
 
     NamedCommands.registerCommand(
         "Elevator_Algae_L1_25",
-    
-    Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
+        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
 
     NamedCommands.registerCommand(
         "Elevator_Algae_L1_5",
@@ -148,13 +141,22 @@ public class RobotContainer {
         .button(ControlMapping.MOVE_TO_BARGE.value)
         .onTrue(
             Commands.sequence(
-                Commands.defer(
-                    () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())), null
-                ),
-                Commands.parallel(new TurnToAngle(swerve, () -> 
-                    ( DriverStation.getAlliance().get() == Alliance.Blue && swerve.getPose().getX() < 6.15) ||
-                    ( DriverStation.getAlliance().get() == Alliance.Red && swerve.getPose().getX() > 6.15)
-                     ? 0 : 180, swerve_x, swerve_y)))
+                    Commands.defer(
+                        () ->
+                            autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
+                        null),
+                    Commands.parallel(
+                        new TurnToAngle(
+                            swerve,
+                            () ->
+                                (DriverStation.getAlliance().get() == Alliance.Blue
+                                            && swerve.getPose().getX() < 6.15)
+                                        || (DriverStation.getAlliance().get() == Alliance.Red
+                                            && swerve.getPose().getX() > 6.15)
+                                    ? 0
+                                    : 180,
+                            swerve_x,
+                            swerve_y)))
                 // m_elevator.setHeightCommand(ElevatorHeights.TOP)))
                 .until(() -> autonTeleController.isDriverInputting()));
 
@@ -169,20 +171,19 @@ public class RobotContainer {
         .button(ControlMapping.LIFT_TO_REEF.value)
         .whileTrue(
             Commands.parallel(
-                    Commands.runOnce(
-                        () -> {
-                          m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
-                        },
-                        m_elevator),
-                    new RepeatCommand(
+                Commands.runOnce(
+                    () -> {
+                      m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
+                    },
+                    m_elevator),
+                new RepeatCommand(
                     new TurnToAngle(
                         swerve,
                         () -> {
                           return ReefUtils.AngleToReef(swerve.getPose());
                         },
                         swerve_x,
-                        swerve_y))
-                        ));
+                        swerve_y))));
 
     driverXbox
         .button(ControlMapping.GROUND.value)
@@ -190,10 +191,10 @@ public class RobotContainer {
 
     driverXbox
         .button(ControlMapping.CHASE_CORAL.value)
-        .whileTrue(Commands.parallel(
-          m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-          new AimAtAlgae(visionSubsystem, swerve)
-        ));
+        .whileTrue(
+            Commands.parallel(
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                new AimAtAlgae(visionSubsystem, swerve)));
 
     driverXbox // LOWER
         .axisGreaterThan(
@@ -219,8 +220,7 @@ public class RobotContainer {
         .button(ControlMapping.INTAKE.value)
         .onTrue(
             Commands.either(
-                Commands.sequence(algaeSubsystem.intakeUntilStalled(),
-    algaeSubsystem.holdAlgae()),
+                Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()),
                 algaeSubsystem.stopMotors(),
                 () -> !algaeSubsystem.hasBall().getAsBoolean()));
 
@@ -228,8 +228,9 @@ public class RobotContainer {
         .button(ControlMapping.OUTTAKE.value)
         .onTrue(
             Commands.sequence(
-                algaeSubsystem.startOutake(), Commands.waitSeconds(0.5),
-    algaeSubsystem.stopMotors()));
+                algaeSubsystem.startOutake(),
+                Commands.waitSeconds(0.5),
+                algaeSubsystem.stopMotors()));
 
     driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
     driverXbox.povRight().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));

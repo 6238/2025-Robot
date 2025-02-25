@@ -50,12 +50,15 @@ public class TurnToAngle extends Command {
         turn_pid.calculate(swerve.getPose().getRotation().getDegrees(), targetAngle.getAsDouble());
 
     swerve.drive(
-        new Translation2d(swerve_x.getAsDouble(), swerve_y.getAsDouble()), turnValue, fieldRelative);
+        new Translation2d(swerve_x.getAsDouble(), swerve_y.getAsDouble()),
+        turnValue,
+        fieldRelative);
   }
 
   @Override
   public void end(boolean interrupted) {
-    swerve.drive(new Translation2d(swerve_x.getAsDouble(), swerve_y.getAsDouble()), 0, fieldRelative);
+    swerve.drive(
+        new Translation2d(swerve_x.getAsDouble(), swerve_y.getAsDouble()), 0, fieldRelative);
   }
 
   @Override

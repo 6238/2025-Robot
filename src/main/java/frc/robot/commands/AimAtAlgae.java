@@ -1,11 +1,10 @@
 package frc.robot.commands;
 
+import static frc.robot.Constants.Swerve.MAX_SPEED;
+
 import edu.wpi.first.epilogue.Logged;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-
-import static frc.robot.Constants.Swerve.MAX_SPEED;
-
 import java.util.List;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -38,7 +37,7 @@ public class AimAtAlgae extends TurnToAngle {
       if (result.hasTargets()) {
         PhotonTrackedTarget target = result.getTargets().get(0); // Lowest Algae
         targetYaw = swerve.getPose().getRotation().getDegrees() - target.getYaw();
-        swerve_x = MAX_SPEED/2;
+        swerve_x = MAX_SPEED / 2;
         targetVisible = true;
       }
     }

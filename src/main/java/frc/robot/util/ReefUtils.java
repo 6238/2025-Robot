@@ -6,8 +6,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.AutoMoveGeneration;
-import frc.robot.Constants.PathfindingConfig;
 import frc.robot.Constants.Elevator.ElevatorHeights;
+import frc.robot.Constants.PathfindingConfig;
 
 public class ReefUtils {
 
