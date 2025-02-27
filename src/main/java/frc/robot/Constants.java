@@ -45,9 +45,9 @@ public final class Constants {
     public final class Gains {
       // From SysID routine
       public static final double kS = 0.041645; // voltage to overcome static friction
-      public static final double kG = 0.42517; // voltage to overcome gravity
-      public static final double kV = 0.12811; // volts per 1 rps
-      public static final double kA = 0.0060141; // volts per 1 rps/s
+      public static final double kG = 0.33; // voltage to overcome gravity
+      public static final double kV = 7.84 / Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
+      public static final double kA = 0.09 / Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
       public static final double kg_Top = 0.6;
