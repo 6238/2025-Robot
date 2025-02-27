@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -47,6 +48,15 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     leftMotor.getConfigurator().apply(talonFXConfigs, 0.050);
     rightMotor.getConfigurator().apply(talonFXConfigs, 0.050);
+
+    var limitConfigs = new CurrentLimitsConfigs();
+    limitConfigs.SupplyCurrentLimit = 80; // The current limit is always this
+    limitConfigs.SupplyCurrentLowerLimit = 20; // But it drops to this...
+    limitConfigs.SupplyCurrentLowerTime = 1; // after this amount of time
+    limitConfigs.SupplyCurrentLimitEnable = true;
+
+    leftMotor.getConfigurator().apply(limitConfigs, 0.050);
+    rightMotor.getConfigurator().apply(limitConfigs, 0.050);
 
     p_request = new PositionVoltage(0).withSlot(0);
     v_request = new VelocityVoltage(0).withSlot(1);
