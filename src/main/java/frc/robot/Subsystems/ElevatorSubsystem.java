@@ -54,8 +54,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
 
-    elevatorMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
     motorConfig.GravityType = GravityTypeValue.Elevator_Static;
     motorConfig.kS = Gains.kS;
     motorConfig.kG = Gains.kG;
@@ -73,7 +71,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     motionMagicConfigs.MotionMagicJerk = Elevator.JERK;
 
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
-    followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
+    followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));
 
     leaderMotor.setNeutralMode(neutralModeValue);
     followerMotor.setNeutralMode(neutralModeValue);
@@ -132,7 +130,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
-      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 60) {
+      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 75) {
         leaderMotor.setVoltage(Elevator.Gains.kg_Top);
       } else if (hasBall.getAsBoolean()) {
         leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
