@@ -171,11 +171,13 @@ public class RobotContainer {
         .button(ControlMapping.LIFT_TO_REEF.value)
         .whileTrue(
             Commands.parallel(
-                Commands.runOnce(
-                    () -> {
-                      m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
-                    },
-                    m_elevator),
+                new RepeatCommand(
+                    Commands.runOnce(
+                        () -> {
+                        m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
+                        },
+                        m_elevator)
+                ),
                 new RepeatCommand(
                     new TurnToAngle(
                         swerve,
