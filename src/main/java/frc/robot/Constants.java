@@ -93,12 +93,14 @@ public final class Constants {
     public final class Gains {
       // From SysID routine
       public static final double kS = 0.041645; // voltage to overcome static friction
-      public static final double kG = 0.42517; // voltage to overcome gravity
-      public static final double kV = 0.12811; // volts per 1 rps
-      public static final double kA = 0.0060141; // volts per 1 rps/s
+      public static final double kG = 0.36; // voltage to overcome gravity
+      public static final double kV =
+          7.84 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
+      public static final double kA =
+          0.09 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 0.6;
+      public static final double kg_Top = 1.6;
 
       // PID for correcting errors
       public static final double kP = 5;
@@ -107,19 +109,20 @@ public final class Constants {
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = (45.1236) / 80;
+      public static final double ELEVATOR_GEAR_RATIO = (42.6) / 80.5;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 4;
-      public static final double ELEVATOR_MAX_HEIGHT = 72.25;
+      public static final double ELEVATOR_MIN_HEIGHT = 1.0;
+      public static final double ELEVATOR_MAX_HEIGHT = 80.5;
 
-      public static final double GROUND = 9.0;
-      public static final double L1_25 = 14.0;
-      public static final double L1_5 = 20.0;
-      public static final double L2 = 31.5;
-      public static final double L3 = 45;
-      public static final double TOP = 72.25; // MAX HEIGHT
+      public static final double GROUND = 2.0;
+      public static final double L1_25 = 10.0;
+      public static final double L1_5 = 17.0;
+      public static final double L2 = 27.5;
+      public static final double L3 = 40;
+      public static final double TOP = 80.5; // MAX HEIGHT
 
+      // TODO
       public static final double REACH_STATE_THRES = 0.1;
     }
 
