@@ -93,17 +93,17 @@ public final class Constants {
     public final class Gains {
       // From SysID routine
       public static final double kS = 0.041645; // voltage to overcome static friction
-      public static final double kG = 0.36; // voltage to overcome gravity
+      public static final double kG = 0.38; // voltage to overcome gravity
       public static final double kV =
           7.84 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
       public static final double kA =
           0.09 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 1.6;
+      public static final double kg_Top = 1.9;
 
       // PID for correcting errors
-      public static final double kP = 5;
+      public static final double kP = 3;
       public static final double kI = 0.05;
       public static final double kD = 0;
     }
@@ -112,15 +112,15 @@ public final class Constants {
       public static final double ELEVATOR_GEAR_RATIO = (42.6) / 80.5;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 1.0;
-      public static final double ELEVATOR_MAX_HEIGHT = 80.5;
+      public static final double ELEVATOR_MIN_HEIGHT = 7.0;
+      public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
-      public static final double GROUND = 2.0;
-      public static final double L1_25 = 10.0;
-      public static final double L1_5 = 17.0;
-      public static final double L2 = 27.5;
-      public static final double L3 = 40;
-      public static final double TOP = 80.5; // MAX HEIGHT
+      public static final double GROUND = 10.0;
+      public static final double L1_25 = 17.0;
+      public static final double L1_5 = 22.0;
+      public static final double L2 = 34;
+      public static final double L3 = 48;
+      public static final double TOP = 81.25; // MAX HEIGHT
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
@@ -158,30 +158,30 @@ public final class Constants {
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
-      new CameraSettings(
-          "BR",
-          new Transform3d(
-              new Translation3d(Inches.of(-10.5), Inches.of(-10.5), Inches.of(10)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(180 + 45).in(Radians)))),
-      new CameraSettings(
-          "BL",
-          new Transform3d(
-              new Translation3d(Inches.of(-10.5), Inches.of(10.5), Inches.of(10)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(180 - 45).in(Radians)))),
-      new CameraSettings(
-          "FR",
-          new Transform3d(
-              new Translation3d(Inches.of(3.5), Inches.of(-14.5), Inches.of(15.5)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(270).in(Radians)))),
+      // new CameraSettings(
+      //     "BR",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(10.5)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(-55).in(Radians),
+      //             Degrees.of(180 + 55).in(Radians)))),
+      // new CameraSettings(
+      //     "BL",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(-55).in(Radians),
+      //             Degrees.of(180 - 55).in(Radians)))),
+      // new CameraSettings(
+      //     "FR",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(7.5), Inches.of(14.5-4.5), Inches.of(34.5)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(270).in(Radians)))),
     };
 
     public static final String ALGAECAM_NAME = "AlgaeCam";

@@ -121,7 +121,7 @@ public class SwerveSubsystem extends SubsystemBase {
     Translation2d limitedTranslation =
         SwerveMath.limitVelocity(
             translation,
-            velocity,
+            getFieldVelocity(),
             getPose(),
             Constants.LOOP_TIME,
             totalMass,
@@ -129,7 +129,7 @@ public class SwerveSubsystem extends SubsystemBase {
             swerveDrive.swerveDriveConfiguration);
 
     swerveDrive.drive(
-        limitedTranslation,
+        translation,
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.

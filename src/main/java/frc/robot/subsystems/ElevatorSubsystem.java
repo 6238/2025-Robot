@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -160,10 +159,15 @@ public class ElevatorSubsystem extends SubsystemBase {
       resetEncoder();
     }
 
-    if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
-      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 75) {
+    if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78 && leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78) {
+      if (leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO > 82) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Top - 0.35);
+      } else {
         leaderMotor.setVoltage(Elevator.Gains.kg_Top);
-      } else if (hasBall.getAsBoolean()) {
+      }
+    }
+    else if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
+      if (hasBall.getAsBoolean()) {
         leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
       } else {
         leaderMotor.setVoltage(Elevator.Gains.kG);
