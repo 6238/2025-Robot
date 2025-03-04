@@ -1,17 +1,13 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.Radians;
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -58,10 +54,6 @@ public final class Constants {
 
     public static final Button OUTTAKE = Button.kRightBumper;
     public static final Button INTAKE = Button.kLeftBumper;
-
-    public static final Axis ELEVATOR_RAISE_LOWER = Axis.kRightY;
-    public static final double ELEVATOR_ADJUST_THRESHOLD = 0.25;
-    public static final double ELEVATOR_ADJUST_SPEED_DECREASE = 50;
   }
 
   /** The robot's maximum angular velocity. */
@@ -112,14 +104,14 @@ public final class Constants {
       public static final double ELEVATOR_GEAR_RATIO = (42.6) / 80.5;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 7.0;
+      public static final double ELEVATOR_MIN_HEIGHT = 4.0;
       public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
-      public static final double GROUND = 10.0;
-      public static final double L1_25 = 17.0;
-      public static final double L1_5 = 22.0;
-      public static final double L2 = 34;
-      public static final double L3 = 48;
+      public static final double GROUND = 5.5;
+      public static final double L1_25 = 11.0;
+      public static final double L1_5 = 16.5;
+      public static final double L2 = 31;
+      public static final double L3 = 45;
       public static final double TOP = 81.25; // MAX HEIGHT
 
       // TODO
@@ -133,8 +125,8 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 20.0;
-    public static final double MAX_ACCEL = 30.0;
+    public static final double MAX_VELOCITY = 30.0;
+    public static final double MAX_ACCEL = 40.0;
     public static final double JERK = 800.0;
   }
 
@@ -144,7 +136,7 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 32.5;
+    public static final double INTAKE_SPEED = 40;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -161,7 +153,7 @@ public final class Constants {
       // new CameraSettings(
       //     "BR",
       //     new Transform3d(
-      //         new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(10.5)),
+      //         new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(9.75)),
       //         new Rotation3d(
       //             Degrees.of(0).in(Radians),
       //             Degrees.of(-55).in(Radians),
@@ -169,7 +161,7 @@ public final class Constants {
       // new CameraSettings(
       //     "BL",
       //     new Transform3d(
-      //         new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(10.5)),
+      //         new Translation3d(Inches.of(-14.5-1), Inches.of(-6.5), Inches.of(10.5)),
       //         new Rotation3d(
       //             Degrees.of(0).in(Radians),
       //             Degrees.of(-55).in(Radians),
@@ -177,7 +169,7 @@ public final class Constants {
       // new CameraSettings(
       //     "FR",
       //     new Transform3d(
-      //         new Translation3d(Inches.of(7.5), Inches.of(14.5-4.5), Inches.of(34.5)),
+      //         new Translation3d(Inches.of(7.5), Inches.of(14.5-4.5), Inches.of(20.5)),
       //         new Rotation3d(
       //             Degrees.of(0).in(Radians),
       //             Degrees.of(0).in(Radians),
@@ -187,7 +179,7 @@ public final class Constants {
     public static final String ALGAECAM_NAME = "AlgaeCam";
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {12, 0, 12, 0, 16});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {3, 3, 3});
   }
 
   public final class Winch {

@@ -159,14 +159,15 @@ public class ElevatorSubsystem extends SubsystemBase {
       resetEncoder();
     }
 
-    if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78 && leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78) {
+    if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78
+        && leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO
+            > 78) {
       if (leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO > 82) {
         leaderMotor.setVoltage(Elevator.Gains.kg_Top - 0.35);
       } else {
         leaderMotor.setVoltage(Elevator.Gains.kg_Top);
       }
-    }
-    else if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
+    } else if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
       if (hasBall.getAsBoolean()) {
         leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
       } else {
