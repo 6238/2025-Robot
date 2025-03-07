@@ -4,16 +4,23 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.TalonFX;
+import java.io.File;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -24,17 +31,16 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ControlMapping;
 import frc.robot.Constants.Elevator.ElevatorHeights;
+import frc.robot.commands.AimAtAlgae;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
-import java.io.File;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
+import frc.robot.util.ReefUtils;
 import swervelib.math.Matter;
 
 /**
@@ -44,230 +50,245 @@ import swervelib.math.Matter;
  */
 @Logged
 public class RobotContainer {
-  AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
-  ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
-  Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
-  SwerveSubsystem swerve = new SwerveSubsystem(
-      new File(Filesystem.getDeployDirectory(), "swerve"),
-      () -> new Matter(new Translation3d(), 0));
-  VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
-  // WinchSubsystem winch = new WinchSubsystem();
-  // BatteryIdentification batteryIdentification = new BatteryIdentification();
+	AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
+	ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+	Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
+	SwerveSubsystem swerve = new SwerveSubsystem(
+			new File(Filesystem.getDeployDirectory(), "swerve"),
+			() -> new Matter(new Translation3d(), 0));
+	VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
+	// WinchSubsystem winch = new WinchSubsystem();
+	// BatteryIdentification batteryIdentification = new BatteryIdentification();
 
-  CommandXboxController driverXbox = new CommandXboxController(0);
-  CommandGenericHID operatorController = new CommandGenericHID(2);
+	private static boolean manualModeEnabled = false;
 
-  DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
-      -driverXbox.getRawAxis(ControlMapping.FORWARD_BACKWARD.value)
-          * (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
-      0.02);
+	CommandXboxController driverXbox = new CommandXboxController(0);
+	CommandGenericHID operatorController = new CommandGenericHID(2);
 
-  DoubleSupplier swerve_y = () -> MathUtil.applyDeadband(
-      -driverXbox.getRawAxis(ControlMapping.LEFT_RIGHT.value)
-          * (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
-      0.02);
+	DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
+			-driverXbox.getLeftY()
+					* (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
+			0.02);
 
-  DoubleSupplier right_stick_up_down = () -> MathUtil.applyDeadband(
-      -driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
-          * (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
-      0.02);
+	DoubleSupplier swerve_y = () -> MathUtil.applyDeadband(
+			-driverXbox.getLeftX()
+					* (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
+			0.02);
 
-  DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(ControlMapping.TURN.value),
-      0.08);
+	DoubleSupplier right_stick_up_down = () -> MathUtil.applyDeadband(
+			-driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
+					* (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
+			0.02);
 
-  private final SendableChooser<Command> autoChooser;
+	DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08);
 
-  AutonTeleController autonTeleController = new AutonTeleController(driverXbox, swerve, swerve_x, swerve_y,
-      swerve_turn);
+	private final SendableChooser<Command> autoChooser;
 
-  public RobotContainer() {
-    Pathfinding.setPathfinder(new LocalADStar());
-    Logging.logMetadata();
+	AutonTeleController autonTeleController = new AutonTeleController(driverXbox, swerve, swerve_x, swerve_y,
+			swerve_turn);
 
-    PathfindingCommand.warmupCommand().schedule();
+	public RobotContainer() {
+		Pathfinding.setPathfinder(new LocalADStar());
+		Logging.logMetadata();
 
-    configureTriggers();
+		PathfindingCommand.warmupCommand().schedule();
 
-    Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
+		configureTriggers();
 
-    swerve.setDefaultCommand(driveCommand);
+		Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1",
-        Commands.sequence(m_elevator
-            .setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND)));
+		swerve.setDefaultCommand(driveCommand);
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1_25",
-        Commands.sequence(
-            m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
+		NamedCommands.registerCommand(
+				"Elevator_Algae_L1",
+				Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND)));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1_5",
-        Commands.sequence(
-            m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
+		NamedCommands.registerCommand(
+				"Elevator_Algae_L1_25",
+				Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25)));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L2",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
+		NamedCommands.registerCommand(
+				"Elevator_Algae_L1_5",
+				Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5)));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L3",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
+		NamedCommands.registerCommand(
+				"Elevator_Algae_L2",
+				Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L4",
-        Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP)));
+		NamedCommands.registerCommand(
+				"Elevator_Algae_L3",
+				Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)));
 
-    NamedCommands.registerCommand(
-        "Intake_Algae",
-        Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
+		NamedCommands.registerCommand(
+				"Elevator_Algae_L4",
+				Commands.sequence(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP)));
 
-    NamedCommands.registerCommand(
-        "Shoot_Algae",
-        Commands.sequence(
-            algaeSubsystem.startOutake(), Commands.waitSeconds(0.5),
-            algaeSubsystem.stopMotors()));
+		NamedCommands.registerCommand(
+				"Intake_Algae",
+				Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
 
-    // Initialize autonomous chooser
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auton Path", autoChooser);
-  }
+		NamedCommands.registerCommand(
+				"Shoot_Algae",
+				Commands.sequence(
+						algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
 
-  /**
-   * This method is where all of the robot's logic is defined. We link {@link
-   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons
-   * and subsystem
-   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The
-   * advantage of
-   * configuring all the robot's logic here is that it's easy to find, and
-   * therefore easy to modify,
-   * what the robot does when something happens and why.
-   */
-  private void configureTriggers() {
-    // Controls
+		// Initialize autonomous chooser
+		autoChooser = AutoBuilder.buildAutoChooser();
+		SmartDashboard.putData("Auton Path", autoChooser);
 
-    // driverXbox
-    // .button(ControlMapping.MOVE_TO_BARGE.value)
-    // .onTrue(
-    // Commands.sequence(
-    // Commands.defer(
-    // () ->
+		SmartDashboard.putBoolean("ManualModeEnabled", manualModeEnabled);
+	}
 
-    // autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
-    // Set.of(swerve)
-    // ),
-    // Commands.parallel(
-    // new TurnToAngle(
-    // swerve,
-    // () -> (DriverStation.getAlliance().get() == Alliance.Blue
-    // && swerve.getPose().getX() < 6.15)
-    // || (DriverStation.getAlliance().get() == Alliance.Red
-    // && swerve.getPose().getX() > 6.15)
-    // ? 0
-    // : 180,
-    // swerve_x,
-    // swerve_y),
-    // m_elevator.setHeightCommand(ElevatorHeights.TOP)))
-    // .until(() -> autonTeleController.isDriverInputting()));
+	/**
+	 * This method is where all of the robot's logic is defined. We link {@link
+	 * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons
+	 * and subsystem
+	 * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The
+	 * advantage of
+	 * configuring all the robot's logic here is that it's easy to find, and
+	 * therefore easy to modify,
+	 * what the robot does when something happens and why.
+	 */
+	private void configureTriggers() {
+		// Controls
 
-    driverXbox
-        .back()
-        .onTrue(
-            Commands.runOnce(() -> m_elevator.resetEncoder())
-                .ignoringDisable(true)); // left menu button
+		driverXbox.rightStick().onTrue(Commands.run(() -> manualModeEnabled = !manualModeEnabled));
+		driverXbox
+				.back()
+				.onTrue(
+						Commands.runOnce(() -> m_elevator.resetEncoder())
+								.ignoringDisable(true)); // left menu button
+		driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
-    driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
+		driverXbox
+				.axisMagnitudeGreaterThan(XboxController.Axis.kRightY.value, 0.3)
+				.whileTrue(
+						new RepeatCommand(
+								swerve.driveCommandRobotRelative(
+										right_stick_up_down,
+										() -> 0,
+										() -> MathUtil.applyDeadband(swerve_turn.getAsDouble(), 0.1))));
 
-    // driverXbox
-    // .button(ControlMapping.LIFT_TO_REEF.value)
-    // .onTrue(
-    // Commands.parallel(
-    // new RepeatCommand(
-    // Commands.runOnce(
-    // () -> {
-    // m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
-    // },
-    // m_elevator)),
-    // new RepeatCommand(
-    // new TurnToAngle(
-    // swerve,
-    // () -> {
-    // return ReefUtils.AngleToReef(swerve.getPose());
-    // },
-    // swerve_x,
-    // swerve_y)))
-    // .until(() -> autonTeleController.isDriverInputting()));
+		driverXbox
+				.y()
+				.onTrue(
+						Commands.either(
+								m_elevator.setHeightCommand(ElevatorHeights.TOP),
+								Commands.sequence(
+										Commands.defer(
+												() -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
+												Set.of(swerve)),
+										Commands.parallel(
+												new TurnToAngle(
+														swerve,
+														() -> (DriverStation.getAlliance().get() == Alliance.Blue
+																&& swerve.getPose().getX() < 6.15)
+																|| (DriverStation.getAlliance().get() == Alliance.Red
+																		&& swerve.getPose().getX() > 6.15)
+																				? 0
+																				: 180,
+														swerve_x,
+														swerve_y),
+												m_elevator.setHeightCommand(ElevatorHeights.TOP)))
+										.until(() -> autonTeleController.isDriverInputting()),
+								() -> manualModeEnabled));
 
-    driverXbox
-        .axisMagnitudeGreaterThan(XboxController.Axis.kRightY.value, 0.3)
-        .whileTrue(
-            new RepeatCommand(
-                swerve.driveCommandRobotRelative(
-                    right_stick_up_down,
-                    () -> 0,
-                    () -> MathUtil.applyDeadband(swerve_turn
-                        .getAsDouble(), 0.1))));
+		driverXbox
+				.x()
+				.onTrue(
+						Commands.either(
+								m_elevator.setHeightCommand(ElevatorHeights.L3),
+								Commands.sequence(
+										Commands.parallel(
+												Commands.defer(
+														() -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
+														Set.of(swerve))),
+										new TurnToAngle(
+												swerve,
+												() -> (DriverStation.getAlliance().get() == Alliance.Blue) ? -90 : 90,
+												swerve_x,
+												swerve_y),
+										m_elevator.setHeightCommand(ElevatorHeights.L1_25),
+										Commands.waitSeconds(0.15),
+										Commands.sequence(
+												algaeSubsystem.startOutake(),
+												Commands.waitSeconds(0.5),
+												algaeSubsystem.stopMotors(),
+												m_elevator.setHeightCommand(ElevatorHeights.GROUND)))
+										.until(() -> autonTeleController.isDriverInputting()),
+								() -> manualModeEnabled));
 
-    driverXbox
-        .button(ControlMapping.GROUND.value)
-        .onTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
+		driverXbox
+				.b()
+				.onTrue(
+						Commands.either(
+								m_elevator.setHeightCommand(ElevatorHeights.L2),
+								Commands.parallel(
+										new RepeatCommand(
+												Commands.runOnce(
+														() -> {
+															m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
+														},
+														m_elevator)),
+										new RepeatCommand(
+												new TurnToAngle(
+														swerve,
+														() -> {
+															return ReefUtils.AngleToReef(swerve.getPose());
+														},
+														swerve_x,
+														swerve_y)))
+										.until(() -> autonTeleController.isDriverInputting()),
+								() -> manualModeEnabled));
 
-    driverXbox.povUp().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
-    driverXbox.povDown().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
+		driverXbox
+				.a()
+				.whileTrue(
+						Commands.either(
+								m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+								Commands.parallel(
+										m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+										new AimAtAlgae(visionSubsystem, swerve)),
+								() -> manualModeEnabled));
 
-    driverXbox.b().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L2));
+		driverXbox
+				.leftBumper()
+				.onTrue(
+						Commands.either(
+								Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()),
+								algaeSubsystem.stopMotors(),
+								() -> !algaeSubsystem.hasBall().getAsBoolean()));
 
-    driverXbox.x().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L3));
+		driverXbox
+				.rightBumper()
+				.onTrue(
+						Commands.sequence(
+								algaeSubsystem.startOutake(),
+								Commands.waitSeconds(0.5),
+								algaeSubsystem.stopMotors(),
+								m_elevator.setHeightCommand(ElevatorHeights.GROUND)));
 
-    driverXbox.y().onTrue(m_elevator.setHeightCommand(ElevatorHeights.TOP));
+		new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
+	}
 
-    // driverXbox
-    // .button(ControlMapping.CHASE_CORAL.value)
-    // .whileTrue(
-    // Commands.parallel(
-    // m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-    // new AimAtAlgae(visionSubsystem, swerve)));
+	public Command toggleBrakeMode() {
+		return Commands.runOnce(
+				() -> {
+					m_elevator.toggleBrakeMode();
+				},
+				m_elevator);
+	}
 
-    driverXbox
-        .button(ControlMapping.INTAKE.value)
-        .onTrue(
-            Commands.either(
-                Commands.sequence(algaeSubsystem.intakeUntilStalled(),
-                    algaeSubsystem.holdAlgae()),
-                algaeSubsystem.stopMotors(),
-                () -> !algaeSubsystem.hasBall().getAsBoolean()));
+	public Command getAutonomousCommand() {
+		return autoChooser.getSelected();
+	}
 
-    driverXbox
-        .button(ControlMapping.OUTTAKE.value)
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.startOutake(),
-                Commands.waitSeconds(0.5),
-                algaeSubsystem.stopMotors(),
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND)));
+	public void OnDisable() {
+		m_elevator.setHeight(ElevatorHeights.GROUND);
+		m_elevator.brake();
+	}
 
-    new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
-  }
-
-  public Command toggleBrakeMode() {
-    return Commands.runOnce(
-        () -> {
-          m_elevator.toggleBrakeMode();
-        },
-        m_elevator);
-  }
-
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-  }
-
-  public void OnDisable() {
-    m_elevator.setHeight(ElevatorHeights.GROUND);
-    m_elevator.brake();
-  }
-
-  public void OnEnable() {
-    m_elevator.brake();
-  }
+	public void OnEnable() {
+		m_elevator.brake();
+	}
 }

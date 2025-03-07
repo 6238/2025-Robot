@@ -3,11 +3,15 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Degrees;
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -16,8 +20,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.XboxController.Axis;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.util.CameraSettings;
 import java.io.File;
 import java.util.Map;
@@ -37,23 +39,6 @@ public final class Constants {
   public final class IDs {
     public static final int ELEVATOR_LEADER_MOTOR = 50;
     public static final int ELEVATOR_FOLLOWER_MOTOR = 51;
-  }
-
-  public final class ControlMapping {
-    public static final Axis FORWARD_BACKWARD = Axis.kLeftY;
-    public static final Axis LEFT_RIGHT = Axis.kLeftX;
-    public static final Axis TURN = Axis.kRightX;
-
-    public static final Button GROUND = Button.kA;
-    public static final Button MOVE_TO_BARGE = Button.kX;
-    public static final Button LIFT_TO_REEF = Button.kB;
-    public static final Button CHASE_CORAL = Button.kY;
-
-    public static final Axis MOVE_TO_BARGE_AXIS = Axis.kLeftTrigger;
-    public static final double MOVE_TO_BARGE_THRESHOLD = 0.5;
-
-    public static final Button OUTTAKE = Button.kRightBumper;
-    public static final Button INTAKE = Button.kLeftBumper;
   }
 
   /** The robot's maximum angular velocity. */
@@ -221,5 +206,8 @@ public final class Constants {
         new Pose2d(10.250, 6, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_RED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+
+    public static final Pose2d PROCESSOR_RED = new Pose2d();
+    public static final Pose2d PROCESSOR_BLUE = new Pose2d();
   }
 }
