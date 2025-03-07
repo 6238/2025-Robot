@@ -150,30 +150,30 @@ public final class Constants {
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
-      // new CameraSettings(
-      //     "BR",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(9.75)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(-55).in(Radians),
-      //             Degrees.of(180 + 55).in(Radians)))),
-      // new CameraSettings(
-      //     "BL",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(-14.5-1), Inches.of(-6.5), Inches.of(10.5)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(-55).in(Radians),
-      //             Degrees.of(180 - 55).in(Radians)))),
-      // new CameraSettings(
-      //     "FR",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(7.5), Inches.of(14.5-4.5), Inches.of(20.5)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(270).in(Radians)))),
+      new CameraSettings(
+          "BR",
+          new Transform3d(
+              new Translation3d(Inches.of(-12.334), Inches.of(12.853), Inches.of(7.715)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(-10).in(Radians),
+                  Degrees.of(180 + 45).in(Radians)))),
+      new CameraSettings(
+          "BL",
+          new Transform3d(
+              new Translation3d(Inches.of(-12.334), Inches.of(-12.853), Inches.of(7.715)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(-10).in(Radians),
+                  Degrees.of(180 - 45).in(Radians)))),
+      new CameraSettings(
+          "FR",
+          new Transform3d(
+              new Translation3d(Inches.of(6), Inches.of(9.232), Inches.of(46.210)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(270).in(Radians)))),
     };
 
     public static final String ALGAECAM_NAME = "AlgaeCam";
