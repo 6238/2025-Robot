@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -12,9 +12,12 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
@@ -28,8 +31,6 @@ import frc.robot.Constants.Elevator.DYNAMICS;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import swervelib.math.Matter;
 
 @Logged
@@ -49,8 +50,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private BooleanSupplier hasBall;
 
   public ElevatorSubsystem(BooleanSupplier hasBall) {
-    leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
-    followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
+    leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR, "canivore");
+    followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR, "canivore");
 
     this.hasBall = hasBall;
 
@@ -73,7 +74,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     motionMagicConfigs.MotionMagicAcceleration =
         Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk = Elevator.JERK;
-
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));
 
@@ -155,10 +155,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (limit.get() && leaderMotor.getPosition().getValueAsDouble() != 0) {
-      resetEncoder();
-    }
-
     if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78
         && leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO
             > 78) {
@@ -174,8 +170,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.setVoltage(Elevator.Gains.kG);
       }
     } else {
-      leaderMotor.setControl(
-          m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+    leaderMotor.setControl(
+        m_request.withPosition(goal.position));
     }
     SmartDashboard.putNumber(
         "elevator height",

@@ -72,9 +72,9 @@ public final class Constants {
       public static final double kS = 0.041645; // voltage to overcome static friction
       public static final double kG = 0.38; // voltage to overcome gravity
       public static final double kV =
-          7.84 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
+          8.84 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
       public static final double kA =
-          0.09 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
+          0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
       public static final double kg_Top = 1.9;
@@ -135,36 +135,36 @@ public final class Constants {
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
-      new CameraSettings(
-          "BR",
-          new Transform3d(
-              new Translation3d(Inches.of(-12.334), Inches.of(12.853), Inches.of(7.715)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(-10).in(Radians),
-                  Degrees.of(180 + 45).in(Radians)))),
-      new CameraSettings(
-          "BL",
-          new Transform3d(
-              new Translation3d(Inches.of(-12.334), Inches.of(-12.853), Inches.of(7.715)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(-10).in(Radians),
-                  Degrees.of(180 - 45).in(Radians)))),
-      new CameraSettings(
-          "FR",
-          new Transform3d(
-              new Translation3d(Inches.of(6), Inches.of(9.232), Inches.of(46.210)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(270).in(Radians)))),
+      // new CameraSettings(
+      //     "BR",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(-12.5), Inches.of(12.5), Inches.of(10.6)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(-10).in(Radians),
+      //             Degrees.of(180 + 45).in(Radians)))),
+      // new CameraSettings(
+      //     "BL",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(-12.5), Inches.of(-12.5), Inches.of(10.6)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(-10).in(Radians),
+      //             Degrees.of(180 - 45).in(Radians)))),
+      // new CameraSettings(
+      //     "FR",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(7), Inches.of(6), Inches.of(27)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(270).in(Radians)))),
     };
 
     public static final String ALGAECAM_NAME = "AlgaeCam";
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {3, 3, 3});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {1, 1, Math.PI/2});
   }
 
   public final class Winch {
@@ -204,7 +204,7 @@ public final class Constants {
     public static final Pose2d BARGE_BLUE = new Pose2d(7.250, 6, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_BLUE_FLIPPED =
         new Pose2d(10.250, 6, Rotation2d.fromDegrees(0));
-    public static final Pose2d BARGE_RED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
 
     public static final Pose2d PROCESSOR_RED = new Pose2d();

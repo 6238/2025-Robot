@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
 import static java.util.Map.entry;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Winch;
-import java.util.Map;
 
 @Logged
 public class WinchSubsystem extends SubsystemBase {
@@ -38,7 +39,7 @@ public class WinchSubsystem extends SubsystemBase {
   }
 
   public static final Map<Position, Double> POSITIONS =
-      Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, -270.0));
+      Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, -220.0));
 
   private Position currentPosition = Position.UNKNOWN;
 

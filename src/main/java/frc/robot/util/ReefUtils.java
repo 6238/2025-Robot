@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoMoveGeneration;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.PathfindingConfig;
@@ -20,6 +21,7 @@ public class ReefUtils {
             : AutoMoveGeneration.REEF_CENTER_RED;
     Transform2d diff = pose.minus(reef_center_blue);
     double angle = Units.radiansToDegrees(Math.atan2(diff.getY(), diff.getX()));
+    SmartDashboard.putNumber("reefAngle", angle);
 
     return angle;
   }
