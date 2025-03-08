@@ -29,11 +29,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Elevator.ElevatorHeights;
-import frc.robot.commands.AimAtAlgae;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
@@ -52,7 +50,7 @@ public class RobotContainer {
 	SwerveSubsystem swerve = new SwerveSubsystem(
 			new File(Filesystem.getDeployDirectory(), "swerve2"),
 			() -> new Matter(new Translation3d(), 0));
-	VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
+	// VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
 	WinchSubsystem winch = new WinchSubsystem();
 	// BatteryIdentification batteryIdentification = new BatteryIdentification();
 
@@ -62,12 +60,12 @@ public class RobotContainer {
 	CommandGenericHID operatorController = new CommandGenericHID(2);
 
 	DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
-			driverXbox.getLeftY()
+			-driverXbox.getLeftY()
 					* (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
 			0.02);
 
 	DoubleSupplier swerve_y = () -> MathUtil.applyDeadband(
-			driverXbox.getLeftX()
+			-driverXbox.getLeftX()
 					* (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
 			0.02);
 
@@ -251,9 +249,9 @@ public class RobotContainer {
 								// () -> manualModeEnabled));
 						);
 		
-		driverXbox.leftTrigger().onTrue(Commands.parallel(
-			m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-			new AimAtAlgae(visionSubsystem, swerve)));
+		// driverXbox.leftTrigger().onTrue(Commands.parallel(
+		// 	m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+		// 	new AimAtAlgae(visionSubsystem, swerve)));
 
 		driverXbox
 				.leftBumper()
