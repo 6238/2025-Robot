@@ -95,8 +95,8 @@ public final class Constants {
       public static final double GROUND = 5.5;
       public static final double L1_25 = 11.0;
       public static final double L1_5 = 16.5;
-      public static final double L2 = 31;
-      public static final double L3 = 47;
+      public static final double L2 = 32;
+      public static final double L3 = 48;
       public static final double TOP = 81.25; // MAX HEIGHT
 
       // TODO
@@ -121,7 +121,7 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 40;
+    public static final double INTAKE_SPEED = 80;
 
     public static final double OUTAKE_WAIT = 3.0;
 

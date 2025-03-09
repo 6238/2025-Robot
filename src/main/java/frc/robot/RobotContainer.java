@@ -200,6 +200,7 @@ public class RobotContainer {
 		// () -> manualModeEnabled));
 		// );
 
+		driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
 		driverXbox
 				.x()
 				.onTrue(

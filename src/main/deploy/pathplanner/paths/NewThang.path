@@ -1,0 +1,122 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.132564742476851,
+        "y": 4.911291956018519
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.132564742476852,
+        "y": 4.911291956018519
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.940787398726851,
+        "y": 5.801194299768518
+      },
+      "prevControl": {
+        "x": 6.6941228777535295,
+        "y": 6.4588307160652745
+      },
+      "nextControl": {
+        "x": 5.661622902199074,
+        "y": 5.557493127893519
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.1790538194444435,
+        "y": 5.208624855324074
+      },
+      "prevControl": {
+        "x": 5.5037557870370355,
+        "y": 5.526164279513889
+      },
+      "nextControl": {
+        "x": 4.814363914667666,
+        "y": 4.851979580799725
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.132564742476851,
+        "y": 6.246087239583333
+      },
+      "prevControl": {
+        "x": 6.66996925636574,
+        "y": 6.774659649884259
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.436343544407895,
+      "rotationDegrees": -125.00000000000001
+    },
+    {
+      "waypointRelativePos": 2.4480622944078947,
+      "rotationDegrees": -125.00000000000001
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.4801061007957563,
+      "maxWaypointRelativePos": 2.0744363395225474,
+      "constraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator_Algae_L3",
+      "waypointRelativePos": 0.5760216346153846,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Intake_Algae",
+      "waypointRelativePos": 0.8414186836870031,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 1.0456999322067304
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 179.67160330537052
+  },
+  "useDefaultConstraints": false
+}
