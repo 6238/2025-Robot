@@ -96,7 +96,7 @@ public final class Constants {
       public static final double L1_25 = 11.0;
       public static final double L1_5 = 16.5;
       public static final double L2 = 31;
-      public static final double L3 = 45;
+      public static final double L3 = 47;
       public static final double TOP = 81.25; // MAX HEIGHT
 
       // TODO
@@ -110,7 +110,7 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 30.0;
+    public static final double MAX_VELOCITY = 40.0;
     public static final double MAX_ACCEL = 40.0;
     public static final double JERK = 800.0;
   }
@@ -135,36 +135,39 @@ public final class Constants {
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     public static final CameraSettings CAMERA_SETTINGS[] = {
-      // new CameraSettings(
-      //     "BR",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(-12.5), Inches.of(12.5), Inches.of(10.6)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(-10).in(Radians),
-      //             Degrees.of(180 + 45).in(Radians)))),
-      // new CameraSettings(
-      //     "BL",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(-12.5), Inches.of(-12.5), Inches.of(10.6)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(-10).in(Radians),
-      //             Degrees.of(180 - 45).in(Radians)))),
-      // new CameraSettings(
-      //     "FR",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(7), Inches.of(6), Inches.of(27)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(270).in(Radians)))),
+      new CameraSettings(
+          "BR",
+          new Transform3d(
+              new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(9.5)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(-10).in(Radians),
+                  Degrees.of(180 + 45).in(Radians)))),
+      new CameraSettings(
+          "BL",
+          new Transform3d(
+              new Translation3d(Inches.of(7), Inches.of(-10), Inches.of(26.25)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(90).in(Radians)))),
+      new CameraSettings(
+          "FR",
+          new Transform3d(
+              new Translation3d(Inches.of(7), Inches.of(10), Inches.of(26.25)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(270).in(Radians)))),
     };
 
     public static final String ALGAECAM_NAME = "AlgaeCam";
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {1, 1, Math.PI/2});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI/8});
+    
+      public static final Matrix<N3, N1> UNIT_VISION_STDDEV =
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {1, 1, Math.PI*2});
   }
 
   public final class Winch {
@@ -180,8 +183,8 @@ public final class Constants {
   }
 
   public final class AutoMoveGeneration {
-    public static final double BARGE_X_BLUE = 7.5;
-    public static final double BARGE_X_RED = 10.5;
+    public static final double BARGE_X_BLUE = 7.1;
+    public static final double BARGE_X_RED = 10.75;
 
     public static final double BARGE_SPEED = 0.8;
     public static final double BARGE_THRESHOLD = 0.2;
@@ -201,7 +204,7 @@ public final class Constants {
      *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_BLUE = new Pose2d(7.250, 6, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_BLUE = new Pose2d(7.104, 5.65, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_BLUE_FLIPPED =
         new Pose2d(10.250, 6, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(0));

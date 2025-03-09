@@ -53,8 +53,8 @@ public class VisionSubsystem extends SubsystemBase {
     for (int i = 0; i < cameras.size(); i++) {
       Optional<EstimatedRobotPose> pose = cameras.get(i).update();
 
-      if (pose.isPresent()) {
-        swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV);
+      if (pose.isPresent() && cameras.get(i).ambiguity < 0.3) {
+      swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV);
       }
     }
   }

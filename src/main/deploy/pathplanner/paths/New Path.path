@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8514409722222211,
-        "y": 5.841665581597222
+        "x": 7.561676793981482,
+        "y": 6.151285445601852
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6014409722222211,
-        "y": 5.841665581597222
+        "x": 7.145725188078703,
+        "y": 5.408768446180556
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.155,
-        "y": 6.023
+        "x": 5.883545283564814,
+        "y": 4.055979456018518
       },
       "prevControl": {
-        "x": 6.905,
-        "y": 6.023
+        "x": 5.631500581069858,
+        "y": 5.135350847113085
+      },
+      "nextControl": {
+        "x": 6.036928530092593,
+        "y": 3.3991218171296294
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.561676793981482,
+        "y": 6.151285445601852
+      },
+      "prevControl": {
+        "x": 7.144123806423611,
+        "y": 5.812171043113426
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,30 +45,9 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 1.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Elevator_Algae_L3",
-      "waypointRelativePos": 0.29272223907767003,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -63,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 122.56955404745965
   },
   "reversed": false,
   "folder": null,

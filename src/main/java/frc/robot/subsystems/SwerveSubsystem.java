@@ -89,6 +89,7 @@ public class SwerveSubsystem extends SubsystemBase {
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
       swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED);
+
     } catch (Exception e) {
       DataLogManager.log("EXSITS: " + directory.exists());
       throw new RuntimeException(e);

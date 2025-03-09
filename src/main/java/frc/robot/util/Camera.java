@@ -1,11 +1,16 @@
 package frc.robot.util;
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import frc.robot.Constants.Vision;
 import frc.robot.telemetry.Alert;
-import java.util.Optional;
-import org.photonvision.*;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 /**
  * Utility class to work with reading from a camera attached via PhotonVision and feeding the data
@@ -16,6 +21,7 @@ public class Camera {
   private PhotonPoseEstimator poseEst;
 
   private Alert camDisconnected;
+  public double ambiguity;
 
   /**
    * Creates a new Camera.
@@ -46,6 +52,12 @@ public class Camera {
 
     Optional<EstimatedRobotPose> pose = Optional.empty();
     for (PhotonPipelineResult result : cam.getAllUnreadResults()) {
+      ambiguity = 0.0;
+
+      for (PhotonTrackedTarget target : result.getTargets()) {
+        ambiguity += target.poseAmbiguity;
+      }
+
       pose = poseEst.update(result, cam.getCameraMatrix(), cam.getDistCoeffs());
     }
 
