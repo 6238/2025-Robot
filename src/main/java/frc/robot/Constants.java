@@ -1,10 +1,10 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Degrees;
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
@@ -164,10 +164,10 @@ public final class Constants {
     public static final String ALGAECAM_NAME = "AlgaeCam";
 
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI/8});
-    
-      public static final Matrix<N3, N1> UNIT_VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {1, 1, Math.PI*2});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});
+
+    public static final Matrix<N3, N1> UNIT_VISION_STDDEV =
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {1, 1, Math.PI * 2});
   }
 
   public final class Winch {

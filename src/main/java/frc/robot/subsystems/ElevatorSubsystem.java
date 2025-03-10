@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -12,12 +12,9 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
@@ -31,6 +28,9 @@ import frc.robot.Constants.Elevator.DYNAMICS;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
+import frc.robot.util.OrcestraManager;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import swervelib.math.Matter;
 
 @Logged
@@ -80,11 +80,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     leaderMotor.setNeutralMode(neutralModeValue);
     followerMotor.setNeutralMode(neutralModeValue);
 
+    OrcestraManager.getInstance().addInstrument(leaderMotor);
+    OrcestraManager.getInstance().addInstrument(followerMotor);
+
     this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
   }
 
   public Command setHeightCommand(double givenHeight) {
-    return run(() -> setHeight(givenHeight));
+    return runOnce(() -> setHeight(givenHeight));
   }
 
   public double getTargetHeight() {
@@ -170,8 +173,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.setVoltage(Elevator.Gains.kG);
       }
     } else {
-    leaderMotor.setControl(
-        m_request.withPosition(goal.position));
+      leaderMotor.setControl(m_request.withPosition(goal.position));
     }
     SmartDashboard.putNumber(
         "elevator height",

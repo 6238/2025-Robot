@@ -1,13 +1,10 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -15,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeEndEffector;
+import frc.robot.util.OrcestraManager;
+import java.util.function.BooleanSupplier;
 
 @Logged
 public class AlgaeEndEffectorSubsystem extends SubsystemBase {
@@ -62,6 +61,9 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     p_request = new PositionVoltage(0).withSlot(0);
     v_request = new VelocityVoltage(0).withSlot(1);
+
+    OrcestraManager.getInstance().addInstrument(leftMotor);
+    OrcestraManager.getInstance().addInstrument(rightMotor);
   }
 
   /** If either motor's velocity is within percentError of speedSetpoint */
@@ -119,10 +121,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     // setMotorSpeed(AlgaeEndEffector.INTAKE_SPEED)).andThen(Commands.waitSeconds(60.0).until(() ->
     // motorStopped()));
     return new SequentialCommandGroup(
-        startIntake(),
-        // stopMotors(),
-        new WaitUntilCommand(() -> motorStopped()),
-        new WaitCommand(0.25));
+        startIntake(), new WaitUntilCommand(() -> motorStopped()), new WaitCommand(0.25));
   }
 
   public Command holdAlgae() {
@@ -134,6 +133,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void setDuty(double speed) {
+    velocityControl = false;
     leftMotor.set(-speed);
     rightMotor.set(speed);
   }
@@ -149,10 +149,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if (velocityControl && upToSpeed(0.1)) {
+    if (velocityControl && upToSpeed(0.2)) {
       upToSpeed = true;
     } else {
-      // upToSpeed = false; // is this breaking?
+      upToSpeed = false; // is this breaking?
     }
   }
 }

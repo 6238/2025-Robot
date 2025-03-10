@@ -9,48 +9,36 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Intake_Algae"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "Example Path"
+                  "pathName": "Go To R"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator_Choral_L1"
+                  "name": "Elevator_Algae_L2"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.25
+            "name": "Elevator_Algae_L4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot_Algae"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator_Algae_L3"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "name": "ShootAlgae"
           }
         },
         {
@@ -66,34 +54,28 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "New Path"
+                  "pathName": "Go To RT"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator_Algae_L3"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 1.0
+            "name": "Elevator_Algae_L4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot_Algae"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator_Algae_L1"
+            "name": "ShootAlgae"
           }
         },
         {
@@ -103,22 +85,34 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator_Algae_L2"
+                  "name": "Intake_Algae"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "New New Path"
+                  "pathName": "Go To RB"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator_Algae_L3"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 10.0
+            "name": "Elevator_Algae_L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAlgae"
           }
         }
       ]

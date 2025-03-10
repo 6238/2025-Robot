@@ -4,19 +4,13 @@
 
 package frc.robot.subsystems;
 
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import org.photonvision.EstimatedRobotPose;
+import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
+import static frc.robot.Constants.Swerve.MAX_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.Matrix;
@@ -35,8 +29,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
-import static frc.robot.Constants.Swerve.MAX_SPEED;
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+import org.photonvision.EstimatedRobotPose;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.imu.NavXSwerve;
@@ -496,7 +494,7 @@ public class SwerveSubsystem extends SubsystemBase {
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
           double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
           // Make the robot move
-          double rotation = rotationSpeed.getAsDouble() * MAX_ANGULAR_VELOCITY;
+          double rotation = Math.pow(rotationSpeed.getAsDouble(), 3) * MAX_ANGULAR_VELOCITY;
 
           Translation2d translation =
               new Translation2d(sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
@@ -524,8 +522,7 @@ public class SwerveSubsystem extends SubsystemBase {
           // Make the robot move
           double rotation = rotationSpeed.getAsDouble() * MAX_ANGULAR_VELOCITY;
 
-          Translation2d translation =
-              new Translation2d(xInput * MAX_SPEED, yInput * MAX_SPEED);
+          Translation2d translation = new Translation2d(xInput * MAX_SPEED, yInput * MAX_SPEED);
           this.drive(translation, rotation, false);
         });
   }

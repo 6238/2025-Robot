@@ -1,16 +1,14 @@
 package frc.robot.util;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import frc.robot.Constants.Vision;
+import frc.robot.telemetry.Alert;
 import java.util.Optional;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import frc.robot.Constants.Vision;
-import frc.robot.telemetry.Alert;
 
 /**
  * Utility class to work with reading from a camera attached via PhotonVision and feeding the data

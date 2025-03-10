@@ -4,16 +4,13 @@
 
 package frc.robot.telemetry;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotController;
-
 /** Add your docs here. */
 public class GeneralLogger {
-    public static void log() {
-        // NetworkTableInstance.getDefault()
-        // .getDoubleTopic("/General/SupplyVoltage")
-        // .publish()
-        // .set(RobotController.getBatteryVoltage());
+  public static void log() {
+    // NetworkTableInstance.getDefault()
+    // .getDoubleTopic("/General/SupplyVoltage")
+    // .publish()
+    // .set(RobotController.getBatteryVoltage());
 
-    }
+  }
 }
