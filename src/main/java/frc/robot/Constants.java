@@ -77,7 +77,7 @@ public final class Constants {
           0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 1.9;
+      public static final double kg_Top = 1.7;
 
       // PID for correcting errors
       public static final double kP = 3;
@@ -92,11 +92,11 @@ public final class Constants {
       public static final double ELEVATOR_MIN_HEIGHT = 4.0;
       public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
-      public static final double GROUND = 5.5;
-      public static final double L1_25 = 11.0;
-      public static final double L1_5 = 16.5;
-      public static final double L2 = 32;
-      public static final double L3 = 48;
+      public static final double GROUND = 6.5;
+      public static final double L1_25 = 12.0;
+      public static final double L1_5 = 17.5;
+      public static final double L2 = 33;
+      public static final double L3 = 49;
       public static final double TOP = 81.25; // MAX HEIGHT
 
       // TODO
@@ -110,9 +110,9 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 40.0;
-    public static final double MAX_ACCEL = 40.0;
-    public static final double JERK = 800.0;
+    public static final double MAX_VELOCITY = 50.0;
+    public static final double MAX_ACCEL = 60.0;
+    public static final double JERK = 1000.0;
   }
 
   public final class AlgaeEndEffector {
@@ -163,11 +163,20 @@ public final class Constants {
 
     public static final String ALGAECAM_NAME = "AlgaeCam";
 
+    public static final boolean USE_ODOM_CUTOFF = false;
+    public static final double ODOM_DIST_CUTOFF = 0.5; // Meters
+
+
+    public static final boolean USE_LAST_DIST_CUTOFF = true;
+    public static final double LAST_DIST_MAX_TIME = 0.2; // Seconds between last camera pose and this one
+    public static final double LAST_DIST_CUTOFF = 0.5; // Meters
+
+
     public static final Matrix<N3, N1> VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});
 
-    public static final Matrix<N3, N1> UNIT_VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {1, 1, Math.PI * 2});
+    public static final Matrix<N3, N1> INCREMENT_STDDEV =
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.07, 0.07, 0});
   }
 
   public final class Winch {

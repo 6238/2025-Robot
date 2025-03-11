@@ -139,6 +139,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startOutake() {
+    return runOnce(() -> setDuty(-0.1));
+  }
+
+  public Command startFastOutake() {
     return runOnce(() -> setDuty(-1));
   }
 

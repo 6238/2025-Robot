@@ -9,9 +9,13 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,10 +38,14 @@ import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
 import frc.robot.util.ReefUtils;
+
 import java.io.File;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import swervelib.math.Matter;
 
 /**
@@ -65,12 +73,12 @@ public class RobotContainer {
   DoubleSupplier swerve_x =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
 
   DoubleSupplier swerve_y =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
 
   DoubleSupplier right_stick_up_down =
       () ->
@@ -127,6 +135,11 @@ public class RobotContainer {
         "Shoot_Algae",
         Commands.sequence(
             algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+	
+	NamedCommands.registerCommand(
+        "Shoot_Choral",
+        Commands.sequence(
+            algaeSubsystem.startFastOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
 
     Pathfinding.setPathfinder(new LocalADStar());
     PathfindingCommand.warmupCommand().schedule();

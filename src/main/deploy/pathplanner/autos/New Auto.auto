@@ -5,71 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Example Path"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator_Choral_L1"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
+            "pathName": "New New New Path"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot_Algae"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator_Algae_L3"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake_Algae"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "New Path"
-                }
-              }
-            ]
+            "name": "Elevator_Choral_L1"
           }
         },
         {
@@ -81,44 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot_Algae"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator_Algae_L1"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator_Algae_L2"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "New New Path"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 10.0
+            "name": "Shoot_Choral"
           }
         }
       ]
