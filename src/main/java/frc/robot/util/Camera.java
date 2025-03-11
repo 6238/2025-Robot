@@ -75,14 +75,23 @@ public class Camera {
       
       boolean lastPoseExists = lastPose3d != null;
       boolean withinMaxTime = Timer.getTimestamp() - lastPoseTimestamp < Vision.LAST_DIST_MAX_TIME;
-      boolean exceedsDist = pose.get().estimatedPose.getTranslation().getDistance(lastPose3d.getTranslation()) > 0.75;
-      if (Vision.USE_LAST_DIST_CUTOFF && lastPoseExists && withinMaxTime && exceedsDist) {
-        return Optional.empty();
+
+      if (!pose.isPresent()) {
+        continue;
+      }
+
+      if (lastPoseExists) {
+        boolean exceedsDist = pose.get().estimatedPose.getTranslation().getDistance(lastPose3d.getTranslation()) > 0.75;
+        if (Vision.USE_LAST_DIST_CUTOFF && withinMaxTime && exceedsDist) {
+          return Optional.empty();
+        }
       }
     }
-
-    lastPose3d = pose.get().estimatedPose;
-    lastPoseTimestamp = Timer.getTimestamp();
+    
+    if (pose.isPresent()) {
+      lastPose3d = pose.get().estimatedPose;
+      lastPoseTimestamp = Timer.getTimestamp();
+    }
 
     return pose;
   }

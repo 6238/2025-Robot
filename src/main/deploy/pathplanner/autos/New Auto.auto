@@ -5,21 +5,40 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "New New New Path"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Elevator_Choral_L1"
+            "name": "Elevator_Algae_L1"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator_Choral_L1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "New New New Path"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
           }
         },
         {

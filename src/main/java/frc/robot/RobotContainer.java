@@ -55,7 +55,7 @@ import swervelib.math.Matter;
 @Logged
 public class RobotContainer {
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
-  ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+  public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
   Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
   SwerveSubsystem swerve =
       new SwerveSubsystem(
@@ -124,12 +124,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Elevator_Algae_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
-    NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(25));
+    NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(22));
 
     NamedCommands.registerCommand(
         "Intake_Algae",
         Commands.sequence(
-            algaeSubsystem.intakeUntilStalled().withTimeout(2), algaeSubsystem.holdAlgae()));
+            algaeSubsystem.intakeUntilStalled().withTimeout(3), algaeSubsystem.holdAlgae()));
 
     NamedCommands.registerCommand(
         "Shoot_Algae",
@@ -180,12 +180,12 @@ public class RobotContainer {
                     () -> 0,
                     () -> MathUtil.applyDeadband(swerve_turn.getAsDouble(), 0.1))));
 
-    driverXbox
-        .leftTrigger()
-        .onTrue(
-            Commands.defer(
-                () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
-                Set.of(swerve)));
+    // driverXbox
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.defer(
+    //             () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
+    //             Set.of(swerve)));
 
     driverXbox.y().onTrue(m_elevator.setHeightCommand(ElevatorHeights.TOP));
 
@@ -276,13 +276,16 @@ public class RobotContainer {
     driverXbox.rightStick().onTrue(Commands.runOnce(() -> winch.setVoltage(5), winch));
     driverXbox.rightStick().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
 
+	driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
+
     driverXbox
         .leftBumper()
         .onTrue(
-            Commands.either(
-                Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()),
-                algaeSubsystem.stopMotors(),
-                () -> !algaeSubsystem.hasBall().getAsBoolean()));
+            algaeSubsystem.startIntake());
+	
+	driverXbox.leftBumper().onFalse(
+		algaeSubsystem.reverse()
+	);
 
     driverXbox
         .rightBumper()
@@ -290,7 +293,16 @@ public class RobotContainer {
             Commands.sequence(
                 algaeSubsystem.startOutake(),
                 Commands.waitSeconds(0.5),
-                algaeSubsystem.stopMotors()));
+                algaeSubsystem.stopMotors(),
+				Commands.deferredProxy(
+					() -> {
+						if (m_elevator.getHeight() >= ElevatorHeights.TOP-1) {
+							return m_elevator.setHeightCommand(ElevatorHeights.GROUND);
+						}
+						return Commands.none();
+					}
+				)
+		));
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }

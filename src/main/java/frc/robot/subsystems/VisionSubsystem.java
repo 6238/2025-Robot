@@ -59,12 +59,21 @@ public class VisionSubsystem extends SubsystemBase {
     for (int i = 0; i < cameras.size(); i++) {
       Optional<EstimatedRobotPose> pose = cameras.get(i).update();
 
+      if (!pose.isPresent()) {
+        continue;
+      }
+
+      if (!Vision.USE_VISION) {
+        return;
+      }
+
       if (Vision.USE_ODOM_CUTOFF && pose.get().estimatedPose.getTranslation().toTranslation2d().getDistance(swerve.getPose().getTranslation()) > Vision.ODOM_DIST_CUTOFF) {
         continue;
       }
 
-      if (pose.isPresent() && cameras.get(i).ambiguity < 0.3) {
+      if (cameras.get(i).ambiguity < 0.3) {
         swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV.plus(Vision.INCREMENT_STDDEV.times(Math.pow(cameras.get(i).area, 2))));
+        count += 1;
       }
     }
   }
