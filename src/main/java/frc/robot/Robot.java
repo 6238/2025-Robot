@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.lang.invoke.ConstantBootstraps;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.net.WebServer;
@@ -26,10 +28,18 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
+
+    SmartDashboard.putBoolean("USE_ODOM_CUTOFF", Constants.Vision.USE_ODOM_CUTOFF);
+    SmartDashboard.putBoolean("USE_LAST_DIST_CUTOFF", Constants.Vision.USE_LAST_DIST_CUTOFF);
+    SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
   }
 
   @Override
   public void robotPeriodic() {
+    Constants.Vision.USE_LAST_DIST_CUTOFF = SmartDashboard.getBoolean("USE_LAST_DIST_CUTOFF", Constants.Vision.USE_LAST_DIST_CUTOFF);
+    Constants.Vision.USE_ODOM_CUTOFF = SmartDashboard.getBoolean("USE_ODOM_CUTOFF", Constants.Vision.USE_ODOM_CUTOFF);
+    Constants.Vision.USE_VISION =  SmartDashboard.getBoolean("USE_VISION", Constants.Vision.USE_VISION);
+
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
     GeneralLogger.log();
@@ -50,6 +60,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_robotContainer.m_elevator.resetEncoder();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -65,6 +76,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    Constants.Vision.USE_VISION = true;
+    SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

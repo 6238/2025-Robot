@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -48,6 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private NeutralModeValue neutralModeValue = NeutralModeValue.Brake;
 
   private BooleanSupplier hasBall;
+  private int slotNum = 0;
 
   public ElevatorSubsystem(BooleanSupplier hasBall) {
     leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR, "canivore");
@@ -56,6 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.hasBall = hasBall;
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
+    var fastElevatorMotorConfigs = new TalonFXConfiguration();
 
     Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
 
@@ -68,13 +71,24 @@ public class ElevatorSubsystem extends SubsystemBase {
     motorConfig.kI = Gains.kI;
     motorConfig.kD = Gains.kD;
 
-    var motionMagicConfigs = elevatorMotorConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity =
+    Slot1Configs downMotorConfig = elevatorMotorConfigs.Slot1;
+
+    downMotorConfig.GravityType = GravityTypeValue.Elevator_Static;
+    downMotorConfig.kS = Gains.kS;
+    downMotorConfig.kG = 0; // Traveling down
+    downMotorConfig.kV = Gains.kV * 1.25; // Faster
+    downMotorConfig.kA = Gains.kA * 1.25; // Faster
+    downMotorConfig.kP = Gains.kP * 1.25; // Faster
+    downMotorConfig.kI = Gains.kI;
+    downMotorConfig.kD = Gains.kD;
+
+    elevatorMotorConfigs.MotionMagic.MotionMagicCruiseVelocity =
         Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration =
+      elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
         Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
-    motionMagicConfigs.MotionMagicJerk = Elevator.JERK;
+      elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.JERK;
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
+
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));
 
     leaderMotor.setNeutralMode(neutralModeValue);
@@ -112,6 +126,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
     double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
     goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
+    // if (height < getHeight()) {
+    //   slotNum = 1;
+    // } else {
+    //   slotNum = 0;
+    // }
   }
 
   public Command increaseHeight(DoubleSupplier speed) {
@@ -158,6 +177,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if (getHeight() < 4.5 && getTargetHeight() < 4.5) {
+      leaderMotor.setVoltage(-1.75);
+    }
+
+    if (getHeight() < 1.25) {
+      leaderMotor.setVoltage(0);
+    }
+
     if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78
         && leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO
             > 78) {
@@ -173,8 +201,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.setVoltage(Elevator.Gains.kG);
       }
     } else {
-      leaderMotor.setControl(m_request.withPosition(goal.position));
+      leaderMotor.setControl(m_request.withPosition(goal.position).withSlot(slotNum));
     }
+
     SmartDashboard.putNumber(
         "elevator height",
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);

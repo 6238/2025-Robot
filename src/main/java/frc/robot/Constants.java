@@ -77,7 +77,7 @@ public final class Constants {
           0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 1.9;
+      public static final double kg_Top = 1.6;
 
       // PID for correcting errors
       public static final double kP = 3;
@@ -89,15 +89,16 @@ public final class Constants {
       public static final double ELEVATOR_GEAR_RATIO = (42.6) / 80.5;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 4.0;
+      public static final double ELEVATOR_MIN_HEIGHT = 0.0;
       public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
-      public static final double GROUND = 5.5;
-      public static final double L1_25 = 11.0;
-      public static final double L1_5 = 16.5;
-      public static final double L2 = 32;
-      public static final double L3 = 48;
-      public static final double TOP = 81.25; // MAX HEIGHT
+      public static final double STOW = 0;
+      public static final double GROUND = 7.5;
+      public static final double L1_25 = 12.5;
+      public static final double L1_5 = 18.5;
+      public static final double L2 = 34;
+      public static final double L3 = 50;
+      public static final double TOP = 80; // MAX HEIGHT
 
       // TODO
       public static final double REACH_STATE_THRES = 0.1;
@@ -110,9 +111,14 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 40.0;
-    public static final double MAX_ACCEL = 40.0;
-    public static final double JERK = 800.0;
+    public static final double MAX_VELOCITY = 50.0;
+    public static final double MAX_ACCEL = 60.0;
+    public static final double JERK = 1000.0;
+
+    // Alternate Profiles
+    public static final double FALLING_MAX_VELOCITY = 70.0;
+    public static final double FALLING_MAX_ACCEL = 90.0;
+    public static final double FALLING_JERK = 1600.0;
   }
 
   public final class AlgaeEndEffector {
@@ -121,7 +127,7 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 80;
+    public static final double INTAKE_SPEED = 100;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -163,11 +169,22 @@ public final class Constants {
 
     public static final String ALGAECAM_NAME = "AlgaeCam";
 
+    public static boolean USE_VISION = false;
+
+    public static boolean USE_ODOM_CUTOFF = false;
+    public static final double ODOM_DIST_CUTOFF = 0.5; // Meters
+
+
+    public static boolean USE_LAST_DIST_CUTOFF = false;
+    public static final double LAST_DIST_MAX_TIME = 0.2; // Seconds between last camera pose and this one
+    public static final double LAST_DIST_CUTOFF = 0.5; // Meters
+
+
     public static final Matrix<N3, N1> VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});
 
-    public static final Matrix<N3, N1> UNIT_VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {1, 1, Math.PI * 2});
+    public static final Matrix<N3, N1> INCREMENT_STDDEV =
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.07, 0.07, 0});
   }
 
   public final class Winch {

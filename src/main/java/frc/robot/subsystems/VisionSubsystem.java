@@ -9,11 +9,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Vision;
 import frc.robot.util.Camera;
 import frc.robot.util.CameraSettings;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
 public class VisionSubsystem extends SubsystemBase {
@@ -25,6 +29,8 @@ public class VisionSubsystem extends SubsystemBase {
   public PhotonCamera algaeCam;
 
   @NotLogged private SwerveSubsystem swerve;
+
+  private int count = 0;
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
@@ -53,8 +59,21 @@ public class VisionSubsystem extends SubsystemBase {
     for (int i = 0; i < cameras.size(); i++) {
       Optional<EstimatedRobotPose> pose = cameras.get(i).update();
 
-      if (pose.isPresent() && cameras.get(i).ambiguity < 0.3) {
-        swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV);
+      if (!pose.isPresent()) {
+        continue;
+      }
+
+      if (!Vision.USE_VISION) {
+        return;
+      }
+
+      if (Vision.USE_ODOM_CUTOFF && pose.get().estimatedPose.getTranslation().toTranslation2d().getDistance(swerve.getPose().getTranslation()) > Vision.ODOM_DIST_CUTOFF) {
+        continue;
+      }
+
+      if (cameras.get(i).ambiguity < 0.3) {
+        swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV.plus(Vision.INCREMENT_STDDEV.times(Math.pow(cameras.get(i).area, 2))));
+        count += 1;
       }
     }
   }

@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -13,12 +14,18 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeEndEffector;
 import frc.robot.util.OrcestraManager;
+
 import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
 public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final TalonFX leftMotor;
   final TalonFX rightMotor;
+
+  public double outputVelocity = 0.1;
 
   final PositionVoltage p_request;
   final VelocityVoltage v_request;
@@ -64,6 +71,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     OrcestraManager.getInstance().addInstrument(leftMotor);
     OrcestraManager.getInstance().addInstrument(rightMotor);
+
+    SmartDashboard.putNumber("Outake Velocity", outputVelocity);
   }
 
   /** If either motor's velocity is within percentError of speedSetpoint */
@@ -121,7 +130,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     // setMotorSpeed(AlgaeEndEffector.INTAKE_SPEED)).andThen(Commands.waitSeconds(60.0).until(() ->
     // motorStopped()));
     return new SequentialCommandGroup(
-        startIntake(), new WaitUntilCommand(() -> motorStopped()), new WaitCommand(0.25));
+        startIntake(), new WaitUntilCommand(() -> motorStopped()), new WaitCommand(0.25), new WaitUntilCommand(() -> motorStopped()));
   }
 
   public Command holdAlgae() {
@@ -132,6 +141,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
                 rightMotor.getPosition().getValueAsDouble()));
   }
 
+  public Command reverse() {
+    return runOnce(() -> setDuty(0.1));
+  }
+
   private void setDuty(double speed) {
     velocityControl = false;
     leftMotor.set(-speed);
@@ -139,7 +152,11 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startOutake() {
-    return runOnce(() -> setDuty(-1));
+    return runOnce(() -> setDuty(-outputVelocity));
+  }
+
+  public Command startFastOutake() {
+    return runOnce(() -> setDuty(-0.1));
   }
 
   public Command stopMotors() {
@@ -148,6 +165,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    outputVelocity = SmartDashboard.getNumber("Outake Velocity", outputVelocity);
 
     if (velocityControl && upToSpeed(0.2)) {
       upToSpeed = true;

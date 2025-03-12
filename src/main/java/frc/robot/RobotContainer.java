@@ -9,9 +9,13 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -36,10 +40,14 @@ import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
 import frc.robot.util.ReefUtils;
+
 import java.io.File;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import swervelib.math.Matter;
 
 /**
@@ -49,7 +57,7 @@ import swervelib.math.Matter;
 @Logged
 public class RobotContainer {
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
-  ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+  public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
   Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
   SwerveSubsystem swerve =
       new SwerveSubsystem(
@@ -68,12 +76,12 @@ public class RobotContainer {
   DoubleSupplier swerve_x =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
 
   DoubleSupplier swerve_y =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
 
   DoubleSupplier right_stick_up_down =
       () ->
@@ -119,17 +127,22 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Elevator_Algae_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
-    NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(25));
+    NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(22));
 
     NamedCommands.registerCommand(
         "Intake_Algae",
         Commands.sequence(
-            algaeSubsystem.intakeUntilStalled().withTimeout(2), algaeSubsystem.holdAlgae()));
+            algaeSubsystem.intakeUntilStalled().withTimeout(3), algaeSubsystem.holdAlgae()));
 
     NamedCommands.registerCommand(
         "Shoot_Algae",
         Commands.sequence(
             algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+	
+	NamedCommands.registerCommand(
+        "Shoot_Choral",
+        Commands.sequence(
+            algaeSubsystem.startFastOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
 
     Pathfinding.setPathfinder(new LocalADStar());
     PathfindingCommand.warmupCommand().schedule();
@@ -170,12 +183,12 @@ public class RobotContainer {
                     () -> 0,
                     () -> MathUtil.applyDeadband(swerve_turn.getAsDouble(), 0.1))));
 
-    driverXbox
-        .leftTrigger()
-        .onTrue(
-            Commands.defer(
-                () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
-                Set.of(swerve)));
+    // driverXbox
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.defer(
+    //             () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
+    //             Set.of(swerve)));
 
     driverXbox.y().onTrue(m_elevator.setHeightCommand(ElevatorHeights.TOP));
 
@@ -266,13 +279,16 @@ public class RobotContainer {
     driverXbox.rightStick().onTrue(Commands.runOnce(() -> winch.setVoltage(5), winch));
     driverXbox.rightStick().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
 
+	driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
+
     driverXbox
         .leftBumper()
         .onTrue(
-            Commands.either(
-                Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()),
-                algaeSubsystem.stopMotors(),
-                () -> !algaeSubsystem.hasBall().getAsBoolean()));
+            algaeSubsystem.startIntake());
+	
+	driverXbox.leftBumper().onFalse(
+		algaeSubsystem.reverse()
+	);
 
     driverXbox
         .rightBumper()
@@ -280,7 +296,16 @@ public class RobotContainer {
             Commands.sequence(
                 algaeSubsystem.startOutake(),
                 Commands.waitSeconds(0.5),
-                algaeSubsystem.stopMotors()));
+                algaeSubsystem.stopMotors(),
+				Commands.deferredProxy(
+					() -> {
+						if (m_elevator.getHeight() >= ElevatorHeights.TOP-1) {
+							return m_elevator.setHeightCommand(ElevatorHeights.GROUND);
+						}
+						return Commands.none();
+					}
+				)
+		));
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
 
