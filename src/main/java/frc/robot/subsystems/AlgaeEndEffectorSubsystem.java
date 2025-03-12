@@ -130,7 +130,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     // setMotorSpeed(AlgaeEndEffector.INTAKE_SPEED)).andThen(Commands.waitSeconds(60.0).until(() ->
     // motorStopped()));
     return new SequentialCommandGroup(
-        startIntake(), new WaitUntilCommand(() -> motorStopped()), new WaitCommand(0.25), new WaitUntilCommand(() -> motorStopped()));
+        startIntake(), new WaitUntilCommand(() -> motorStopped()));
   }
 
   public Command holdAlgae() {

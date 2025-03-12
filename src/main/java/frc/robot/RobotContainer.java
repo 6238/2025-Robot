@@ -278,13 +278,21 @@ public class RobotContainer {
 
 	driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
 
-    driverXbox
-        .leftBumper()
-        .onTrue(
-            algaeSubsystem.startIntake());
+    // driverXbox
+    //     .leftBumper()
+    //     .onTrue(
+    //         algaeSubsystem.startIntake());
 	
-	driverXbox.leftBumper().onFalse(
-		algaeSubsystem.reverse()
+	// driverXbox.leftBumper().onFalse(
+	// 	algaeSubsystem.reverse()
+	// );
+
+	driverXbox.leftBumper().onTrue(
+		Commands.sequence(
+			algaeSubsystem.intakeUntilStalled(),
+			Commands.waitSeconds(0.1),
+			algaeSubsystem.holdAlgae()
+		)
 	);
 
     driverXbox
