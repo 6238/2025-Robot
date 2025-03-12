@@ -21,7 +21,7 @@ import java.util.Optional;
 @Logged
 public class LEDSubsystem extends SubsystemBase {
   private CANdle candle = new CANdle(40);
-  private final int LED_COUNT = 8; // Just the onboard LEDs
+  private final int LED_COUNT = 62; // Just the onboard LEDs
   private LEDMode currentMode = null;
   private LEDMode lastSentMode = null;
 
@@ -96,7 +96,7 @@ public class LEDSubsystem extends SubsystemBase {
             entry(LEDMode.BLUE_SLOW_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.5, LED_COUNT, 0)),
             entry(LEDMode.RED_FAST_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.8, LED_COUNT, 0)),
             entry(LEDMode.BLUE_FAST_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.8, LED_COUNT, 0)),
-            entry(LEDMode.RAINBOW,          new RainbowAnimation(1.0, 1.0, LED_COUNT)),
+            entry(LEDMode.RAINBOW,          new RainbowAnimation(1.0, 0.5, LED_COUNT)),
             entry(LEDMode.CYAN_CHASE,       new ColorFlowAnimation(10, 250, 182, 0, 0.75, LED_COUNT, Direction.Forward)))
             );
   // spotless:on
