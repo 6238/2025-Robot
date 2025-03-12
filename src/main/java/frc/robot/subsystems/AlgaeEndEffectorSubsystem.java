@@ -110,6 +110,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     rightMotor.setControl(p_request.withPosition(positionR));
   }
 
+  public Command alternateHoldAlgae() {
+    return runOnce(() -> setDuty(0.1));
+  }
+
   private void disableOutput() {
     speedSetpoint = 0;
     velocityControl = true;
