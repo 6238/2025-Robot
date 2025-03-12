@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
@@ -143,6 +144,15 @@ public class RobotContainer {
         "Shoot_Choral",
         Commands.sequence(
             algaeSubsystem.startFastOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+
+	new EventTrigger("Elevator_Algae_L2").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+	new EventTrigger("Elevator_Algae_L3").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+	new EventTrigger("Elevator_Algae_L4").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
+	new EventTrigger("Elevator_Algae_L1").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+	new EventTrigger("Intake").onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
+	new EventTrigger("Start_Intake").onTrue(algaeSubsystem.startIntake());
+	new EventTrigger("Stop_Intake").onTrue(algaeSubsystem.holdAlgae());
+	new EventTrigger("Shoot").onTrue(algaeSubsystem.startOutake());
 
     Pathfinding.setPathfinder(new LocalADStar());
     PathfindingCommand.warmupCommand().schedule();
