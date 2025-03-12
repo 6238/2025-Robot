@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -31,6 +32,7 @@ import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.commands.AimAtAlgae;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
@@ -63,6 +65,7 @@ public class RobotContainer {
           () -> new Matter(new Translation3d(), 0));
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
   WinchSubsystem winch = new WinchSubsystem();
+  LEDSubsystem led = new LEDSubsystem();
   // BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   private static boolean manualModeEnabled = false;
@@ -313,6 +316,12 @@ public class RobotContainer {
 		));
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
+
+    // spotless:off
+    new Trigger(algaeSubsystem.hasBall())
+        .onTrue(led.indicateIntookCommand())
+        .onFalse(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
+    // spotless:on
   }
 
   public Command toggleBrakeMode() {
