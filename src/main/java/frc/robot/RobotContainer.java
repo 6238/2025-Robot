@@ -149,6 +149,7 @@ public class RobotContainer {
 	new EventTrigger("Elevator_Algae_L3").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
 	new EventTrigger("Elevator_Algae_L4").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 	new EventTrigger("Elevator_Algae_L1").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+	new EventTrigger("Elevator_Choral_L1").onTrue(m_elevator.setHeightCommand(25));
 	new EventTrigger("Intake").onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
 	new EventTrigger("Start_Intake").onTrue(algaeSubsystem.startIntake());
 	new EventTrigger("Stop_Intake").onTrue(algaeSubsystem.holdAlgae());

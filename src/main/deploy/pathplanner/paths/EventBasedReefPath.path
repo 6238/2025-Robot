@@ -86,6 +86,12 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "Elevator_Choral_L1",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "Shoot",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
