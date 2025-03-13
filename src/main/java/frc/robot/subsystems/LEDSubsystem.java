@@ -78,7 +78,7 @@ public class LEDSubsystem extends SubsystemBase {
   public Command indicateIntookCommand() {
     return runOnce(
         () -> {
-          currentMode = LEDMode.DAS_FIRE;
+          currentMode = LEDMode.YELLOW_CHASE;
         });
   }
 
