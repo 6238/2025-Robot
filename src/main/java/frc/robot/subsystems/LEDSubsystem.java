@@ -9,6 +9,8 @@ import static java.util.Map.entry;
 import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -76,7 +78,7 @@ public class LEDSubsystem extends SubsystemBase {
   public Command indicateIntookCommand() {
     return runOnce(
         () -> {
-          currentMode = LEDMode.CYAN_CHASE;
+          currentMode = LEDMode.DAS_FIRE;
         });
   }
 
@@ -86,7 +88,10 @@ public class LEDSubsystem extends SubsystemBase {
     RED_FAST_PULSE,
     BLUE_FAST_PULSE,
     RAINBOW,
-    CYAN_CHASE
+    CYAN_CHASE,
+    YELLOW_CHASE,
+    SCANNER,
+    DAS_FIRE
   }
 
   // spotless:off
@@ -97,7 +102,10 @@ public class LEDSubsystem extends SubsystemBase {
             entry(LEDMode.RED_FAST_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.8, LED_COUNT, 8)),
             entry(LEDMode.BLUE_FAST_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.8, LED_COUNT, 8)),
             entry(LEDMode.RAINBOW,          new RainbowAnimation(1.0, 0.5, LED_COUNT, false, 8)),
-            entry(LEDMode.CYAN_CHASE,       new ColorFlowAnimation(10, 250, 182, 0, 0.75, LED_COUNT, Direction.Forward, 8)))
-            );
+            entry(LEDMode.CYAN_CHASE,       new ColorFlowAnimation(10, 250, 182, 0, 0.8, LED_COUNT, Direction.Backward, 8)),
+            entry(LEDMode.YELLOW_CHASE,     new ColorFlowAnimation(255, 191, 0, 0, 0.8, LED_COUNT, Direction.Backward, 8)),
+            entry(LEDMode.SCANNER,          new LarsonAnimation(255, 191, 0, 0, 0.8, LED_COUNT, BounceMode.Back, 7, 8)),
+            entry(LEDMode.DAS_FIRE,         new FireAnimation(0.75, 0.7, LED_COUNT, 0.7, 0.2))
+            ));
   // spotless:on
 }

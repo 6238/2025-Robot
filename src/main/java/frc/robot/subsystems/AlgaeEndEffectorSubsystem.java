@@ -27,6 +27,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   boolean upToSpeed = false;
   boolean velocityControl = true;
+  boolean position = false;
   double speedSetpoint = 0.0;
 
   public AlgaeEndEffectorSubsystem() {
@@ -37,9 +38,9 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     var slot0Configs = talonFXConfigs.Slot0;
 
-    slot0Configs.kP = 16.5; // An error of 1 rotation results in 2.4 V output
-    slot0Configs.kI = 0.4; // no output for integrated error
-    slot0Configs.kD = 0.4; // A velocity of 1 rps results in 0.1 V output
+    slot0Configs.kP = 12; // An error of 1 rotation results in 2.4 V output
+    slot0Configs.kI = 0.2; // no output for integrated error
+    slot0Configs.kD = 0.2; // A velocity of 1 rps results in 0.1 V output
 
     var slot1Configs = talonFXConfigs.Slot1;
 
@@ -87,10 +88,11 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public BooleanSupplier hasBall() {
-    return () -> velocityControl == false;
+    return () -> position;
   }
 
   private void setMotorSpeed(double speed) {
+    position = false;
     upToSpeed = upToSpeed(0.1);
     velocityControl = true;
     speedSetpoint = speed;
@@ -101,6 +103,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   private void setMotorPositions(double positionL, double positionR) {
     upToSpeed = false;
     velocityControl = false;
+    position = true;
     leftMotor.setControl(p_request.withPosition(positionL));
     rightMotor.setControl(p_request.withPosition(positionR));
   }
@@ -110,6 +113,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void disableOutput() {
+    position = false;
     speedSetpoint = 0;
     velocityControl = true;
     leftMotor.set(0);
@@ -144,9 +148,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   private void setDuty(double speed) {
+    position = false;
     velocityControl = false;
-    leftMotor.set(-speed);
-    rightMotor.set(speed);
+    leftMotor.setVoltage(12*-speed);
+    rightMotor.setVoltage(12*speed);
   }
 
   public Command startOutake() {
@@ -164,11 +169,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     outputVelocity = SmartDashboard.getNumber("Outake Velocity", outputVelocity);
-
-    if (velocityControl && upToSpeed(0.2)) {
-      upToSpeed = true;
-    } else {
-      upToSpeed = false; // is this breaking?
+    if (upToSpeed == false) {
+      upToSpeed = upToSpeed(0.2);
     }
   }
 }

@@ -27,22 +27,10 @@ import java.util.Map;
 public class WinchSubsystem extends SubsystemBase {
 
   private final TalonFX motor = new TalonFX(Winch.MOTOR_ID);
-  private final PositionVoltage positionRequest = new PositionVoltage(0.0);
   private final NeutralOut neutralRequest = new NeutralOut();
-
-  public static enum Position {
-    /** Initial state */
-    UNKNOWN,
-    /** Fully retracted to lift the robot */
-    PULL,
-    /** Fully outward to grab onto cage */
-    GRAB
-  }
-
-  public static final Map<Position, Double> POSITIONS =
-      Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, -200.0));
-
-  private Position currentPosition = Position.UNKNOWN;
+  
+  public static final double MAX = 200;
+  public static final double MIN = 50;
 
   /** Creates a new WinchSubsystem. */
   public WinchSubsystem() {
@@ -53,67 +41,26 @@ public class WinchSubsystem extends SubsystemBase {
     OrcestraManager.getInstance().addInstrument(motor);
 
     motor.setNeutralMode(NeutralModeValue.Brake);
-    motor.setControl(neutralRequest);
-    var slotConfigs = new Slot0Configs();
-    slotConfigs.kP = Winch.Gains.kP;
-    slotConfigs.kI = Winch.Gains.kI;
-    slotConfigs.kD = Winch.Gains.kD;
-    motor.getConfigurator().apply(slotConfigs);
-
-    isAtGrabPosition()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  motor.setPosition(0);
-                  currentPosition = Position.GRAB;
-                }));
   }
 
-  /** Sends the arm to the outward ("grab") position. */
-  public Command toGrab() {
-    return startEnd(
-            () -> {
-              motor.setControl(positionRequest.withPosition(POSITIONS.get(Position.GRAB)));
-            },
-            () -> {
-              motor.setControl(neutralRequest);
-            })
-        .until(this.isAtGrabPosition());
+  public void raise() {
+    if (motor.getPosition().getValueAsDouble() > MIN) {
+      motor.setVoltage(-12);
+    } else {
+      motor.setVoltage(0);
+    }
   }
 
-  public Command toPull() {
-    return startEnd(
-            () -> {
-              motor.setControl(positionRequest.withPosition(POSITIONS.get(Position.PULL)));
-            },
-            () -> {
-              motor.setControl(neutralRequest);
-            })
-        .until(this.isAtPullPosition());
-  }
-
-  public void setVoltage(double volts) {
-    motor.setVoltage(volts);
+  public void lower() {
+    if (motor.getPosition().getValueAsDouble() < MAX) {
+      motor.setVoltage(12);
+    } else {
+      motor.setVoltage(0);
+    }
   }
 
   public void stopMotor() {
     motor.setVoltage(0);
-  }
-
-  private boolean limitTriggered() {
-    return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
-  }
-
-  private boolean isAtPosition(Position pos) {
-    return Math.abs(motor.getPosition().getValueAsDouble() - POSITIONS.get(pos)) <= Winch.TOLERANCE;
-  }
-
-  public Trigger isAtPullPosition() {
-    return new Trigger(() -> this.isAtPosition(Position.PULL));
-  }
-
-  public Trigger isAtGrabPosition() {
-    return new Trigger(this::limitTriggered);
   }
 
   @Override

@@ -93,7 +93,7 @@ public final class Constants {
       public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
       public static final double STOW = 0;
-      public static final double GROUND = 7.5;
+      public static final double GROUND = 7;
       public static final double L1_25 = 12.5;
       public static final double L1_5 = 18.5;
       public static final double L2 = 34;
@@ -127,7 +127,7 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 100;
+    public static final double INTAKE_SPEED = 40;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -149,14 +149,14 @@ public final class Constants {
                   Degrees.of(0).in(Radians),
                   Degrees.of(-10).in(Radians),
                   Degrees.of(180 + 45).in(Radians)))),
-      new CameraSettings(
-          "BL",
-          new Transform3d(
-              new Translation3d(Inches.of(7), Inches.of(-10), Inches.of(26.25)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(90).in(Radians)))),
+      // new CameraSettings(
+      //     "BL",
+      //     new Transform3d(
+      //         new Translation3d(Inches.of(7), Inches.of(-10), Inches.of(26.25)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(90).in(Radians)))),
       new CameraSettings(
           "FR",
           new Transform3d(

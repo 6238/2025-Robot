@@ -10,12 +10,14 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -174,6 +176,12 @@ public class RobotContainer {
   private void configureTriggers() {
     // Controls
 
+    new Trigger(algaeSubsystem.hasBall()).onTrue(Commands.sequence(
+        Commands.runOnce(() -> driverXbox.setRumble(RumbleType.kBothRumble, 1)),
+        Commands.waitSeconds(0.5),
+        Commands.runOnce(() -> driverXbox.setRumble(RumbleType.kBothRumble, 0))
+    ));
+
     driverXbox.rightStick().onTrue(Commands.run(() -> manualModeEnabled = !manualModeEnabled));
     driverXbox
         .back()
@@ -267,12 +275,12 @@ public class RobotContainer {
     driverXbox
         .a()
         .whileTrue(
-            Commands.either(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.parallel(
-                    m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                    new AimAtAlgae(visionSubsystem, swerve)),
-                () -> manualModeEnabled));
+            // Commands.either(
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND));
+                // Commands.parallel(
+                    // m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                    // new AimAtAlgae(visionSubsystem, swerve)),
+                // () -> manualModeEnabled));
 
     // driverXbox.leftTrigger().onTrue(Commands.parallel(
     // m_elevator.setHeightCommand(ElevatorHeights.GROUND),
@@ -281,11 +289,11 @@ public class RobotContainer {
     driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
     driverXbox.povRight().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
 
-    driverXbox.povDown().onTrue(winch.toGrab());
-    driverXbox.povUp().onTrue(winch.toPull());
+    driverXbox.povDown().whileTrue(Commands.run(() -> winch.lower(), winch)); // must be run repeatedly
+    driverXbox.povDown().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
 
-    driverXbox.rightStick().onTrue(Commands.runOnce(() -> winch.setVoltage(5), winch));
-    driverXbox.rightStick().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
+    driverXbox.povUp().whileTrue(Commands.run(() -> winch.raise(), winch)); // must be run repeatedly
+    driverXbox.povUp().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
 
     driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
 

@@ -71,17 +71,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     motorConfig.kI = Gains.kI;
     motorConfig.kD = Gains.kD;
 
-    Slot1Configs downMotorConfig = elevatorMotorConfigs.Slot1;
-
-    downMotorConfig.GravityType = GravityTypeValue.Elevator_Static;
-    downMotorConfig.kS = Gains.kS;
-    downMotorConfig.kG = 0; // Traveling down
-    downMotorConfig.kV = Gains.kV * 1.25; // Faster
-    downMotorConfig.kA = Gains.kA * 1.25; // Faster
-    downMotorConfig.kP = Gains.kP * 1.25; // Faster
-    downMotorConfig.kI = Gains.kI;
-    downMotorConfig.kD = Gains.kD;
-
     elevatorMotorConfigs.MotionMagic.MotionMagicCruiseVelocity =
         Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
     elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
@@ -177,13 +166,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    if (getHeight() < 4.5 && getTargetHeight() < 4.5) {
-      leaderMotor.setVoltage(-1.75);
-    }
-
-    if (getHeight() < 1.25) {
+    SmartDashboard.putNumber(
+      "elevator height",
+      leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    SmartDashboard.putNumber(
+        "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+    if (getHeight() < 0.5 && getTargetHeight() < 4.5) {
       leaderMotor.setVoltage(0);
+      return;
+    }
+    
+    if (getHeight() < 4.5 && getTargetHeight() < 4.5) {
+      leaderMotor.setVoltage(-1.5);
+      return;
     }
 
     if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78
@@ -203,12 +198,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else {
       leaderMotor.setControl(m_request.withPosition(goal.position).withSlot(slotNum));
     }
-
-    SmartDashboard.putNumber(
-        "elevator height",
-        leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
-    SmartDashboard.putNumber(
-        "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
   }
 
   public boolean reachedState() {
