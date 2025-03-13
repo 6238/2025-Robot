@@ -1,0 +1,142 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.750930989583333,
+        "y": 4.761752025462963
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.259452401620369,
+        "y": 4.3271661603009255
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.878828486689814,
+        "y": 4.015741102430556
+      },
+      "prevControl": {
+        "x": 6.406702112268517,
+        "y": 4.018361545138888
+      },
+      "nextControl": {
+        "x": 5.370523864170826,
+        "y": 4.0132178031461265
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.655120081018518,
+        "y": 4.015741102430556
+      },
+      "prevControl": {
+        "x": 6.395201280381945,
+        "y": 3.8842531105324083
+      },
+      "nextControl": {
+        "x": 6.915038881655091,
+        "y": 4.147229094328703
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.878828486689814,
+        "y": 4.015741102430556
+      },
+      "prevControl": {
+        "x": 6.094282253468952,
+        "y": 4.142546758379654
+      },
+      "nextControl": {
+        "x": 5.663374719910676,
+        "y": 3.888935446481458
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.044517867476851,
+        "y": 5.810336733217593
+      },
+      "prevControl": {
+        "x": 7.371025028935185,
+        "y": 3.9654868344907412
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 3.434621710526315,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator_Choral_L1",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Elevator_Algae_L2",
+      "waypointRelativePos": 1.6854277188328919,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Start_Intake"
+        }
+      }
+    },
+    {
+      "name": "Stop_Intake",
+      "waypointRelativePos": 3.4355520557029178,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Elevator_Algae_L4"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 25.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

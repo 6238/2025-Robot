@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static java.util.Map.entry;
 
+import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Winch;
+import frc.robot.util.OrcestraManager;
 import java.util.Map;
 
 @Logged
@@ -38,12 +40,18 @@ public class WinchSubsystem extends SubsystemBase {
   }
 
   public static final Map<Position, Double> POSITIONS =
-      Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, -270.0));
+      Map.ofEntries(entry(Position.GRAB, 0.0), entry(Position.PULL, -200.0));
 
   private Position currentPosition = Position.UNKNOWN;
 
   /** Creates a new WinchSubsystem. */
   public WinchSubsystem() {
+    AudioConfigs audioConfigs = new AudioConfigs();
+    audioConfigs.AllowMusicDurDisable = true;
+    motor.getConfigurator().apply(audioConfigs);
+
+    OrcestraManager.getInstance().addInstrument(motor);
+
     motor.setNeutralMode(NeutralModeValue.Brake);
     motor.setControl(neutralRequest);
     var slotConfigs = new Slot0Configs();
@@ -51,6 +59,7 @@ public class WinchSubsystem extends SubsystemBase {
     slotConfigs.kI = Winch.Gains.kI;
     slotConfigs.kD = Winch.Gains.kD;
     motor.getConfigurator().apply(slotConfigs);
+
     isAtGrabPosition()
         .onTrue(
             Commands.runOnce(
@@ -81,6 +90,14 @@ public class WinchSubsystem extends SubsystemBase {
               motor.setControl(neutralRequest);
             })
         .until(this.isAtPullPosition());
+  }
+
+  public void setVoltage(double volts) {
+    motor.setVoltage(volts);
+  }
+
+  public void stopMotor() {
+    motor.setVoltage(0);
   }
 
   private boolean limitTriggered() {

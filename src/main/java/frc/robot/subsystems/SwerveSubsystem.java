@@ -87,6 +87,7 @@ public class SwerveSubsystem extends SubsystemBase {
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
       swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED);
+
     } catch (Exception e) {
       DataLogManager.log("EXSITS: " + directory.exists());
       throw new RuntimeException(e);
@@ -115,21 +116,23 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     // todo: all this is dead code and i wanna test it
-    ChassisSpeeds velocity = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
     List<Matter> objects = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
     double totalMass = objects.stream().mapToDouble((x) -> x.mass).sum(); // yagsl shoud calc this
-    Translation2d limitedTranslation =
-        SwerveMath.limitVelocity(
-            translation,
-            velocity,
-            getPose(),
-            Constants.LOOP_TIME,
-            totalMass,
-            objects,
-            swerveDrive.swerveDriveConfiguration);
+    // Translation2d limitedTranslation =
+    //     SwerveMath.limitVelocity(
+    //         translation,
+    //         getFieldVelocity(),
+    //         getPose(),
+    //         Constants.LOOP_TIME,
+    //         totalMass,
+    //         objects,
+    //         swerveDrive.swerveDriveConfiguration);
+
+    // SmartDashboard.putNumber("translation_X", limitedTranslation.getX());
+    // SmartDashboard.putNumber("translation_Y", limitedTranslation.getY());
 
     swerveDrive.drive(
-        limitedTranslation,
+        translation,
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.
@@ -486,16 +489,41 @@ public class SwerveSubsystem extends SubsystemBase {
           Optional<Alliance> ally = DriverStation.getAlliance();
           double sign = 1.0;
           if (ally.isPresent()) {
-            sign = (ally.get() == Alliance.Blue) ? 1.0 : -1.0;
+            sign = (ally.get() == Alliance.Blue) ? -1.0 : 1.0;
           }
+          double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
+          double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+          // Make the robot move
+          double rotation = Math.pow(rotationSpeed.getAsDouble(), 3) * MAX_ANGULAR_VELOCITY;
+
+          Translation2d translation =
+              new Translation2d(sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
+          this.drive(translation, rotation, true);
+        });
+  }
+
+  /**
+   * Command to drive the robot using translative values and heading as a setpoint.
+   *
+   * @param translationX Translation in the X direction. Cubed for smoother controls.
+   * @param translationY Translation in the Y direction. Cubed for smoother controls.
+   * @param headingX Heading X to calculate angle of the joystick.
+   * @param headingY Heading Y to calculate angle of the joystick.
+   * @return Drive command.
+   */
+  public Command driveCommandRobotRelative(
+      DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotationSpeed) {
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for this kind of control.
+    return run(
+        () -> {
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
           double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
           // Make the robot move
           double rotation = rotationSpeed.getAsDouble() * MAX_ANGULAR_VELOCITY;
 
-          Translation2d translation =
-              new Translation2d(sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
-          this.drive(translation, rotation, true);
+          Translation2d translation = new Translation2d(xInput * MAX_SPEED, yInput * MAX_SPEED);
+          this.drive(translation, rotation, false);
         });
   }
 }

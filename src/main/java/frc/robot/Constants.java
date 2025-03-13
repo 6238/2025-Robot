@@ -20,8 +20,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.XboxController.Axis;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.util.CameraSettings;
 import java.io.File;
 import java.util.Map;
@@ -41,27 +39,6 @@ public final class Constants {
   public final class IDs {
     public static final int ELEVATOR_LEADER_MOTOR = 50;
     public static final int ELEVATOR_FOLLOWER_MOTOR = 51;
-  }
-
-  public final class ControlMapping {
-    public static final Axis FORWARD_BACKWARD = Axis.kLeftY;
-    public static final Axis LEFT_RIGHT = Axis.kLeftX;
-    public static final Axis TURN = Axis.kRightX;
-
-    public static final Button GROUND = Button.kA;
-    public static final Button MOVE_TO_BARGE = Button.kX;
-    public static final Button LIFT_TO_REEF = Button.kB;
-    public static final Button CHASE_CORAL = Button.kY;
-
-    public static final Axis MOVE_TO_BARGE_AXIS = Axis.kLeftTrigger;
-    public static final double MOVE_TO_BARGE_THRESHOLD = 0.5;
-
-    public static final Button OUTTAKE = Button.kRightBumper;
-    public static final Button INTAKE = Button.kLeftBumper;
-
-    public static final Axis ELEVATOR_RAISE_LOWER = Axis.kRightY;
-    public static final double ELEVATOR_ADJUST_THRESHOLD = 0.25;
-    public static final double ELEVATOR_ADJUST_SPEED_DECREASE = 50;
   }
 
   /** The robot's maximum angular velocity. */
@@ -93,33 +70,37 @@ public final class Constants {
     public final class Gains {
       // From SysID routine
       public static final double kS = 0.041645; // voltage to overcome static friction
-      public static final double kG = 0.42517; // voltage to overcome gravity
-      public static final double kV = 0.12811; // volts per 1 rps
-      public static final double kA = 0.0060141; // volts per 1 rps/s
+      public static final double kG = 0.38; // voltage to overcome gravity
+      public static final double kV =
+          8.84 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
+      public static final double kA =
+          0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 0.6;
+      public static final double kg_Top = 1.6;
 
       // PID for correcting errors
-      public static final double kP = 5;
+      public static final double kP = 3;
       public static final double kI = 0.05;
       public static final double kD = 0;
     }
 
     public final class ElevatorHeights {
-      public static final double ELEVATOR_GEAR_RATIO = (45.1236) / 80;
+      public static final double ELEVATOR_GEAR_RATIO = (42.6) / 80.5;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 4;
-      public static final double ELEVATOR_MAX_HEIGHT = 72.25;
+      public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+      public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
-      public static final double GROUND = 9.0;
-      public static final double L1_25 = 14.0;
-      public static final double L1_5 = 20.0;
-      public static final double L2 = 31.5;
-      public static final double L3 = 45;
-      public static final double TOP = 72.25; // MAX HEIGHT
+      public static final double STOW = 0;
+      public static final double GROUND = 7.5;
+      public static final double L1_25 = 12.5;
+      public static final double L1_5 = 18.5;
+      public static final double L2 = 34;
+      public static final double L3 = 50;
+      public static final double TOP = 80; // MAX HEIGHT
 
+      // TODO
       public static final double REACH_STATE_THRES = 0.1;
     }
 
@@ -130,9 +111,14 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 20.0;
-    public static final double MAX_ACCEL = 30.0;
-    public static final double JERK = 800.0;
+    public static final double MAX_VELOCITY = 50.0;
+    public static final double MAX_ACCEL = 60.0;
+    public static final double JERK = 1000.0;
+
+    // Alternate Profiles
+    public static final double FALLING_MAX_VELOCITY = 70.0;
+    public static final double FALLING_MAX_ACCEL = 90.0;
+    public static final double FALLING_JERK = 1600.0;
   }
 
   public final class AlgaeEndEffector {
@@ -141,7 +127,7 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 32.5;
+    public static final double INTAKE_SPEED = 100;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -158,23 +144,23 @@ public final class Constants {
       new CameraSettings(
           "BR",
           new Transform3d(
-              new Translation3d(Inches.of(-10.5), Inches.of(-10.5), Inches.of(10)),
+              new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(9.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
+                  Degrees.of(-10).in(Radians),
                   Degrees.of(180 + 45).in(Radians)))),
       new CameraSettings(
           "BL",
           new Transform3d(
-              new Translation3d(Inches.of(-10.5), Inches.of(10.5), Inches.of(10)),
+              new Translation3d(Inches.of(7), Inches.of(-10), Inches.of(26.25)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(0).in(Radians),
-                  Degrees.of(180 - 45).in(Radians)))),
+                  Degrees.of(90).in(Radians)))),
       new CameraSettings(
           "FR",
           new Transform3d(
-              new Translation3d(Inches.of(3.5), Inches.of(-14.5), Inches.of(15.5)),
+              new Translation3d(Inches.of(7), Inches.of(10), Inches.of(26.25)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(0).in(Radians),
@@ -183,8 +169,22 @@ public final class Constants {
 
     public static final String ALGAECAM_NAME = "AlgaeCam";
 
+    public static boolean USE_VISION = false;
+
+    public static boolean USE_ODOM_CUTOFF = false;
+    public static final double ODOM_DIST_CUTOFF = 0.5; // Meters
+
+
+    public static boolean USE_LAST_DIST_CUTOFF = false;
+    public static final double LAST_DIST_MAX_TIME = 0.2; // Seconds between last camera pose and this one
+    public static final double LAST_DIST_CUTOFF = 0.5; // Meters
+
+
     public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {12, 0, 12, 0, 16});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});
+
+    public static final Matrix<N3, N1> INCREMENT_STDDEV =
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.07, 0.07, 0});
   }
 
   public final class Winch {
@@ -200,8 +200,8 @@ public final class Constants {
   }
 
   public final class AutoMoveGeneration {
-    public static final double BARGE_X_BLUE = 7.5;
-    public static final double BARGE_X_RED = 10.5;
+    public static final double BARGE_X_BLUE = 7.1;
+    public static final double BARGE_X_RED = 10.75;
 
     public static final double BARGE_SPEED = 0.8;
     public static final double BARGE_THRESHOLD = 0.2;
@@ -221,10 +221,13 @@ public final class Constants {
      *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_BLUE = new Pose2d(7.250, 6, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_BLUE = new Pose2d(7.104, 5.65, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_BLUE_FLIPPED =
         new Pose2d(10.250, 6, Rotation2d.fromDegrees(0));
-    public static final Pose2d BARGE_RED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+
+    public static final Pose2d PROCESSOR_RED = new Pose2d();
+    public static final Pose2d PROCESSOR_BLUE = new Pose2d();
   }
 }

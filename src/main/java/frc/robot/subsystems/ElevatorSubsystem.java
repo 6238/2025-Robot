@@ -5,13 +5,13 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -29,6 +29,7 @@ import frc.robot.Constants.Elevator.DYNAMICS;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.Elevator.Gains;
 import frc.robot.Constants.IDs;
+import frc.robot.util.OrcestraManager;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.math.Matter;
@@ -48,18 +49,18 @@ public class ElevatorSubsystem extends SubsystemBase {
   private NeutralModeValue neutralModeValue = NeutralModeValue.Brake;
 
   private BooleanSupplier hasBall;
+  private int slotNum = 0;
 
   public ElevatorSubsystem(BooleanSupplier hasBall) {
-    leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR);
-    followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR);
+    leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR, "canivore");
+    followerMotor = new TalonFX(IDs.ELEVATOR_FOLLOWER_MOTOR, "canivore");
 
     this.hasBall = hasBall;
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
+    var fastElevatorMotorConfigs = new TalonFXConfiguration();
 
     Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
-
-    elevatorMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     motorConfig.GravityType = GravityTypeValue.Elevator_Static;
     motorConfig.kS = Gains.kS;
@@ -70,24 +71,37 @@ public class ElevatorSubsystem extends SubsystemBase {
     motorConfig.kI = Gains.kI;
     motorConfig.kD = Gains.kD;
 
-    var motionMagicConfigs = elevatorMotorConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity =
-        Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration =
-        Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
-    motionMagicConfigs.MotionMagicJerk = Elevator.JERK;
+    Slot1Configs downMotorConfig = elevatorMotorConfigs.Slot1;
 
+    downMotorConfig.GravityType = GravityTypeValue.Elevator_Static;
+    downMotorConfig.kS = Gains.kS;
+    downMotorConfig.kG = 0; // Traveling down
+    downMotorConfig.kV = Gains.kV * 1.25; // Faster
+    downMotorConfig.kA = Gains.kA * 1.25; // Faster
+    downMotorConfig.kP = Gains.kP * 1.25; // Faster
+    downMotorConfig.kI = Gains.kI;
+    downMotorConfig.kD = Gains.kD;
+
+    elevatorMotorConfigs.MotionMagic.MotionMagicCruiseVelocity =
+        Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
+      elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
+        Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
+      elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.JERK;
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
-    followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, false));
+
+    followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));
 
     leaderMotor.setNeutralMode(neutralModeValue);
     followerMotor.setNeutralMode(neutralModeValue);
+
+    OrcestraManager.getInstance().addInstrument(leaderMotor);
+    OrcestraManager.getInstance().addInstrument(followerMotor);
 
     this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
   }
 
   public Command setHeightCommand(double givenHeight) {
-    return run(() -> setHeight(givenHeight));
+    return runOnce(() -> setHeight(givenHeight));
   }
 
   public double getTargetHeight() {
@@ -112,6 +126,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
     double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
     goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
+    // if (height < getHeight()) {
+    //   slotNum = 1;
+    // } else {
+    //   slotNum = 0;
+    // }
   }
 
   public Command increaseHeight(DoubleSupplier speed) {
@@ -158,22 +177,33 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (limit.get() && leaderMotor.getPosition().getValueAsDouble() != 0) {
-      resetEncoder();
+
+    if (getHeight() < 4.5 && getTargetHeight() < 4.5) {
+      leaderMotor.setVoltage(-1.75);
     }
 
-    if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
-      if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 60) {
+    if (getHeight() < 1.25) {
+      leaderMotor.setVoltage(0);
+    }
+
+    if (goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO > 78
+        && leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO
+            > 78) {
+      if (leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO > 82) {
+        leaderMotor.setVoltage(Elevator.Gains.kg_Top - 0.35);
+      } else {
         leaderMotor.setVoltage(Elevator.Gains.kg_Top);
-      } else if (hasBall.getAsBoolean()) {
+      }
+    } else if (Math.abs(leaderMotor.getPosition().getValueAsDouble() - goal.position) < 0.15) {
+      if (hasBall.getAsBoolean()) {
         leaderMotor.setVoltage(Elevator.Gains.kg_Ball);
       } else {
         leaderMotor.setVoltage(Elevator.Gains.kG);
       }
     } else {
-      leaderMotor.setControl(
-          m_request.withPosition(goal.position).withLimitReverseMotion(limit.get()));
+      leaderMotor.setControl(m_request.withPosition(goal.position).withSlot(slotNum));
     }
+
     SmartDashboard.putNumber(
         "elevator height",
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
