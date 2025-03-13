@@ -10,13 +10,9 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -40,15 +36,9 @@ import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
-import frc.robot.util.ReefUtils;
-
 import java.io.File;
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DataLogManager;
 import swervelib.math.Matter;
 
 /**
@@ -139,21 +129,28 @@ public class RobotContainer {
         "Shoot_Algae",
         Commands.sequence(
             algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
-	
-	NamedCommands.registerCommand(
+
+    NamedCommands.registerCommand(
         "Shoot_Choral",
         Commands.sequence(
-            algaeSubsystem.startFastOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+            algaeSubsystem.startFastOutake(),
+            Commands.waitSeconds(0.5),
+            algaeSubsystem.stopMotors()));
 
-	new EventTrigger("Elevator_Algae_L2").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
-	new EventTrigger("Elevator_Algae_L3").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-	new EventTrigger("Elevator_Algae_L4").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
-	new EventTrigger("Elevator_Algae_L1").onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
-	new EventTrigger("Elevator_Choral_L1").onTrue(m_elevator.setHeightCommand(25));
-	new EventTrigger("Intake").onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
-	new EventTrigger("Start_Intake").onTrue(algaeSubsystem.startIntake());
-	new EventTrigger("Stop_Intake").onTrue(algaeSubsystem.holdAlgae());
-	new EventTrigger("Shoot").onTrue(algaeSubsystem.startOutake());
+    new EventTrigger("Elevator_Algae_L2")
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    new EventTrigger("Elevator_Algae_L3")
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+    new EventTrigger("Elevator_Algae_L4")
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
+    new EventTrigger("Elevator_Algae_L1")
+        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+    new EventTrigger("Elevator_Choral_L1").onTrue(m_elevator.setHeightCommand(25));
+    new EventTrigger("Intake")
+        .onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
+    new EventTrigger("Start_Intake").onTrue(algaeSubsystem.startIntake());
+    new EventTrigger("Stop_Intake").onTrue(algaeSubsystem.holdAlgae());
+    new EventTrigger("Shoot").onTrue(algaeSubsystem.startOutake());
 
     Pathfinding.setPathfinder(new LocalADStar());
     PathfindingCommand.warmupCommand().schedule();
@@ -290,24 +287,24 @@ public class RobotContainer {
     driverXbox.rightStick().onTrue(Commands.runOnce(() -> winch.setVoltage(5), winch));
     driverXbox.rightStick().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
 
-	driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
+    driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
 
     // driverXbox
     //     .leftBumper()
     //     .onTrue(
     //         algaeSubsystem.startIntake());
-	
-	// driverXbox.leftBumper().onFalse(
-	// 	algaeSubsystem.reverse()
-	// );
 
-	driverXbox.leftBumper().onTrue(
-		Commands.sequence(
-			algaeSubsystem.intakeUntilStalled(),
-			Commands.waitSeconds(0.1),
-			algaeSubsystem.holdAlgae()
-		)
-	);
+    // driverXbox.leftBumper().onFalse(
+    // 	algaeSubsystem.reverse()
+    // );
+
+    driverXbox
+        .leftBumper()
+        .onTrue(
+            Commands.sequence(
+                algaeSubsystem.intakeUntilStalled(),
+                Commands.waitSeconds(0.1),
+                algaeSubsystem.holdAlgae()));
 
     driverXbox
         .rightBumper()
@@ -316,15 +313,13 @@ public class RobotContainer {
                 algaeSubsystem.startOutake(),
                 Commands.waitSeconds(0.5),
                 algaeSubsystem.stopMotors(),
-				Commands.deferredProxy(
-					() -> {
-						if (m_elevator.getHeight() >= ElevatorHeights.TOP-1) {
-							return m_elevator.setHeightCommand(ElevatorHeights.GROUND);
-						}
-						return Commands.none();
-					}
-				)
-		));
+                Commands.deferredProxy(
+                    () -> {
+                      if (m_elevator.getHeight() >= ElevatorHeights.TOP - 1) {
+                        return m_elevator.setHeightCommand(ElevatorHeights.GROUND);
+                      }
+                      return Commands.none();
+                    })));
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
 

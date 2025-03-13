@@ -9,15 +9,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Vision;
 import frc.robot.util.Camera;
 import frc.robot.util.CameraSettings;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
 public class VisionSubsystem extends SubsystemBase {
@@ -67,12 +63,21 @@ public class VisionSubsystem extends SubsystemBase {
         return;
       }
 
-      if (Vision.USE_ODOM_CUTOFF && pose.get().estimatedPose.getTranslation().toTranslation2d().getDistance(swerve.getPose().getTranslation()) > Vision.ODOM_DIST_CUTOFF) {
+      if (Vision.USE_ODOM_CUTOFF
+          && pose.get()
+                  .estimatedPose
+                  .getTranslation()
+                  .toTranslation2d()
+                  .getDistance(swerve.getPose().getTranslation())
+              > Vision.ODOM_DIST_CUTOFF) {
         continue;
       }
 
       if (cameras.get(i).ambiguity < 0.3) {
-        swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV.plus(Vision.INCREMENT_STDDEV.times(Math.pow(cameras.get(i).area, 2))));
+        swerve.addVisionPose(
+            pose.get(),
+            Vision.VISION_STDDEV.plus(
+                Vision.INCREMENT_STDDEV.times(Math.pow(cameras.get(i).area, 2))));
         count += 1;
       }
     }

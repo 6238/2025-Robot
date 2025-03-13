@@ -84,9 +84,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     elevatorMotorConfigs.MotionMagic.MotionMagicCruiseVelocity =
         Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
-      elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
+    elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
         Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
-      elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.JERK;
+    elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.JERK;
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
 
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));

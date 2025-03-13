@@ -1,20 +1,17 @@
 package frc.robot.util;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.Vision;
+import frc.robot.telemetry.Alert;
 import java.util.Optional;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants.Vision;
-import frc.robot.telemetry.Alert;
 
 /**
  * Utility class to work with reading from a camera attached via PhotonVision and feeding the data
@@ -72,7 +69,7 @@ public class Camera {
       }
 
       pose = poseEst.update(result, cam.getCameraMatrix(), cam.getDistCoeffs());
-      
+
       boolean lastPoseExists = lastPose3d != null;
       boolean withinMaxTime = Timer.getTimestamp() - lastPoseTimestamp < Vision.LAST_DIST_MAX_TIME;
 
@@ -81,13 +78,15 @@ public class Camera {
       }
 
       if (lastPoseExists) {
-        boolean exceedsDist = pose.get().estimatedPose.getTranslation().getDistance(lastPose3d.getTranslation()) > 0.75;
+        boolean exceedsDist =
+            pose.get().estimatedPose.getTranslation().getDistance(lastPose3d.getTranslation())
+                > 0.75;
         if (Vision.USE_LAST_DIST_CUTOFF && withinMaxTime && exceedsDist) {
           return Optional.empty();
         }
       }
     }
-    
+
     if (pose.isPresent()) {
       lastPose3d = pose.get().estimatedPose;
       lastPoseTimestamp = Timer.getTimestamp();

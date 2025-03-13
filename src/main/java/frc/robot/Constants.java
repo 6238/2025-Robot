@@ -174,11 +174,10 @@ public final class Constants {
     public static boolean USE_ODOM_CUTOFF = false;
     public static final double ODOM_DIST_CUTOFF = 0.5; // Meters
 
-
     public static boolean USE_LAST_DIST_CUTOFF = false;
-    public static final double LAST_DIST_MAX_TIME = 0.2; // Seconds between last camera pose and this one
+    public static final double LAST_DIST_MAX_TIME =
+        0.2; // Seconds between last camera pose and this one
     public static final double LAST_DIST_CUTOFF = 0.5; // Meters
-
 
     public static final Matrix<N3, N1> VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});

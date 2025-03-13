@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.lang.invoke.ConstantBootstraps;
-
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.net.WebServer;
@@ -36,9 +34,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    Constants.Vision.USE_LAST_DIST_CUTOFF = SmartDashboard.getBoolean("USE_LAST_DIST_CUTOFF", Constants.Vision.USE_LAST_DIST_CUTOFF);
-    Constants.Vision.USE_ODOM_CUTOFF = SmartDashboard.getBoolean("USE_ODOM_CUTOFF", Constants.Vision.USE_ODOM_CUTOFF);
-    Constants.Vision.USE_VISION =  SmartDashboard.getBoolean("USE_VISION", Constants.Vision.USE_VISION);
+    Constants.Vision.USE_LAST_DIST_CUTOFF =
+        SmartDashboard.getBoolean("USE_LAST_DIST_CUTOFF", Constants.Vision.USE_LAST_DIST_CUTOFF);
+    Constants.Vision.USE_ODOM_CUTOFF =
+        SmartDashboard.getBoolean("USE_ODOM_CUTOFF", Constants.Vision.USE_ODOM_CUTOFF);
+    Constants.Vision.USE_VISION =
+        SmartDashboard.getBoolean("USE_VISION", Constants.Vision.USE_VISION);
 
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
