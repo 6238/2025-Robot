@@ -44,7 +44,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     // If disabled, we want to do the alliance pulse or default to rainbow
     if (DriverStation.isDisabled()) {
-      this.setAnimation(this.getAllianceAnimation(DriverStation.getAlliance()));
+      this.setAnimation(this.getDefaultAnimation(DriverStation.getAlliance()));
     }
   }
 
@@ -52,12 +52,12 @@ public class LEDSubsystem extends SubsystemBase {
     currentMode = mode;
   }
 
-  private LEDMode getAllianceAnimation(Optional<Alliance> ally) {
+  private LEDMode getDefaultAnimation(Optional<Alliance> ally) {
     if (ally.isPresent()) {
       if (ally.get() == Alliance.Red) {
-        return LEDMode.RED_SLOW_PULSE;
+        return DriverStation.isEnabled() ? LEDMode.RED_FAST_PULSE : LEDMode.RED_SLOW_PULSE;
       } else {
-        return LEDMode.BLUE_SLOW_PULSE;
+        return DriverStation.isEnabled() ? LEDMode.BLUE_FAST_PULSE : LEDMode.BLUE_SLOW_PULSE;
       }
     } else {
       return LEDMode.RAINBOW;
@@ -67,7 +67,7 @@ public class LEDSubsystem extends SubsystemBase {
   public Command setAnimationToAllianceColorCommand(Optional<Alliance> ally) {
     return runOnce(
             () -> {
-              LEDMode anim = getAllianceAnimation(ally);
+              LEDMode anim = getDefaultAnimation(ally);
               currentMode = anim;
             })
         .ignoringDisable(true);
