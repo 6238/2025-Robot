@@ -11,7 +11,7 @@
             "title": "Field",
             "x": 256.0,
             "y": 0.0,
-            "width": 1152.0,
+            "width": 896.0,
             "height": 512.0,
             "type": "Field",
             "properties": {
@@ -28,26 +28,9 @@
             }
           },
           {
-            "title": "Manual Mode Active",
-            "x": 1408.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/ManualModeEnabled",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294198070,
-              "false_color": 4282466625,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "Auton Path",
-            "x": 1408.0,
-            "y": 256.0,
+            "x": 1152.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -67,6 +50,71 @@
             "properties": {
               "topic": "/SmartDashboard/Alerts",
               "period": 0.06
+            }
+          },
+          {
+            "title": "Outake Velocity",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Outake Velocity",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "USE_VISION",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/USE_VISION",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Winch",
+            "x": 1152.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/SmartDashboard/Winch/motorPosTurns",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 200.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "hasBall",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/m_robotContainer/algaeSubsystem/hasBall",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
