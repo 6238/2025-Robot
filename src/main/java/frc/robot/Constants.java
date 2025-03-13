@@ -111,8 +111,8 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 50.0;
-    public static final double MAX_ACCEL = 60.0;
+    public static final double MAX_VELOCITY = 40.0;
+    public static final double MAX_ACCEL = 50.0;
     public static final double JERK = 1000.0;
 
     // Alternate Profiles

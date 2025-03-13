@@ -206,8 +206,6 @@ public class RobotContainer {
     //             () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
     //             Set.of(swerve)));
 
-    driverXbox.y().onTrue(m_elevator.setHeightCommand(ElevatorHeights.TOP));
-
     // driverXbox
     // .x()
     // .onTrue(
@@ -235,9 +233,39 @@ public class RobotContainer {
     // );
 
     driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
-    driverXbox.x().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L3));
 
-    driverXbox.b().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L2));
+    driverXbox.y().onTrue(Commands.sequence(
+        m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+        Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+        m_elevator.setHeightCommand(ElevatorHeights.TOP)
+    ));
+
+    driverXbox.x().onTrue(Commands.sequence(
+        m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+        Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+        m_elevator.setHeightCommand(ElevatorHeights.L3)
+    ));
+
+    driverXbox.b().onTrue(Commands.sequence(
+        m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+        Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+        m_elevator.setHeightCommand(ElevatorHeights.L2)
+    ));
+
+    driverXbox.povLeft().onTrue(Commands.sequence(
+        m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+        Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+        m_elevator.setHeightCommand(ElevatorHeights.L1_25)
+    ));
+
+    driverXbox.povRight().onTrue(Commands.sequence(
+        m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+        Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+        m_elevator.setHeightCommand(ElevatorHeights.L1_5)
+    ));
+
+    driverXbox.a().whileTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
+
     // Commands.either(
     // Commands.parallel(
     // algaeSubsystem.intakeUntilStalled(),
@@ -272,22 +300,11 @@ public class RobotContainer {
     // ,
     // () -> manualModeEnabled));
 
-    driverXbox
-        .a()
-        .whileTrue(
-            // Commands.either(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND));
-                // Commands.parallel(
-                    // m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                    // new AimAtAlgae(visionSubsystem, swerve)),
-                // () -> manualModeEnabled));
-
     // driverXbox.leftTrigger().onTrue(Commands.parallel(
     // m_elevator.setHeightCommand(ElevatorHeights.GROUND),
     // new AimAtAlgae(visionSubsystem, swerve)));
 
-    driverXbox.povLeft().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
-    driverXbox.povRight().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
+    
 
     driverXbox.povDown().whileTrue(Commands.run(() -> winch.lower(), winch)); // must be run repeatedly
     driverXbox.povDown().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
