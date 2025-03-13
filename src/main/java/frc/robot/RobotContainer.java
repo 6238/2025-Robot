@@ -317,11 +317,13 @@ public class RobotContainer {
         .povDown()
         .whileTrue(Commands.run(() -> winch.lower(), winch)); // must be run repeatedly
     driverXbox.povDown().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
+    driverXbox.povDown().onTrue(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
 
     driverXbox
         .povUp()
         .whileTrue(Commands.run(() -> winch.raise(), winch)); // must be run repeatedly
     driverXbox.povUp().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
+    driverXbox.povUp().onTrue(led.climbCommand());
 
     driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
 
