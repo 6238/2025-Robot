@@ -92,12 +92,12 @@ public class LEDSubsystem extends SubsystemBase {
   // spotless:off
   private final EnumMap<LEDMode, Animation> MODES =
       new EnumMap<LEDMode, Animation>(Map.ofEntries(
-            entry(LEDMode.RED_SLOW_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.5, LED_COUNT, 0)),
-            entry(LEDMode.BLUE_SLOW_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.5, LED_COUNT, 0)),
-            entry(LEDMode.RED_FAST_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.8, LED_COUNT, 0)),
-            entry(LEDMode.BLUE_FAST_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.8, LED_COUNT, 0)),
-            entry(LEDMode.RAINBOW,          new RainbowAnimation(1.0, 0.5, LED_COUNT)),
-            entry(LEDMode.CYAN_CHASE,       new ColorFlowAnimation(10, 250, 182, 0, 0.75, LED_COUNT, Direction.Forward)))
+            entry(LEDMode.RED_SLOW_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.5, LED_COUNT, 8)),
+            entry(LEDMode.BLUE_SLOW_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.5, LED_COUNT, 8)),
+            entry(LEDMode.RED_FAST_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.8, LED_COUNT, 8)),
+            entry(LEDMode.BLUE_FAST_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.8, LED_COUNT, 8)),
+            entry(LEDMode.RAINBOW,          new RainbowAnimation(1.0, 0.5, LED_COUNT, false, 8)),
+            entry(LEDMode.CYAN_CHASE,       new ColorFlowAnimation(10, 250, 182, 0, 0.75, LED_COUNT, Direction.Forward, 8)))
             );
   // spotless:on
 }
