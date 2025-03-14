@@ -29,6 +29,8 @@ import swervelib.math.Matter;
 /** Constants for the robot. */
 public final class Constants {
 
+  public static boolean FLIP_DIR = false;
+
   public static final double LOOP_TIME = 0.02;
 
   public static final Map<String, File> SWERVE_DIRECTORIES =

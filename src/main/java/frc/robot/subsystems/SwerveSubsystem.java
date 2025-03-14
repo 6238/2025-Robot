@@ -486,11 +486,14 @@ public class SwerveSubsystem extends SubsystemBase {
     // correction for this kind of control.
     return run(
         () -> {
-          // Optional<Alliance> ally = DriverStation.getAlliance();
-          double sign = -1.0;
-          // if (ally.isPresent()) {
-          //   sign = (ally.get() == Alliance.Blue) ? -1.0 : 1.0;
-          // }
+          Optional<Alliance> ally = DriverStation.getAlliance();
+          double sign = 1.0;
+          if (ally.isPresent()) {
+            sign = (ally.get() == Alliance.Blue) ? -1.0 : 1.0;
+          }
+
+          sign *= Constants.FLIP_DIR ? -1.0 : 1.0;
+          
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
           double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
           // Make the robot move
