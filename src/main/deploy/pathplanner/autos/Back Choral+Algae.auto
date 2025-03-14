@@ -5,15 +5,95 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "EventBasedReefPath"
+            "name": "Elevator_Algae_L1"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.15
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator_Choral_L1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BackChoral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_Choral"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BackChoral Algae Step"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator_Algae_L2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake_Algae"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Algae_L4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -25,7 +105,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 0.25
           }
         },
         {
