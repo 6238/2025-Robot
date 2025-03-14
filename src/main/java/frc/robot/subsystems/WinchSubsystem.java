@@ -21,7 +21,7 @@ public class WinchSubsystem extends SubsystemBase {
   private final NeutralOut neutralRequest = new NeutralOut();
 
   public static final double MAX = 200;
-  public static final double MIN = 50;
+  public static final double MIN = 0;
 
   /** Creates a new WinchSubsystem. */
   public WinchSubsystem() {

@@ -67,12 +67,12 @@ public class RobotContainer {
   DoubleSupplier swerve_x =
       () ->
           MathUtil.applyDeadband(
-              driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              -driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
 
   DoubleSupplier swerve_y =
       () ->
           MathUtil.applyDeadband(
-              driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              -driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
 
   DoubleSupplier right_stick_up_down =
       () ->

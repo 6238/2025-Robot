@@ -77,7 +77,7 @@ public final class Constants {
           0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 1.6;
+      public static final double kg_Top = 1.7;
 
       // PID for correcting errors
       public static final double kP = 3;

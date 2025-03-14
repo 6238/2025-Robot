@@ -82,8 +82,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    Constants.Vision.USE_VISION = true;
-    SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
+    // Constants.Vision.USE_VISION = true;
+    // SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
