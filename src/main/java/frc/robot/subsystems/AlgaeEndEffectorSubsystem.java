@@ -22,6 +22,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final TalonFX rightMotor;
 
   public double outputVelocity = 0.1;
+  public double intakeVelocity = 60;
 
   final PositionVoltage p_request;
   final VelocityVoltage v_request;
@@ -39,7 +40,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     var slot0Configs = talonFXConfigs.Slot0;
 
-    slot0Configs.kP = 12; // An error of 1 rotation results in 2.4 V output
+    slot0Configs.kP = 16; // An error of 1 rotation results in 2.4 V output
     slot0Configs.kI = 0.2; // no output for integrated error
     slot0Configs.kD = 0.2; // A velocity of 1 rps results in 0.1 V output
 
@@ -122,9 +123,9 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startIntake() {
-    return runOnce(() -> setMotorSpeed(AlgaeEndEffector.INTAKE_SPEED));
+    return runOnce(() -> setMotorSpeed(intakeVelocity));
   }
-
+ 
   // public Command intakeUntilStalled() {
   //     return startIntake().until(() -> isMotorStopped());
   // }
@@ -160,7 +161,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startFastOutake() {
-    return runOnce(() -> setDuty(-0.1));
+    return runOnce(() -> setDuty(-0.3));
   }
 
   public Command stopMotors() {

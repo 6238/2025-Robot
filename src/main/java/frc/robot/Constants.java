@@ -127,8 +127,6 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static final double INTAKE_SPEED = 40;
-
     public static final double OUTAKE_WAIT = 3.0;
 
     public static final double REEF_REMOVAL_SPEED = 0.65;
