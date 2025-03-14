@@ -29,7 +29,7 @@ import swervelib.math.Matter;
 /** Constants for the robot. */
 public final class Constants {
 
-  public static boolean FLIP_DIR = false;
+  public static boolean FLIP_DIR = true;
 
   public static final double LOOP_TIME = 0.02;
 
