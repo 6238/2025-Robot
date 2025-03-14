@@ -94,7 +94,7 @@ public final class Constants {
 
       public static final double STOW = 0;
       public static final double GROUND = 7;
-      public static final double L1_25 = 12.5;
+      public static final double L1_25 = 13.5;
       public static final double L1_5 = 18.5;
       public static final double L2 = 34;
       public static final double L3 = 50;
@@ -129,7 +129,7 @@ public final class Constants {
 
     public static final double STALL_THRESHOLD = 0.1;
 
-    public static double INTAKE_SPEED = 60;
+    public static double INTAKE_SPEED = 80;
     public static double OUTAKE_SPEED = 0.1;
 
     public static final double OUTAKE_WAIT = 3.0;
