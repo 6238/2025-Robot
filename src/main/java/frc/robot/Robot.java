@@ -27,8 +27,6 @@ public class Robot extends TimedRobot {
     WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
 
-    SmartDashboard.putBoolean("USE_ODOM_CUTOFF", Constants.Vision.USE_ODOM_CUTOFF);
-    SmartDashboard.putBoolean("USE_LAST_DIST_CUTOFF", Constants.Vision.USE_LAST_DIST_CUTOFF);
     SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
     SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
@@ -37,10 +35,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    Constants.Vision.USE_LAST_DIST_CUTOFF =
-        SmartDashboard.getBoolean("USE_LAST_DIST_CUTOFF", Constants.Vision.USE_LAST_DIST_CUTOFF);
-    Constants.Vision.USE_ODOM_CUTOFF =
-        SmartDashboard.getBoolean("USE_ODOM_CUTOFF", Constants.Vision.USE_ODOM_CUTOFF);
     Constants.Vision.USE_VISION =
         SmartDashboard.getBoolean("USE_VISION", Constants.Vision.USE_VISION);
     

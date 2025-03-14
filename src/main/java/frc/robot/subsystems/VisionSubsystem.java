@@ -26,8 +26,6 @@ public class VisionSubsystem extends SubsystemBase {
 
   @NotLogged private SwerveSubsystem swerve;
 
-  private int count = 0;
-
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
     this.swerve = swerve;
@@ -55,30 +53,8 @@ public class VisionSubsystem extends SubsystemBase {
     for (int i = 0; i < cameras.size(); i++) {
       Optional<EstimatedRobotPose> pose = cameras.get(i).update();
 
-      if (!pose.isPresent()) {
-        continue;
-      }
-
-      if (!Vision.USE_VISION) {
-        return;
-      }
-
-      if (Vision.USE_ODOM_CUTOFF
-          && pose.get()
-                  .estimatedPose
-                  .getTranslation()
-                  .toTranslation2d()
-                  .getDistance(swerve.getPose().getTranslation())
-              > Vision.ODOM_DIST_CUTOFF) {
-        continue;
-      }
-
-      if (cameras.get(i).ambiguity < 0.3) {
-        swerve.addVisionPose(
-            pose.get(),
-            Vision.VISION_STDDEV.plus(
-                Vision.INCREMENT_STDDEV.times(Math.pow(cameras.get(i).area, 2))));
-        count += 1;
+      if (pose.isPresent() && Vision.USE_VISION && cameras.get(i).ambiguity < 0.3) {
+        swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV);
       }
     }
   }
