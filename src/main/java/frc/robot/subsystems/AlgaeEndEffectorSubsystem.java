@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -132,7 +133,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     // return run(() ->
     // setMotorSpeed(AlgaeEndEffector.INTAKE_SPEED)).andThen(Commands.waitSeconds(60.0).until(() ->
     // motorStopped()));
-    return new SequentialCommandGroup(startIntake(), new WaitUntilCommand(() -> motorStopped()));
+    return new SequentialCommandGroup(startIntake(), Commands.waitSeconds(0.15), new WaitUntilCommand(() -> motorStopped()));
   }
 
   public Command holdAlgae() {
