@@ -49,6 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private BooleanSupplier hasBall;
   private int slotNum = 0;
+  public double elevatorOffset = 0;
 
   public ElevatorSubsystem(BooleanSupplier hasBall) {
     leaderMotor = new TalonFX(IDs.ELEVATOR_LEADER_MOTOR, "canivore");
@@ -113,7 +114,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setHeight(Double height) {
     double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
     double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
-    goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
+    goal.position = (Math.max(min, Math.min(height, max)) + Elevator.ELEVATOR_OFFSET) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
     // if (height < getHeight()) {
     //   slotNum = 1;
     // } else {

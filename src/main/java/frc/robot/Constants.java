@@ -119,6 +119,8 @@ public final class Constants {
     public static final double FALLING_MAX_VELOCITY = 70.0;
     public static final double FALLING_MAX_ACCEL = 90.0;
     public static final double FALLING_JERK = 1600.0;
+
+    public static double ELEVATOR_OFFSET = 0;
   }
 
   public final class AlgaeEndEffector {
@@ -126,6 +128,9 @@ public final class Constants {
     public static final int RIGHT_MOTOR_ID = 40;
 
     public static final double STALL_THRESHOLD = 0.1;
+
+    public static double INTAKE_SPEED = 60;
+    public static double OUTAKE_SPEED = 0.1;
 
     public static final double OUTAKE_WAIT = 3.0;
 

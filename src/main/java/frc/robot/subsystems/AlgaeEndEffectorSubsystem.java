@@ -21,9 +21,6 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   final TalonFX leftMotor;
   final TalonFX rightMotor;
 
-  public double outputVelocity = 0.1;
-  public double intakeVelocity = 60;
-
   final PositionVoltage p_request;
   final VelocityVoltage v_request;
 
@@ -69,8 +66,6 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     OrcestraManager.getInstance().addInstrument(leftMotor);
     OrcestraManager.getInstance().addInstrument(rightMotor);
-
-    SmartDashboard.putNumber("Outake Velocity", outputVelocity);
   }
 
   /** If either motor's velocity is within percentError of speedSetpoint */
@@ -123,7 +118,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startIntake() {
-    return runOnce(() -> setMotorSpeed(intakeVelocity));
+    return runOnce(() -> setMotorSpeed(AlgaeEndEffector.INTAKE_SPEED));
   }
  
   // public Command intakeUntilStalled() {
@@ -157,7 +152,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startOutake() {
-    return runOnce(() -> setDuty(-outputVelocity));
+    return runOnce(() -> setDuty(-AlgaeEndEffector.OUTAKE_SPEED));
   }
 
   public Command startFastOutake() {
@@ -170,7 +165,6 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    outputVelocity = SmartDashboard.getNumber("Outake Velocity", outputVelocity);
     if (upToSpeed == false) {
       upToSpeed = upToSpeed(0.2);
     }
