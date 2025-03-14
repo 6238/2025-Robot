@@ -124,6 +124,14 @@ public class RobotContainer {
         "Intake_Algae",
         Commands.sequence(
             algaeSubsystem.intakeUntilStalled().withTimeout(3), algaeSubsystem.holdAlgae()));
+    
+    NamedCommands.registerCommand(
+        "Start_Intake",
+        algaeSubsystem.startIntake());
+
+    NamedCommands.registerCommand(
+        "Stop_Intake",
+        algaeSubsystem.holdAlgae());
 
     NamedCommands.registerCommand(
         "Shoot_Algae",

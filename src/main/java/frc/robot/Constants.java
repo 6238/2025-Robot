@@ -132,7 +132,7 @@ public final class Constants {
     public static final double STALL_THRESHOLD = 0.1;
 
     public static double INTAKE_SPEED = 80;
-    public static double OUTAKE_SPEED = 0.1;
+    public static double OUTAKE_SPEED = 0.07;
 
     public static final double OUTAKE_WAIT = 3.0;
 

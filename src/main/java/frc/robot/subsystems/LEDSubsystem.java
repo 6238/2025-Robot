@@ -29,7 +29,7 @@ public class LEDSubsystem extends SubsystemBase {
   public LEDSubsystem() {
     CANdleConfiguration config = new CANdleConfiguration();
     config.statusLedOffWhenActive = false;
-    config.brightnessScalar = 1.0;
+    config.brightnessScalar = 0.7;
     config.vBatOutputMode = VBatOutputMode.Off;
     candle.configAllSettings(config);
 

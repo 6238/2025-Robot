@@ -85,10 +85,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake_Algae"
+                  "name": "Start_Intake"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop_Intake"
           }
         },
         {

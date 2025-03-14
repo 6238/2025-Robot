@@ -493,11 +493,11 @@ public class SwerveSubsystem extends SubsystemBase {
           }
 
           sign *= Constants.FLIP_DIR ? -1.0 : 1.0;
-          
+
           double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
           double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
           // Make the robot move
-          double rotation = Math.pow(rotationSpeed.getAsDouble(), 3) * MAX_ANGULAR_VELOCITY;
+          double rotation = Math.pow(rotationSpeed.getAsDouble(), 5) * MAX_ANGULAR_VELOCITY;
 
           Translation2d translation =
               new Translation2d(sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
