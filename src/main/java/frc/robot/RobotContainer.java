@@ -67,21 +67,21 @@ public class RobotContainer {
   DoubleSupplier swerve_x =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              -driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.02);
 
   DoubleSupplier swerve_y =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)), 0.02);
+              -driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.02);
 
   DoubleSupplier right_stick_up_down =
       () ->
           MathUtil.applyDeadband(
               -driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
-                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2)),
+                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
               0.02);
 
-  DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(-driverXbox.getRightX(), 0.08);
+  DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(-driverXbox.getRightX() * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.08);
 
   private final SendableChooser<Command> autoChooser;
 
