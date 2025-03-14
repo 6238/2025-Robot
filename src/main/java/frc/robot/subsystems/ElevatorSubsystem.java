@@ -114,7 +114,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setHeight(Double height) {
     double min = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
     double max = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
-    goal.position = (Math.max(min, Math.min(height, max)) + Elevator.ELEVATOR_OFFSET) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
+    goal.position = Math.max(min, Math.min(height, max)) * ElevatorHeights.ELEVATOR_GEAR_RATIO;
     // if (height < getHeight()) {
     //   slotNum = 1;
     // } else {
@@ -171,6 +171,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+
     if (getHeight() < 0.5 && getTargetHeight() < 4.5) {
       leaderMotor.setVoltage(0);
       return;

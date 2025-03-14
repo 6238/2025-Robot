@@ -30,7 +30,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("USE_ODOM_CUTOFF", Constants.Vision.USE_ODOM_CUTOFF);
     SmartDashboard.putBoolean("USE_LAST_DIST_CUTOFF", Constants.Vision.USE_LAST_DIST_CUTOFF);
     SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
-    SmartDashboard.putNumber("ELEVATOR_OFFSET", Constants.Elevator.ELEVATOR_OFFSET);
     SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
   }
@@ -44,7 +43,6 @@ public class Robot extends TimedRobot {
     Constants.Vision.USE_VISION =
         SmartDashboard.getBoolean("USE_VISION", Constants.Vision.USE_VISION);
     
-    Constants.Elevator.ELEVATOR_OFFSET = SmartDashboard.getNumber("ELEVATOR_OFFSET", Constants.Elevator.ELEVATOR_OFFSET);
     Constants.AlgaeEndEffector.INTAKE_SPEED = SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     Constants.AlgaeEndEffector.OUTAKE_SPEED = SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
 
