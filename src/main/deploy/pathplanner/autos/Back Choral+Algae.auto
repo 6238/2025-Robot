@@ -118,13 +118,26 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.6
+            "waitTime": 0.1
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Elevator_Algae_L1"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator_Algae_L1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "getTFout"
+                }
+              }
+            ]
           }
         }
       ]
