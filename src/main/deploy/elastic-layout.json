@@ -30,7 +30,7 @@
           {
             "title": "Auton Path",
             "x": 1152.0,
-            "y": 128.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -45,7 +45,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 384.0,
+            "height": 256.0,
             "type": "Alerts",
             "properties": {
               "topic": "/SmartDashboard/Alerts",
@@ -53,27 +53,10 @@
             }
           },
           {
-            "title": "Outake Velocity",
-            "x": 1152.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/Outake Velocity",
-              "period": 0.06,
-              "data_type": "double",
-              "min_value": 0.0,
-              "max_value": 1.0,
-              "divisions": 5,
-              "update_continuously": false
-            }
-          },
-          {
             "title": "USE_VISION",
-            "x": 1152.0,
-            "y": 0.0,
-            "width": 256.0,
+            "x": 1408.0,
+            "y": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Toggle Switch",
             "properties": {
@@ -85,7 +68,7 @@
           {
             "title": "Winch",
             "x": 1152.0,
-            "y": 384.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -102,10 +85,10 @@
           },
           {
             "title": "hasBall",
-            "x": 0.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
+            "x": 1408.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 256.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/m_robotContainer/algaeSubsystem/hasBall",
@@ -115,6 +98,66 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "OUTAKE_SPEED",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/OUTAKE_SPEED",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "INTAKE_SPEED",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/INTAKE_SPEED",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "FLIP_DIR",
+            "x": 1152.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/FLIP_DIR",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "RAISE_CLIMBER",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/RAISE_CLIMBER",
+              "period": 0.06,
+              "data_type": "boolean"
             }
           }
         ]
