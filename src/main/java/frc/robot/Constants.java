@@ -99,7 +99,7 @@ public final class Constants {
       public static final double L1_25 = 13.5;
       public static final double L1_5 = 18.5;
       public static final double L2 = 33.5;
-      public static final double L3 = 49.5;
+      public static final double L3 = 48.5;
       public static final double TOP = 80; // MAX HEIGHT
 
       // TODO
