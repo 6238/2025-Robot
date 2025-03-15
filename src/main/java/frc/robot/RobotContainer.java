@@ -209,6 +209,8 @@ public class RobotContainer {
     SmartDashboard.putBoolean("RAISE_CLIMBER", false);
     new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false)).whileTrue(Commands.run(() -> winch.lower(), winch));
 
+    new Trigger(() -> DriverStation.isTeleop() && DriverStation.getMatchTime() < 20).onTrue(Commands.runOnce(() -> led.setAnimation(null)));
+
     // driverXbox
     //     .leftTrigger()
     //     .onTrue(
