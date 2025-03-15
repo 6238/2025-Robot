@@ -205,6 +205,9 @@ public class RobotContainer {
                     right_stick_up_down,
                     () -> 0,
                     () -> MathUtil.applyDeadband(swerve_turn.getAsDouble(), 0.1))));
+    
+    SmartDashboard.putBoolean("RAISE_CLIMBER", false);
+    new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false)).whileTrue(Commands.run(() -> winch.lower(), winch));
 
     // driverXbox
     //     .leftTrigger()
