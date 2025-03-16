@@ -10,6 +10,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
@@ -30,6 +31,7 @@ import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDMode;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
@@ -209,7 +211,10 @@ public class RobotContainer {
     SmartDashboard.putBoolean("RAISE_CLIMBER", false);
     new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false)).whileTrue(Commands.run(() -> winch.lower(), winch));
 
-    new Trigger(() -> DriverStation.isTeleop() && DriverStation.getMatchTime() < 20).onTrue(Commands.runOnce(() -> led.setAnimation(null)));
+    new Trigger(() -> DriverStation.isTeleop() && DriverStation.getMatchTime() < 30).onTrue(Commands.sequence(
+        Commands.runOnce(() -> led.setAnimation(LEDMode.OFF)),
+        Commands.run(() -> winch.lower(), winch)
+    ));
 
     // driverXbox
     //     .leftTrigger()

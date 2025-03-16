@@ -84,7 +84,7 @@ public class LEDSubsystem extends SubsystemBase {
   public Command climbCommand() {
     return runOnce(
       () -> {
-        currentMode = null;
+        currentMode = LEDMode.DAS_FIRE;
       });
   }
 
@@ -97,12 +97,14 @@ public class LEDSubsystem extends SubsystemBase {
     CYAN_CHASE,
     YELLOW_CHASE,
     SCANNER,
-    DAS_FIRE
+    DAS_FIRE,
+    OFF
   }
 
   // spotless:off
   private final EnumMap<LEDMode, Animation> MODES =
       new EnumMap<LEDMode, Animation>(Map.ofEntries(
+            entry(LEDMode.OFF,   new SingleFadeAnimation(0, 0, 0, 0, 0.5, LED_COUNT, 8)),
             entry(LEDMode.RED_SLOW_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.5, LED_COUNT, 8)),
             entry(LEDMode.BLUE_SLOW_PULSE,  new SingleFadeAnimation(0, 0, 255, 0, 0.5, LED_COUNT, 8)),
             entry(LEDMode.RED_FAST_PULSE,   new SingleFadeAnimation(255, 0, 0, 0, 0.8, LED_COUNT, 8)),
