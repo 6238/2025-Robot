@@ -10,52 +10,72 @@ import frc.robot.Constants.Vision;
 import frc.robot.util.Camera;
 import frc.robot.util.CameraSettings;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Optional;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
+import java.util.List;
 
 @Logged
 public class VisionSubsystem extends SubsystemBase {
-  private AprilTagFieldLayout fieldLayout;
+  @NotLogged private AprilTagFieldLayout fieldLayout;
+  private boolean failedLoadingLayout = false;
 
-  // Keep track of cameras and poses
-  private ArrayList<Camera> cameras = new ArrayList<>();
-
-  public PhotonCamera algaeCam;
-
-  @NotLogged private SwerveSubsystem swerve;
+  @NotLogged private List<Camera> cameras;
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
-    this.swerve = swerve;
+    loadFieldLayout();
 
-    algaeCam = new PhotonCamera(Vision.ALGAECAM_NAME);
+    for (CameraSettings cameraSettings : Vision.CAMERA_SETTINGS) {
+      cameras.add(new Camera(cameraSettings, fieldLayout, swerve));
+    }
+  }
 
+  private void loadFieldLayout() {
     try {
       fieldLayout =
           AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
       System.out.println("Loaded apriltag field from: " + fieldLayout);
     } catch (IOException e) {
-      DataLogManager.log(
-          "ERROR: Unable to load apriltag field layout" + e.getStackTrace().toString());
-    }
-
-    cameras = new ArrayList<Camera>(Vision.CAMERA_SETTINGS.length);
-
-    for (CameraSettings cameraSettings : Vision.CAMERA_SETTINGS) {
-      cameras.add(new Camera(cameraSettings, fieldLayout));
+      failedLoadingLayout = true;
+      DataLogManager.log("ERROR: Unable to load apriltag field layout" + e.toString());
     }
   }
 
   @Override
   public void periodic() {
-    for (int i = 0; i < cameras.size(); i++) {
-      Optional<EstimatedRobotPose> pose = cameras.get(i).update();
+    if (failedLoadingLayout) {
+      return;
+    }
 
-      if (pose.isPresent() && Vision.USE_VISION && cameras.get(i).ambiguity < 0.3) {
-        swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV);
+    for (Camera camera : cameras) {
+      camera.update();
+    }
+  }
+
+  /* Camera Enable Functions */
+
+  public void enableCamera(String cameraName) {
+    for (Camera camera : cameras) {
+      if (camera.getCameraSettings().getCameraName().equals(cameraName)) {
+        camera.setEnabled(true);
       }
     }
+  }
+
+  public void disableCamera(String cameraName) {
+    for (Camera camera : cameras) {
+      if (camera.getCameraSettings().getCameraName().equals(cameraName)) {
+        camera.setEnabled(false);
+      }
+    }
+  }
+
+  public void disableAllCameras() {
+    for (Camera camera : cameras) {
+      camera.setEnabled(false);
+    }
+  }
+
+  public void enableOnlyOneCamera(String cameraName) {
+    disableAllCameras();
+    enableCamera(cameraName);
   }
 }

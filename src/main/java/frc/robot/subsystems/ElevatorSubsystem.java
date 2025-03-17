@@ -58,7 +58,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.hasBall = hasBall;
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
-    var fastElevatorMotorConfigs = new TalonFXConfiguration();
 
     Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
 

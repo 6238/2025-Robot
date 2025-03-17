@@ -27,7 +27,6 @@ public class Robot extends TimedRobot {
     WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
 
-    SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
     SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
     SmartDashboard.putBoolean("FLIP_DIR", Constants.FLIP_DIR);
@@ -35,11 +34,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    Constants.Vision.USE_VISION =
-        SmartDashboard.getBoolean("USE_VISION", Constants.Vision.USE_VISION);
-    
-    Constants.AlgaeEndEffector.INTAKE_SPEED = SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
-    Constants.AlgaeEndEffector.OUTAKE_SPEED = SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+    Constants.AlgaeEndEffector.INTAKE_SPEED =
+        SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
+    Constants.AlgaeEndEffector.OUTAKE_SPEED =
+        SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
     Constants.FLIP_DIR = SmartDashboard.getBoolean("FLIP_DIR", Constants.FLIP_DIR);
 
     CommandScheduler.getInstance().run();
@@ -78,8 +76,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    Constants.Vision.USE_VISION = true;
-    SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

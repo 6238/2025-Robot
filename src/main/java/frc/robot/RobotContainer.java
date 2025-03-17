@@ -10,7 +10,6 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
@@ -69,21 +68,31 @@ public class RobotContainer {
   DoubleSupplier swerve_x =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.02);
+              -driverXbox.getLeftY()
+                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
+                  * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
+              0.02);
 
   DoubleSupplier swerve_y =
       () ->
           MathUtil.applyDeadband(
-              -driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.02);
+              -driverXbox.getLeftX()
+                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
+                  * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
+              0.02);
 
   DoubleSupplier right_stick_up_down =
       () ->
           MathUtil.applyDeadband(
               -driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
-                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
+                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
+                  * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
               0.02);
 
-  DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(-driverXbox.getRightX() * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.08);
+  DoubleSupplier swerve_turn =
+      () ->
+          MathUtil.applyDeadband(
+              -driverXbox.getRightX() * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.08);
 
   private final SendableChooser<Command> autoChooser;
 
@@ -126,14 +135,10 @@ public class RobotContainer {
         "Intake_Algae",
         Commands.sequence(
             algaeSubsystem.intakeUntilStalled().withTimeout(3), algaeSubsystem.holdAlgae()));
-    
-    NamedCommands.registerCommand(
-        "Start_Intake",
-        algaeSubsystem.startIntake());
 
-    NamedCommands.registerCommand(
-        "Stop_Intake",
-        algaeSubsystem.holdAlgae());
+    NamedCommands.registerCommand("Start_Intake", algaeSubsystem.startIntake());
+
+    NamedCommands.registerCommand("Stop_Intake", algaeSubsystem.holdAlgae());
 
     NamedCommands.registerCommand(
         "Shoot_Algae",
@@ -207,14 +212,16 @@ public class RobotContainer {
                     right_stick_up_down,
                     () -> 0,
                     () -> MathUtil.applyDeadband(swerve_turn.getAsDouble(), 0.1))));
-    
-    SmartDashboard.putBoolean("RAISE_CLIMBER", false);
-    new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false)).whileTrue(Commands.run(() -> winch.lower(), winch));
 
-    new Trigger(() -> DriverStation.isTeleop() && DriverStation.getMatchTime() < 30).onTrue(Commands.sequence(
-        Commands.runOnce(() -> led.setAnimation(LEDMode.OFF)),
-        Commands.run(() -> winch.lower(), winch)
-    ));
+    SmartDashboard.putBoolean("RAISE_CLIMBER", false);
+    new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false))
+        .whileTrue(Commands.run(() -> winch.lower(), winch));
+
+    new Trigger(() -> DriverStation.isTeleop() && DriverStation.getMatchTime() < 30)
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(() -> led.setAnimation(LEDMode.OFF)),
+                Commands.run(() -> winch.lower(), winch)));
 
     // driverXbox
     //     .leftTrigger()
@@ -335,7 +342,9 @@ public class RobotContainer {
         .povDown()
         .whileTrue(Commands.run(() -> winch.lower(), winch)); // must be run repeatedly
     driverXbox.povDown().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
-    driverXbox.povDown().onTrue(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
+    driverXbox
+        .povDown()
+        .onTrue(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
 
     driverXbox
         .povUp()
@@ -344,6 +353,7 @@ public class RobotContainer {
     driverXbox.povUp().onTrue(led.climbCommand());
 
     driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
+    driverXbox.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
 
     // driverXbox
     //     .leftBumper()
