@@ -74,7 +74,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    * SysId routine for characterizing steer. This is used to find PID gains for
    * the steer motors.
    */
-  private final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
+  public final SysIdRoutine sysIdRoutineSteer = new SysIdRoutine(
       new SysIdRoutine.Config(
           null, // Use default ramp rate (1 V/s)
           Volts.of(7), // Use dynamic voltage of 7 V
@@ -93,7 +93,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    * See the documentation of SwerveRequest.SysIdSwerveRotation for info on
    * importing the log to SysId.
    */
-  private final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
+  public final SysIdRoutine sysIdRoutineRotation = new SysIdRoutine(
       new SysIdRoutine.Config(
           /* This is in radians per second², but SysId only supports "volts per second" */
           Volts.of(Math.PI / 6).per(Second),
@@ -351,6 +351,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         visionMeasurementStdDevs);
   }
 
+  /**
+   * Returns the current position of the robot accoring to the odometry
+   * Uses swerve driveState to get the current pose
+   * @return current robot odometry pose
+   */
   public Pose2d getPose() {
     return new Pose2d(
         super.m_jni.driveState.PoseX,
