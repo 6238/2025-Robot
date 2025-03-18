@@ -529,4 +529,8 @@ public class SwerveSubsystem extends SubsystemBase {
           this.drive(translation, rotation, false);
         });
   }
+
+  public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
+    return swerveDrive.swerveDrivePoseEstimator.sampleAt(timestampSeconds);
+  }
 }
