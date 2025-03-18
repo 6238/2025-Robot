@@ -3,8 +3,11 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
@@ -20,10 +23,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.generated.TunerConstants;
 import frc.robot.util.CameraSettings;
 import java.io.File;
 import java.util.Map;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import com.pathplanner.lib.config.PIDConstants;
+
 import swervelib.math.Matter;
 
 /** Constants for the robot. */
@@ -32,11 +39,6 @@ public final class Constants {
   public static boolean FLIP_DIR = true;
 
   public static final double LOOP_TIME = 0.02;
-
-  public static final Map<String, File> SWERVE_DIRECTORIES =
-      Map.ofEntries(
-          entry("032B1F73", new File(Filesystem.getDeployDirectory(), "swerve2")),
-          entry("03182373", new File(Filesystem.getDeployDirectory(), "swerve")));
 
   public final class IDs {
     public static final int ELEVATOR_LEADER_MOTOR = 50;
@@ -48,22 +50,12 @@ public final class Constants {
     public static final Matter CHASSIS = new Matter(new Translation3d(0.0, 0.0, 0.1), 60.0);
     public static final double MAX_ANGULAR_VELOCITY = 2.0 * Math.PI; // 2pi rad/sec = 1 rev/sec
 
-    /**
-     * Constants specific to the swerve modules See
-     * https://docs.wcproducts.com/wcp-swervex/general-info/ratio-options
-     */
-    public static final double MAX_SPEED = Units.feetToMeters(15.12);
+    public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    public static final double WHEEL_DIAMETER = 4.0; // Inches
-    public static final double DRIVE_GEAR_RATIO = 6.55;
-    public static final double STEERING_GEAR_RATIO = 10.29;
-    public static final double DRIVER_ENCODER_RESOLUTION = 1.0;
-    public static final double STEERING_ENCODER_RESOLUTION = 1.0;
-
-    /* Turn PID */
-    public static final double TURN_kP = 0.175;
-    public static final double TURN_kI = 0.005;
-    public static final double TURN_kD = 0;
+    /* Pathplanner PID */
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(10, 0, 0);
+    public static final PIDConstants TURN_PID = new PIDConstants(7, 0, 0);
 
     public static final double TURN_THRESHOLD = 10;
   }

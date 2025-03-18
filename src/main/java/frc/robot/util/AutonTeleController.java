@@ -1,14 +1,16 @@
 package frc.robot.util;
 
+import java.util.function.DoubleSupplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.PathfindingConfig;
-import frc.robot.subsystems.SwerveSubsystem;
-import java.util.function.DoubleSupplier;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonTeleController {
   CommandXboxController driverXbox;
@@ -18,7 +20,7 @@ public class AutonTeleController {
 
   public AutonTeleController(
       CommandXboxController driverXbox,
-      SwerveSubsystem swerve,
+      CommandSwerveDrivetrain swerve,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier turnSupplier) {

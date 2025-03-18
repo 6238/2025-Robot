@@ -24,10 +24,10 @@ public class VisionSubsystem extends SubsystemBase {
 
   public PhotonCamera algaeCam;
 
-  @NotLogged private SwerveSubsystem swerve;
+  @NotLogged private CommandSwerveDrivetrain swerve;
 
   /** Creates a new VisionSubsystem. */
-  public VisionSubsystem(SwerveSubsystem swerve) {
+  public VisionSubsystem(CommandSwerveDrivetrain swerve) {
     this.swerve = swerve;
 
     algaeCam = new PhotonCamera(Vision.ALGAECAM_NAME);
@@ -54,7 +54,8 @@ public class VisionSubsystem extends SubsystemBase {
       Optional<EstimatedRobotPose> pose = cameras.get(i).update();
 
       if (pose.isPresent() && Vision.USE_VISION && cameras.get(i).ambiguity < 0.3) {
-        swerve.addVisionPose(pose.get(), Vision.VISION_STDDEV);
+        EstimatedRobotPose estimatedRobotPose = pose.get();
+        swerve.addVisionMeasurement(estimatedRobotPose.estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds, Vision.VISION_STDDEV);
       }
     }
   }

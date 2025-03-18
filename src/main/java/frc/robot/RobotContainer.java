@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -12,36 +14,32 @@ import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.hal.HALUtil;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.Elevator.ElevatorHeights;
+import static frc.robot.Constants.Swerve.MaxAngularRate;
+import static frc.robot.Constants.Swerve.MaxSpeed;
+import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.LEDSubsystem.LEDMode;
-import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
-import frc.robot.util.AutonTeleController;
+import frc.robot.telemetry.Telemetry;
 import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
-import java.io.File;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import swervelib.math.Matter;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems are all set up
@@ -51,54 +49,219 @@ import swervelib.math.Matter;
 public class RobotContainer {
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
   public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
-  Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
-  SwerveSubsystem swerve =
-      new SwerveSubsystem(
-          new File(Filesystem.getDeployDirectory(), "swerve2"),
-          () -> new Matter(new Translation3d(), 0));
-  VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
   WinchSubsystem winch = new WinchSubsystem();
   LEDSubsystem led = new LEDSubsystem();
   // BatteryIdentification batteryIdentification = new BatteryIdentification();
 
-  private static boolean manualModeEnabled = false;
+  @NotLogged CommandXboxController driverXbox = new CommandXboxController(0);
 
-  CommandXboxController driverXbox = new CommandXboxController(0);
-  CommandGenericHID operatorController = new CommandGenericHID(2);
+  /* Setting up bindings for necessary control of the swerve drive platform */
+  @NotLogged
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+          .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+          .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+  @NotLogged private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  @NotLogged private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  @NotLogged private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
+          .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-  DoubleSupplier swerve_x =
-      () ->
-          MathUtil.applyDeadband(
-              -driverXbox.getLeftY() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.02);
+  @NotLogged private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  DoubleSupplier swerve_y =
-      () ->
-          MathUtil.applyDeadband(
-              -driverXbox.getLeftX() * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.02);
-
-  DoubleSupplier right_stick_up_down =
-      () ->
-          MathUtil.applyDeadband(
-              -driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
-                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2)) * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
-              0.02);
-
-  DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(-driverXbox.getRightX() * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.08);
+  @NotLogged public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain);
 
   private final SendableChooser<Command> autoChooser;
-
-  AutonTeleController autonTeleController =
-      new AutonTeleController(driverXbox, swerve, swerve_x, swerve_y, swerve_turn);
 
   public RobotContainer() {
     Logging.logMetadata();
 
-    configureTriggers();
+    setupPathPlanner();
+    // configureTriggers();
 
-    Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
+    drivetrain.registerTelemetry(logger::telemeterize);
+    drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(-driverXbox.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverXbox.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driverXbox.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
-    swerve.setDefaultCommand(driveCommand);
+    driverXbox.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    driverXbox.b().whileTrue(drivetrain.applyRequest(() ->
+        point.withModuleDirection(new Rotation2d(-driverXbox.getLeftY(), -driverXbox.getLeftX()))
+    ));
 
+    driverXbox.pov(0).whileTrue(drivetrain.applyRequest(() ->
+        forwardStraight.withVelocityX(0.5).withVelocityY(0))
+    );
+    driverXbox.pov(180).whileTrue(drivetrain.applyRequest(() ->
+        forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+    );
+
+    // Run SysId routines when holding back/start and X/Y.
+    // Note that each routine should be run exactly once in a single log.
+    driverXbox.back().and(driverXbox.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    driverXbox.back().and(driverXbox.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    driverXbox.start().and(driverXbox.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    driverXbox.start().and(driverXbox.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+    // reset the field-centric heading on left bumper press
+    driverXbox.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+    // Initialize autonomous chooser
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auton Path", autoChooser);
+
+
+    OrcestraManager.getInstance().load("acdc.chrp");
+  }
+
+  /**
+   * This method is where all of the robot's logic is defined. We link {@link
+   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons and subsystem
+   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The advantage of
+   * configuring all the robot's logic here is that it's easy to find, and therefore easy to modify,
+   * what the robot does when something happens and why.
+   */
+  private void configureTriggers() {
+    // Controls
+
+    new Trigger(algaeSubsystem.hasBall())
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(() -> driverXbox.setRumble(RumbleType.kBothRumble, 1)),
+                Commands.waitSeconds(0.5),
+                Commands.runOnce(() -> driverXbox.setRumble(RumbleType.kBothRumble, 0))));
+
+    driverXbox
+        .back()
+        .onTrue(
+            Commands.runOnce(() -> m_elevator.resetEncoder())
+                .ignoringDisable(true)); // left menu button
+    
+    SmartDashboard.putBoolean("RAISE_CLIMBER", false);
+    new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false)).whileTrue(Commands.run(() -> winch.lower(), winch));
+
+    new Trigger(() -> DriverStation.isTeleop() && DriverStation.getMatchTime() < 30).onTrue(Commands.sequence(
+        Commands.runOnce(() -> led.setAnimation(LEDMode.OFF)),
+        Commands.run(() -> winch.lower(), winch)
+    ));
+
+    driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
+
+    driverXbox
+        .y()
+        .onTrue(
+            Commands.sequence(
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                m_elevator.setHeightCommand(ElevatorHeights.TOP)));
+
+    driverXbox
+        .x()
+        .onTrue(
+            Commands.sequence(
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                m_elevator.setHeightCommand(ElevatorHeights.L3)));
+
+    driverXbox
+        .b()
+        .onTrue(
+            Commands.sequence(
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                m_elevator.setHeightCommand(ElevatorHeights.L2)));
+
+    driverXbox
+        .povLeft()
+        .onTrue(
+            Commands.sequence(
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                m_elevator.setHeightCommand(ElevatorHeights.L1_25)));
+
+    driverXbox
+        .povRight()
+        .onTrue(
+            Commands.sequence(
+                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                m_elevator.setHeightCommand(ElevatorHeights.L1_5)));
+
+    driverXbox.a().whileTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
+
+    driverXbox
+        .povDown()
+        .whileTrue(Commands.run(() -> winch.lower(), winch)); // must be run repeatedly
+    driverXbox.povDown().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
+    driverXbox.povDown().onTrue(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
+
+    driverXbox
+        .povUp()
+        .whileTrue(Commands.run(() -> winch.raise(), winch)); // must be run repeatedly
+    driverXbox.povUp().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
+    driverXbox.povUp().onTrue(led.climbCommand());
+
+    driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
+
+    driverXbox
+        .leftBumper()
+        .onTrue(
+            Commands.sequence(
+                algaeSubsystem.intakeUntilStalled(),
+                Commands.waitSeconds(0.1),
+                algaeSubsystem.holdAlgae()));
+
+    driverXbox
+        .rightBumper()
+        .onTrue(
+            Commands.sequence(
+                algaeSubsystem.startOutake(),
+                Commands.waitSeconds(0.5),
+                algaeSubsystem.stopMotors(),
+                Commands.deferredProxy(
+                    () -> {
+                      if (m_elevator.getHeight() >= ElevatorHeights.TOP - 1) {
+                        return m_elevator.setHeightCommand(ElevatorHeights.GROUND);
+                      }
+                      return Commands.none();
+                    })));
+
+    new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
+
+    // spotless:off
+    new Trigger(algaeSubsystem.hasBall())
+        .onTrue(led.indicateIntookCommand())
+        .onFalse(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
+    // spotless:on
+  }
+
+  public Command toggleBrakeMode() {
+    return Commands.runOnce(
+        () -> {
+          m_elevator.toggleBrakeMode();
+          OrcestraManager.getInstance().getOrchestra().play();
+        },
+        m_elevator);
+  }
+
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
+
+  public void OnDisable() {
+    m_elevator.setHeight(ElevatorHeights.GROUND);
+    m_elevator.brake();
+  }
+
+  public void OnEnable() {
+    m_elevator.brake();
+  }
+
+  private void setupPathPlanner() {
     NamedCommands.registerCommand(
         "Elevator_Algae_L1",
         m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
@@ -164,247 +327,5 @@ public class RobotContainer {
 
     Pathfinding.setPathfinder(new LocalADStar());
     PathfindingCommand.warmupCommand().schedule();
-
-    OrcestraManager.getInstance().load("acdc.chrp");
-
-    // Initialize autonomous chooser
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auton Path", autoChooser);
-
-    SmartDashboard.putBoolean("ManualModeEnabled", manualModeEnabled);
-  }
-
-  /**
-   * This method is where all of the robot's logic is defined. We link {@link
-   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons and subsystem
-   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The advantage of
-   * configuring all the robot's logic here is that it's easy to find, and therefore easy to modify,
-   * what the robot does when something happens and why.
-   */
-  private void configureTriggers() {
-    // Controls
-
-    new Trigger(algaeSubsystem.hasBall())
-        .onTrue(
-            Commands.sequence(
-                Commands.runOnce(() -> driverXbox.setRumble(RumbleType.kBothRumble, 1)),
-                Commands.waitSeconds(0.5),
-                Commands.runOnce(() -> driverXbox.setRumble(RumbleType.kBothRumble, 0))));
-
-    driverXbox.rightStick().onTrue(Commands.run(() -> manualModeEnabled = !manualModeEnabled));
-    driverXbox
-        .back()
-        .onTrue(
-            Commands.runOnce(() -> m_elevator.resetEncoder())
-                .ignoringDisable(true)); // left menu button
-    driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
-
-    driverXbox
-        .axisMagnitudeGreaterThan(XboxController.Axis.kRightY.value, 0.3)
-        .whileTrue(
-            new RepeatCommand(
-                swerve.driveCommandRobotRelative(
-                    right_stick_up_down,
-                    () -> 0,
-                    () -> MathUtil.applyDeadband(swerve_turn.getAsDouble(), 0.1))));
-    
-    SmartDashboard.putBoolean("RAISE_CLIMBER", false);
-    new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false)).whileTrue(Commands.run(() -> winch.lower(), winch));
-
-    new Trigger(() -> DriverStation.isTeleop() && DriverStation.getMatchTime() < 30).onTrue(Commands.sequence(
-        Commands.runOnce(() -> led.setAnimation(LEDMode.OFF)),
-        Commands.run(() -> winch.lower(), winch)
-    ));
-
-    // driverXbox
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.defer(
-    //             () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
-    //             Set.of(swerve)));
-
-    // driverXbox
-    // .x()
-    // .onTrue(
-    // Commands.either(
-    // m_elevator.setHeightCommand(ElevatorHeights.L3)
-    // Commands.sequence(
-    // Commands.parallel(
-    // Commands.defer(
-    // () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
-    // Set.of(swerve))),
-    // new TurnToAngle(
-    // swerve,
-    // () -> (DriverStation.getAlliance().get() == Alliance.Blue) ? -90 : 90,
-    // swerve_x,
-    // swerve_y),
-    // m_elevator.setHeightCommand(ElevatorHeights.L1_25),
-    // Commands.waitSeconds(0.15),
-    // Commands.sequence(
-    // algaeSubsystem.startOutake(),
-    // Commands.waitSeconds(0.5),
-    // algaeSubsystem.stopMotors(),
-    // m_elevator.setHeightCommand(ElevatorHeights.GROUND)))
-    // .until(() -> autonTeleController.isDriverInputting()),
-    // () -> manualModeEnabled));
-    // );
-
-    driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
-
-    driverXbox
-        .y()
-        .onTrue(
-            Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                m_elevator.setHeightCommand(ElevatorHeights.TOP)));
-
-    driverXbox
-        .x()
-        .onTrue(
-            Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                m_elevator.setHeightCommand(ElevatorHeights.L3)));
-
-    driverXbox
-        .b()
-        .onTrue(
-            Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                m_elevator.setHeightCommand(ElevatorHeights.L2)));
-
-    driverXbox
-        .povLeft()
-        .onTrue(
-            Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                m_elevator.setHeightCommand(ElevatorHeights.L1_25)));
-
-    driverXbox
-        .povRight()
-        .onTrue(
-            Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                m_elevator.setHeightCommand(ElevatorHeights.L1_5)));
-
-    driverXbox.a().whileTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
-
-    // Commands.either(
-    // Commands.parallel(
-    // algaeSubsystem.intakeUntilStalled(),
-    // Commands.runOnce(() -> {
-    // m_elevator.setHeight(ReefUtils.ReefHeight(swerve.getPose()));
-    // })
-    // ),
-    // new RepeatCommand(
-    // Commands.runOnce(
-    // () -> {
-    // },
-    // m_elevator))),
-    // new AimAtAlgae(visionSubsystem, swerve)
-    // new TurnToAngle(
-    // swerve,
-    // () -> {
-    // return ReefUtils.AngleToReef(swerve.getPose());
-    // },
-    // swerve_x,
-    // swerve_y
-    // )
-    // ).until(() -> autonTeleController.isDriverInputting()),
-
-    // new RepeatCommand(
-    // new TurnToAngle(
-    // swerve,
-    // () -> {
-    // return ReefUtils.AngleToReef(swerve.getPose());
-    // },
-    // swerve_x,
-    // swerve_y)))
-    // ,
-    // () -> manualModeEnabled));
-
-    // driverXbox.leftTrigger().onTrue(Commands.parallel(
-    // m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-    // new AimAtAlgae(visionSubsystem, swerve)));
-
-    driverXbox
-        .povDown()
-        .whileTrue(Commands.run(() -> winch.lower(), winch)); // must be run repeatedly
-    driverXbox.povDown().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
-    driverXbox.povDown().onTrue(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
-
-    driverXbox
-        .povUp()
-        .whileTrue(Commands.run(() -> winch.raise(), winch)); // must be run repeatedly
-    driverXbox.povUp().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
-    driverXbox.povUp().onTrue(led.climbCommand());
-
-    driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
-
-    // driverXbox
-    //     .leftBumper()
-    //     .onTrue(
-    //         algaeSubsystem.startIntake());
-
-    // driverXbox.leftBumper().onFalse(
-    // 	algaeSubsystem.reverse()
-    // );
-
-    driverXbox
-        .leftBumper()
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.intakeUntilStalled(),
-                Commands.waitSeconds(0.1),
-                algaeSubsystem.holdAlgae()));
-
-    driverXbox
-        .rightBumper()
-        .onTrue(
-            Commands.sequence(
-                algaeSubsystem.startOutake(),
-                Commands.waitSeconds(0.5),
-                algaeSubsystem.stopMotors(),
-                Commands.deferredProxy(
-                    () -> {
-                      if (m_elevator.getHeight() >= ElevatorHeights.TOP - 1) {
-                        return m_elevator.setHeightCommand(ElevatorHeights.GROUND);
-                      }
-                      return Commands.none();
-                    })));
-
-    new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
-
-    // spotless:off
-    new Trigger(algaeSubsystem.hasBall())
-        .onTrue(led.indicateIntookCommand())
-        .onFalse(led.setAnimationToAllianceColorCommand(DriverStation.getAlliance()));
-    // spotless:on
-  }
-
-  public Command toggleBrakeMode() {
-    return Commands.runOnce(
-        () -> {
-          m_elevator.toggleBrakeMode();
-          OrcestraManager.getInstance().getOrchestra().play();
-        },
-        m_elevator);
-  }
-
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-  }
-
-  public void OnDisable() {
-    m_elevator.setHeight(ElevatorHeights.GROUND);
-    m_elevator.brake();
-  }
-
-  public void OnEnable() {
-    m_elevator.brake();
   }
 }
