@@ -10,6 +10,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
@@ -37,9 +38,12 @@ import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
 import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import swervelib.math.Matter;
 
 /**
@@ -102,7 +106,7 @@ public class RobotContainer {
   public RobotContainer() {
     Logging.logMetadata();
 
-    configureTriggers();
+    // configureTriggers();
 
     Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 

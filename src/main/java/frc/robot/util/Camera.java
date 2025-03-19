@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -10,22 +11,26 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveSubsystem;
 
+@Logged
 public class Camera {
-  CameraSettings settings;
-  @NotLogged
-  SwerveSubsystem swerve;
+  @NotLogged CameraSettings settings;
+  @NotLogged SwerveSubsystem swerve;
 
-  PhotonCamera camera;
-  PhotonPoseEstimator estimator;
+  @NotLogged PhotonCamera camera;
+  @NotLogged PhotonPoseEstimator estimator;
 
   private boolean enabled;
 
@@ -40,7 +45,7 @@ public class Camera {
         layout, Vision.VISION_POSE_STRATEGY, settings.getCameraToRobotTransform());
   }
 
-  public CameraSettings getCameraSettings() {
+  @NotLogged public CameraSettings getCameraSettings() {
     return settings;
   }
 
@@ -57,7 +62,11 @@ public class Camera {
       return;
     }
 
-    for (PhotonPipelineResult result : camera.getAllUnreadResults()) {
+    List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+
+    double[] poseArray = new double[results.size()*3];
+    int i = 0;
+    for (PhotonPipelineResult result : results) {
       Optional<EstimatedRobotPose> pose = estimator.update(result);
       if (pose.isEmpty()) {
         continue;
@@ -71,6 +80,12 @@ public class Camera {
         ambiguity = multiTagResult.get().estimatedPose.ambiguity; // get multitag ambiguity
       } else {
         ambiguity = result.getBestTarget().poseAmbiguity; // get best tag ambiguity
+      }
+
+      SmartDashboard.putNumber("CAMERA_"+settings.getCameraName()+"AMBIGUITY", ambiguity);
+
+      if (ambiguity > 0.05) {
+        continue;
       }
 
       // Calculate Average Target Area
@@ -91,7 +106,15 @@ public class Camera {
 
       Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, avgTargetArea, distFromCurrentPosition);
       swerve.addVisionPose(pose.get(), stdDvs);
+
+      poseArray[i] = pose.get().estimatedPose.getMeasureX().magnitude();
+      poseArray[i+1] = pose.get().estimatedPose.getMeasureY().magnitude();
+      poseArray[i+2] = pose.get().estimatedPose.getRotation().toRotation2d().getDegrees();
+      i += 3;
     }
+
+    SmartDashboard.putNumberArray("CAMERA_"+settings.getCameraName(), poseArray);
+    
   }
 
   private Matrix<N3, N1> calculateStandardDevs(double ambiguity, double avgTargetArea,

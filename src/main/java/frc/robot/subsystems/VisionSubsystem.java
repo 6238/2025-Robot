@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -18,14 +19,14 @@ public class VisionSubsystem extends SubsystemBase {
   @NotLogged private AprilTagFieldLayout fieldLayout;
   private boolean failedLoadingLayout = false;
 
-  @NotLogged private List<Camera> cameras;
+  private Camera cameras[] = new Camera[Vision.CAMERA_SETTINGS.length];
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
     loadFieldLayout();
 
-    for (CameraSettings cameraSettings : Vision.CAMERA_SETTINGS) {
-      cameras.add(new Camera(cameraSettings, fieldLayout, swerve));
+    for (int i = 0; i < Vision.CAMERA_SETTINGS.length; i++) {
+      cameras[i] = new Camera(Vision.CAMERA_SETTINGS[i], fieldLayout, swerve);
     }
   }
 

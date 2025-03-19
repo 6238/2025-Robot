@@ -1,13 +1,17 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Radians;
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -141,7 +145,24 @@ public final class Constants {
     public static final PoseStrategy VISION_POSE_STRATEGY =
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-    public static final CameraSettings[] CAMERA_SETTINGS = {};
+    public static final CameraSettings[] CAMERA_SETTINGS = {
+      new CameraSettings(
+          "BR",
+          new Transform3d(
+              new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(9.5)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(-10).in(Radians),
+                  Degrees.of(180 + 45).in(Radians)))),
+      new CameraSettings(
+          "FR",
+          new Transform3d(
+              new Translation3d(Inches.of(7), Inches.of(10), Inches.of(26.25)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(270).in(Radians)))),
+    };
 
     public static final Matrix<N3, N1> VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});
