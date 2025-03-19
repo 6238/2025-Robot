@@ -19,6 +19,11 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.DoubleArrayEntry;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleArrayTopic;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Vision;
@@ -33,6 +38,8 @@ public class Camera {
   @NotLogged PhotonPoseEstimator estimator;
 
   private boolean enabled;
+
+  DoubleArrayPublisher posePublisher;
 
   public Camera(CameraSettings settings, AprilTagFieldLayout layout, SwerveSubsystem swerve) {
     this.settings = settings;
@@ -64,8 +71,9 @@ public class Camera {
 
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 
-    double[] poseArray = new double[results.size()*8];
-    int i = 0;
+    if (results.isEmpty()) {
+      return;
+    }
     
     for (PhotonPipelineResult result : results) {
       Optional<EstimatedRobotPose> pose = estimator.update(result);
@@ -81,12 +89,6 @@ public class Camera {
         ambiguity = multiTagResult.get().estimatedPose.ambiguity; // get multitag ambiguity
       } else {
         ambiguity = result.getBestTarget().poseAmbiguity; // get best tag ambiguity
-      }
-
-      SmartDashboard.putNumber("CAMERA_"+settings.getCameraName()+"AMBIGUITY", ambiguity);
-
-      if (ambiguity > 0.05) {
-        continue;
       }
 
       // Calculate Average Target Area
@@ -108,19 +110,20 @@ public class Camera {
       Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, avgTargetArea, distFromCurrentPosition);
       swerve.addVisionPose(pose.get(), stdDvs);
 
-      // Add data for std dvs algorithm
-      poseArray[i+0] = pose.get().timestampSeconds;
-      poseArray[i+1] = pose.get().estimatedPose.getMeasureX().magnitude();
-      poseArray[i+2] = pose.get().estimatedPose.getMeasureY().magnitude();
-      poseArray[i+3] = pose.get().estimatedPose.getRotation().toRotation2d().getDegrees();
-      poseArray[i+4] = pose.get().targetsUsed.get(0).skew;
-      poseArray[i+5] = pose.get().targetsUsed.get(0).yaw;
-      poseArray[i+6] = pose.get().targetsUsed.get(0).area;
-      poseArray[i+7] = pose.get().targetsUsed.get(0).poseAmbiguity;
-    }
+      double[] poseArray = new double[8];
 
-    SmartDashboard.putNumberArray("CAMERA_"+settings.getCameraName(), poseArray); // only display the last pose
-    
+      // Add data for std dvs algorithm
+      poseArray[0] = pose.get().timestampSeconds;
+      poseArray[1] = pose.get().estimatedPose.getMeasureX().magnitude();
+      poseArray[2] = pose.get().estimatedPose.getMeasureY().magnitude();
+      poseArray[3] = pose.get().estimatedPose.getRotation().toRotation2d().getDegrees();
+
+      poseArray[4] = pose.get().targetsUsed.get(0).yaw;
+      poseArray[5] = pose.get().targetsUsed.get(0).area;
+      poseArray[6] = pose.get().targetsUsed.get(0).poseAmbiguity;
+
+      SmartDashboard.putNumberArray("CAMERA_"+settings.getCameraName(), poseArray);
+    }
   }
 
   private Matrix<N3, N1> calculateStandardDevs(double ambiguity, double avgTargetArea,

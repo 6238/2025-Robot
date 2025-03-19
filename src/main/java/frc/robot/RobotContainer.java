@@ -108,12 +108,8 @@ public class RobotContainer {
     Logging.logMetadata();
 
     // configureTriggers();
-    driverXbox.a().onTrue(Commands.repeatingSequence(
-      Commands.run( () -> SmartDashboard.putNumber("MySuperAwesomeTestNumber", 0) ),
-      Commands.waitSeconds(1),
-      Commands.run( () -> SmartDashboard.putNumber("MySuperAwesomeTestNumber", 1) ),
-      Commands.waitSeconds(0.1)
-    ));
+    driverXbox.x().onTrue(Commands.runOnce(() -> SmartDashboard.putBoolean("isMoving", false)));
+    driverXbox.b().onTrue(Commands.runOnce(() -> SmartDashboard.putBoolean("isMoving", true)));
 
     Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 
