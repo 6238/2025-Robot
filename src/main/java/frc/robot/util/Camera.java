@@ -64,7 +64,8 @@ public class Camera {
 
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 
-    double[] poseArray = new double[3];
+    double[] poseArray = new double[results.size()*8];
+    int i = 0;
     
     for (PhotonPipelineResult result : results) {
       Optional<EstimatedRobotPose> pose = estimator.update(result);
@@ -107,9 +108,15 @@ public class Camera {
       Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, avgTargetArea, distFromCurrentPosition);
       swerve.addVisionPose(pose.get(), stdDvs);
 
-      poseArray[0] = pose.get().estimatedPose.getMeasureX().magnitude();
-      poseArray[1] = pose.get().estimatedPose.getMeasureY().magnitude();
-      poseArray[2] = pose.get().estimatedPose.getRotation().toRotation2d().getDegrees();
+      // Add data for std dvs algorithm
+      poseArray[i+0] = pose.get().timestampSeconds;
+      poseArray[i+1] = pose.get().estimatedPose.getMeasureX().magnitude();
+      poseArray[i+2] = pose.get().estimatedPose.getMeasureY().magnitude();
+      poseArray[i+3] = pose.get().estimatedPose.getRotation().toRotation2d().getDegrees();
+      poseArray[i+4] = pose.get().targetsUsed.get(0).skew;
+      poseArray[i+5] = pose.get().targetsUsed.get(0).yaw;
+      poseArray[i+6] = pose.get().targetsUsed.get(0).area;
+      poseArray[i+7] = pose.get().targetsUsed.get(0).poseAmbiguity;
     }
 
     SmartDashboard.putNumberArray("CAMERA_"+settings.getCameraName(), poseArray); // only display the last pose
