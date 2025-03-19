@@ -15,6 +15,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -107,6 +108,12 @@ public class RobotContainer {
     Logging.logMetadata();
 
     // configureTriggers();
+    driverXbox.a().onTrue(Commands.repeatingSequence(
+      Commands.run( () -> SmartDashboard.putNumber("MySuperAwesomeTestNumber", 0) ),
+      Commands.waitSeconds(1),
+      Commands.run( () -> SmartDashboard.putNumber("MySuperAwesomeTestNumber", 1) ),
+      Commands.waitSeconds(0.1)
+    ));
 
     Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 
