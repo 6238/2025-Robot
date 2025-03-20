@@ -70,8 +70,8 @@ public class RobotContainer {
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandGenericHID operatorController = new CommandGenericHID(2);
 
-  DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_SPEED, 0.4);
-  DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_SPEED, 0.4);
+  DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_SPEED, 0.5);
+  DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_SPEED, 0.5);
 
   DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(
       -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02),
