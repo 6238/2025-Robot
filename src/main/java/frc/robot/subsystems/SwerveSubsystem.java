@@ -57,12 +57,15 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
 
+  private Supplier<Matter> elevatorMatter;
+
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory) {
+  public SwerveSubsystem(File directory, Supplier<Matter> elevatorMatter) {
+    this.elevatorMatter = elevatorMatter;
     // // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     // // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     // // The encoder resolution per motor revolution is 1 per motor revolution.
@@ -90,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
       swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED);
-
+      swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
     } catch (Exception e) {
       DataLogManager.log("EXSITS: " + directory.exists());
       throw new RuntimeException(e);
@@ -118,8 +121,21 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param fieldRelative Drive mode. True for field-relative, false for robot-relative.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+    
+    List<Matter> matter = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
+
+    Translation2d limitedTranslation = SwerveMath.limitVelocity(
+      translation, 
+      getFieldVelocity(), 
+      getPose(),
+      Constants.LOOP_TIME, 
+      125,
+      matter,
+      swerveDrive.swerveDriveConfiguration
+    );
+
     swerveDrive.drive(
-        translation,
+        limitedTranslation,
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.

@@ -57,9 +57,10 @@ import swervelib.math.Matter;
 public class RobotContainer {
   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
   public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
-  Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
   SwerveSubsystem swerve = new SwerveSubsystem(
-      new File(Filesystem.getDeployDirectory(), "swerve2"));
+      new File(Filesystem.getDeployDirectory(), "swerve2"),
+      () -> m_elevator.getMatter());
+
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
   WinchSubsystem winch = new WinchSubsystem();
   LEDSubsystem led = new LEDSubsystem();
