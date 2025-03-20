@@ -1,5 +1,9 @@
 package frc.robot.util;
 
+import static frc.robot.Constants.Swerve.MAX_SPEED;
+
+import edu.wpi.first.math.filter.SlewRateLimiter;
+
 public class DrivingRate {
     public static class DrivingRateConfig {
         public double CentreRate;

@@ -44,6 +44,7 @@ import java.io.File;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.util.DrivingRate;
 import swervelib.math.Matter;
 
@@ -58,8 +59,7 @@ public class RobotContainer {
   public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
   Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
   SwerveSubsystem swerve = new SwerveSubsystem(
-      new File(Filesystem.getDeployDirectory(), "swerve2"),
-      () -> new Matter(new Translation3d(), 0));
+      new File(Filesystem.getDeployDirectory(), "swerve2"));
   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
   WinchSubsystem winch = new WinchSubsystem();
   LEDSubsystem led = new LEDSubsystem();
@@ -74,8 +74,8 @@ public class RobotContainer {
   DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_SPEED, 0.5);
 
   DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(
-      -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02),
-      DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), TRANSLATE_RATE_CONFIG));
+        -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02),
+        DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), TRANSLATE_RATE_CONFIG));
 
   DoubleSupplier swerve_y = () -> DrivingRate.applyRateConfig(
       -MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02),
