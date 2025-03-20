@@ -481,7 +481,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return Drive command.
    */
   public Command driveCommand(
-      DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotationSpeed) {
+      DoubleSupplier translationSpeedX, DoubleSupplier translationSpeedY, DoubleSupplier rotationSpeed) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
     return run(
@@ -494,14 +494,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
           sign *= Constants.FLIP_DIR ? -1.0 : 1.0;
 
-          double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-          double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
-          // Make the robot move
-          double rotation = Math.pow(rotationSpeed.getAsDouble(), 5) * MAX_ANGULAR_VELOCITY;
-
           Translation2d translation =
-              new Translation2d(sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
-          this.drive(translation, rotation, true);
+              new Translation2d(sign * translationSpeedX.getAsDouble(), sign * translationSpeedY.getAsDouble());
+          this.drive(translation, rotationSpeed.getAsDouble(), true);
         });
   }
 
