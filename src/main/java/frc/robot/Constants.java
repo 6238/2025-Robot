@@ -143,13 +143,13 @@ public final class Constants {
 
   public final class Vision {
     public static final PoseStrategy VISION_POSE_STRATEGY =
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+        PoseStrategy.LOWEST_AMBIGUITY;
 
     public static final CameraSettings[] CAMERA_SETTINGS = {
       new CameraSettings(
           "BR",
           new Transform3d(
-              new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(9.5)),
+              new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(9.5)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-10).in(Radians),
@@ -157,15 +157,21 @@ public final class Constants {
       new CameraSettings(
           "FR",
           new Transform3d(
-              new Translation3d(Inches.of(7), Inches.of(10), Inches.of(26.25)),
+              new Translation3d(Inches.of(7), Inches.of(-10), Inches.of(26.25)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(0).in(Radians),
                   Degrees.of(270).in(Radians)))),
     };
 
-    public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});
+    public static final double CLOSE_FAR_CUTOFF = Units.feetToMeters(5);
+    public static final double AMBIGUITY_CUTOFF = 0.2;
+
+    public static final Matrix<N3, N1> REEF_CLOSE_VISION_STDDEV =
+      new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.01, 0.01, Math.toRadians(5)});
+    
+    public static final Matrix<N3, N1> REEF_FAR_VISION_STDDEV =
+      new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.toRadians(15)});
   }
 
   public final class Winch {

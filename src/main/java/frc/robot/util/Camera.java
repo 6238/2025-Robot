@@ -17,6 +17,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.DoubleArrayEntry;
@@ -38,8 +39,6 @@ public class Camera {
   @NotLogged PhotonPoseEstimator estimator;
 
   private boolean enabled;
-
-  DoubleArrayPublisher posePublisher;
 
   public Camera(CameraSettings settings, AprilTagFieldLayout layout, SwerveSubsystem swerve) {
     this.settings = settings;
@@ -81,33 +80,16 @@ public class Camera {
         continue;
       }
 
-      Optional<MultiTargetPNPResult> multiTagResult = result.getMultiTagResult();
-
       // Calculate Ambiguity of pose
-      double ambiguity = 1.0;
-      if (multiTagResult.isPresent()) {
-        ambiguity = multiTagResult.get().estimatedPose.ambiguity; // get multitag ambiguity
-      } else {
-        ambiguity = result.getBestTarget().poseAmbiguity; // get best tag ambiguity
+      double ambiguity = result.getBestTarget().poseAmbiguity;
+      if (ambiguity > Vision.AMBIGUITY_CUTOFF) {
+        continue;
       }
 
       // Calculate Average Target Area
-      double avgTargetArea = 0.0;
-      for (PhotonTrackedTarget target : result.targets) {
-        avgTargetArea += target.area;
-      }
-      avgTargetArea /= result.targets.size();
-
-      // Calculate Distance from current Position
-      Optional<Double> distFromCurrentPosition = Optional.empty();
-      Optional<Pose2d> poseAtResultTime = swerve.samplePoseAt(pose.get().timestampSeconds);
-      if (poseAtResultTime.isPresent()) {
-        Translation2d translationAtResultTime = poseAtResultTime.get().getTranslation();
-        Translation2d resultTranslation = pose.get().estimatedPose.getTranslation().toTranslation2d();
-        distFromCurrentPosition = Optional.of(translationAtResultTime.getDistance(resultTranslation));
-      }
-
-      Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, avgTargetArea, distFromCurrentPosition);
+      double distanceToTag = result.getBestTarget().bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
+      
+      Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, distanceToTag);
       swerve.addVisionPose(pose.get(), stdDvs);
 
       double[] poseArray = new double[8];
@@ -126,8 +108,10 @@ public class Camera {
     }
   }
 
-  private Matrix<N3, N1> calculateStandardDevs(double ambiguity, double avgTargetArea,
-      Optional<Double> distFromCurrentPosition) {
-    return Vision.VISION_STDDEV;
+  private Matrix<N3, N1> calculateStandardDevs(double ambiguity, double targetDistance) {
+    if (targetDistance > Vision.CLOSE_FAR_CUTOFF) {
+      return Vision.REEF_FAR_VISION_STDDEV;
+    }
+    return Vision.REEF_CLOSE_VISION_STDDEV;
   }
 }

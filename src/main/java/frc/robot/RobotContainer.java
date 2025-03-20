@@ -14,6 +14,8 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -107,9 +109,7 @@ public class RobotContainer {
   public RobotContainer() {
     Logging.logMetadata();
 
-    // configureTriggers();
-    driverXbox.x().onTrue(Commands.runOnce(() -> SmartDashboard.putBoolean("isMoving", false)));
-    driverXbox.b().onTrue(Commands.runOnce(() -> SmartDashboard.putBoolean("isMoving", true)));
+    configureTriggers();
 
     Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 
@@ -203,7 +203,6 @@ public class RobotContainer {
                 Commands.waitSeconds(0.5),
                 Commands.runOnce(() -> driverXbox.setRumble(RumbleType.kBothRumble, 0))));
 
-    driverXbox.rightStick().onTrue(Commands.run(() -> manualModeEnabled = !manualModeEnabled));
     driverXbox
         .back()
         .onTrue(
@@ -236,6 +235,28 @@ public class RobotContainer {
     //         Commands.defer(
     //             () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
     //             Set.of(swerve)));
+    
+    driverXbox.leftStick().onTrue(
+      Commands.sequence(
+        m_elevator.setHeightCommand(ElevatorHeights.STOW),
+        autonTeleController.GoToPose(new Pose2d(1.874, 3.971, new Rotation2d(Math.toRadians(90))), 2.0, 1.0),
+        Commands.parallel(
+          algaeSubsystem.startIntake(),
+          m_elevator.setHeightCommand(ElevatorHeights.L2),
+          autonTeleController.GoToPose(new Pose2d(2.874, 3.971, new Rotation2d(Math.toRadians(90))), 1, 0.0)
+        ),
+        Commands.waitSeconds(0.25),
+        algaeSubsystem.stopMotors(),
+        Commands.parallel(
+          Commands.sequence(
+            autonTeleController.GoToPose(new Pose2d(1.374, 3.971, new Rotation2d(Math.toRadians(90))), 2.5, 2.5, 1.5)
+          ),
+          Commands.sequence(
+            Commands.waitSeconds(0.1),
+            m_elevator.setHeightCommand(ElevatorHeights.L1_25)
+          )
+        )
+    ));
 
     // driverXbox
     // .x()
@@ -263,7 +284,7 @@ public class RobotContainer {
     // () -> manualModeEnabled));
     // );
 
-    driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
+    // driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
 
     driverXbox
         .y()
