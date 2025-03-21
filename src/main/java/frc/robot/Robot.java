@@ -33,6 +33,22 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
     SmartDashboard.putBoolean("FLIP_DIR", Constants.FLIP_DIR);
+
+
+    SmartDashboard.putNumber("Elevator/kg", Constants.Elevator.Gains.kG);
+    SmartDashboard.putNumber("Elevator/kgTop", Constants.Elevator.Gains.kg_Top);
+    SmartDashboard.putNumber("Elevator/kgBall", Constants.Elevator.Gains.kg_Ball);
+    SmartDashboard.putNumber("Elevator/kV", Constants.Elevator.Gains.kV);
+    SmartDashboard.putNumber("Elevator/kA", Constants.Elevator.Gains.kA);
+    SmartDashboard.putNumber("Elevator/kS", Constants.Elevator.Gains.kS);
+    SmartDashboard.putNumber("Elevator/kP", Constants.Elevator.Gains.kP);
+    SmartDashboard.putNumber("Elevator/kI", Constants.Elevator.Gains.kI);
+    SmartDashboard.putNumber("Elevator/kD", Constants.Elevator.Gains.kD);
+    SmartDashboard.putNumber("Elevator/MaxV", Constants.Elevator.MAX_VELOCITY);
+    SmartDashboard.putNumber("Elevator/MaxA", Constants.Elevator.MAX_ACCEL);
+    SmartDashboard.putNumber("Elevator/MaxJ", Constants.Elevator.MAX_JERK);
+
+    SmartDashboard.putBoolean("Elevator/UpdateConf", false);
   }
 
   @Override
@@ -42,6 +58,23 @@ public class Robot extends TimedRobot {
     Constants.AlgaeEndEffector.OUTAKE_SPEED =
         SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
     Constants.FLIP_DIR = SmartDashboard.getBoolean("FLIP_DIR", Constants.FLIP_DIR);
+
+    Constants.Elevator.Gains.kG = SmartDashboard.getNumber("Elevator/kg", Constants.Elevator.Gains.kG);
+    Constants.Elevator.Gains.kg_Top = SmartDashboard.getNumber("Elevator/kgTop", Constants.Elevator.Gains.kg_Top);
+    Constants.Elevator.Gains.kg_Ball = SmartDashboard.getNumber("Elevator/kgBall", Constants.Elevator.Gains.kg_Ball);
+    Constants.Elevator.Gains.kV = SmartDashboard.getNumber("Elevator/kV", Constants.Elevator.Gains.kV);
+    Constants.Elevator.Gains.kA = SmartDashboard.getNumber("Elevator/kA", Constants.Elevator.Gains.kA);
+    Constants.Elevator.Gains.kS = SmartDashboard.getNumber("Elevator/kS", Constants.Elevator.Gains.kS);
+    Constants.Elevator.Gains.kP = SmartDashboard.getNumber("Elevator/kP", Constants.Elevator.Gains.kP);
+    Constants.Elevator.Gains.kI = SmartDashboard.getNumber("Elevator/kI", Constants.Elevator.Gains.kI);
+    Constants.Elevator.Gains.kD = SmartDashboard.getNumber("Elevator/kD", Constants.Elevator.Gains.kD);
+    Constants.Elevator.MAX_VELOCITY = SmartDashboard.getNumber("Elevator/MaxV", Constants.Elevator.MAX_VELOCITY);
+    Constants.Elevator.MAX_ACCEL = SmartDashboard.getNumber("Elevator/MaxA", Constants.Elevator.MAX_ACCEL);
+    Constants.Elevator.MAX_JERK = SmartDashboard.getNumber("Elevator/MaxJ", Constants.Elevator.MAX_JERK);
+
+    if (SmartDashboard.getBoolean("Elevator/UpdateConf", false)) {
+      m_robotContainer.m_elevator.reapplyconf();
+    }
 
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());

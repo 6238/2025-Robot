@@ -74,7 +74,39 @@ public class ElevatorSubsystem extends SubsystemBase {
         Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
     elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
         Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
-    elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.JERK;
+    elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.MAX_JERK;
+    leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
+
+    followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));
+
+    leaderMotor.setNeutralMode(neutralModeValue);
+    followerMotor.setNeutralMode(neutralModeValue);
+
+    OrcestraManager.getInstance().addInstrument(leaderMotor);
+    OrcestraManager.getInstance().addInstrument(followerMotor);
+
+    this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
+  }
+
+  public void reapplyconf() {
+    var elevatorMotorConfigs = new TalonFXConfiguration();
+
+    Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
+
+    motorConfig.GravityType = GravityTypeValue.Elevator_Static;
+    motorConfig.kS = Gains.kS;
+    motorConfig.kG = Gains.kG;
+    motorConfig.kV = Gains.kV;
+    motorConfig.kA = Gains.kA;
+    motorConfig.kP = Gains.kP;
+    motorConfig.kI = Gains.kI;
+    motorConfig.kD = Gains.kD;
+
+    elevatorMotorConfigs.MotionMagic.MotionMagicCruiseVelocity =
+        Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
+    elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
+        Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
+    elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.MAX_JERK;
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
 
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));

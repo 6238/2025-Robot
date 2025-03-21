@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
+
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
@@ -71,20 +72,20 @@ public final class Constants {
   public final class Elevator {
     public final class Gains {
       // From SysID routine
-      public static final double kS = 0.041645; // voltage to overcome static friction
-      public static final double kG = 0.38; // voltage to overcome gravity
-      public static final double kV =
+      public static double kS = 0.041645; // voltage to overcome static friction
+      public static double kG = 0.38; // voltage to overcome gravity
+      public static double kV =
           8.84 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
-      public static final double kA =
+      public static double kA =
           0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
-      public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 1.7;
+      public static double kg_Ball = 0.465;
+      public static double kg_Top = 1.7;
 
       // PID for correcting errors
-      public static final double kP = 3;
-      public static final double kI = 0.05;
-      public static final double kD = 0;
+      public static double kP = 3;
+      public static double kI = 0.05;
+      public static double kD = 0;
     }
 
     public final class ElevatorHeights {
@@ -98,7 +99,7 @@ public final class Constants {
       public static final double GROUND = 7;
       public static final double L1_25 = 13.5;
       public static final double L1_5 = 18.5;
-      public static final double L2 = 33.5;
+      public static final double L2 = 34.5;
       public static final double L3 = 48.5;
       public static final double TOP = 80; // MAX HEIGHT
 
@@ -113,14 +114,9 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 40.0;
-    public static final double MAX_ACCEL = 50.0;
-    public static final double JERK = 1000.0;
-
-    // Alternate Profiles
-    public static final double FALLING_MAX_VELOCITY = 70.0;
-    public static final double FALLING_MAX_ACCEL = 90.0;
-    public static final double FALLING_JERK = 1600.0;
+    public static double MAX_VELOCITY = 40.0;
+    public static double MAX_ACCEL = 50.0;
+    public static double MAX_JERK = 1000.0;
 
     public static double ELEVATOR_OFFSET = 0;
   }
@@ -147,13 +143,21 @@ public final class Constants {
 
     public static final CameraSettings[] CAMERA_SETTINGS = {
       new CameraSettings(
-          "BR",
+          "Reef_L",
           new Transform3d(
-              new Translation3d(Inches.of(-13.5), Inches.of(-13.5), Inches.of(9.5)),
+              new Translation3d(Inches.of(12.615295), Inches.of(10.696954), Inches.of(7.612962+1.4785)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-10).in(Radians),
-                  Degrees.of(180 + 45).in(Radians)))),
+                  Degrees.of(-20).in(Radians)))),
+      new CameraSettings(
+        "Reef_R",
+        new Transform3d(
+            new Translation3d(Inches.of(12.615), Inches.of(-10.841124), Inches.of(7.612962+1.4785)),
+            new Rotation3d(
+                Degrees.of(0).in(Radians),
+                Degrees.of(-10).in(Radians),
+                Degrees.of(20).in(Radians)))),
       new CameraSettings(
           "FR",
           new Transform3d(
@@ -192,10 +196,6 @@ public final class Constants {
 
     public static final double BARGE_SPEED = 0.8;
     public static final double BARGE_THRESHOLD = 0.2;
-
-    public static final Pose2d REEF_CENTER_BLUE = new Pose2d(4.485, 4.042, new Rotation2d());
-
-    public static final Pose2d REEF_CENTER_RED = new Pose2d(4.485, 4.042, new Rotation2d());
   }
 
   public class PathfindingConfig {
@@ -214,7 +214,7 @@ public final class Constants {
     public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
 
-    public static final Pose2d PROCESSOR_RED = new Pose2d();
-    public static final Pose2d PROCESSOR_BLUE = new Pose2d();
+    public static final Pose2d BLUE_REEF_CENTER = new Pose2d(4.486, 4.027, Rotation2d.kZero);
+    public static final Pose2d RED_REEF_CENTER = new Pose2d(13.062, 4.027, Rotation2d.kZero);
   }
 }

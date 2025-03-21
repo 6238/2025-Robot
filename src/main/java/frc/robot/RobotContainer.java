@@ -239,24 +239,24 @@ public class RobotContainer {
     driverXbox.leftStick().onTrue(
       Commands.sequence(
         m_elevator.setHeightCommand(ElevatorHeights.STOW),
-        autonTeleController.GoToPose(new Pose2d(1.874, 3.971, new Rotation2d(Math.toRadians(90))), 2.0, 1.0),
+        autonTeleController.GoToPose(new Pose2d(2.2, 3.971, new Rotation2d(Math.toRadians(0))), 2.0, 0.5),
+        m_elevator.setHeightCommand(ElevatorHeights.L2),
+        Commands.waitSeconds(0.5),
         Commands.parallel(
-          algaeSubsystem.startIntake(),
-          m_elevator.setHeightCommand(ElevatorHeights.L2),
-          autonTeleController.GoToPose(new Pose2d(2.874, 3.971, new Rotation2d(Math.toRadians(90))), 1, 0.0)
+            algaeSubsystem.intakeUntilStalled(),
+          autonTeleController.GoToPose(new Pose2d(3.192, 3.971, new Rotation2d(Math.toRadians(0))), 0.75, 0.0)
         ),
-        Commands.waitSeconds(0.25),
-        algaeSubsystem.stopMotors(),
+        algaeSubsystem.holdAlgae(),
         Commands.parallel(
           Commands.sequence(
-            autonTeleController.GoToPose(new Pose2d(1.374, 3.971, new Rotation2d(Math.toRadians(90))), 2.5, 2.5, 1.5)
+            autonTeleController.GoToPose(new Pose2d(1.374, 3.971, new Rotation2d(Math.toRadians(0))), 2.5, 2.5, 2)
           ),
           Commands.sequence(
-            Commands.waitSeconds(0.1),
+            Commands.waitSeconds(0.5),
             m_elevator.setHeightCommand(ElevatorHeights.L1_25)
           )
         )
-    ));
+    ).until(() -> autonTeleController.isDriverInputting()));
 
     // driverXbox
     // .x()
