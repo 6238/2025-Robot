@@ -72,7 +72,7 @@ public class RobotContainer {
   @NotLogged CommandXboxController driverXbox = new CommandXboxController(0);
   @NotLogged CommandGenericHID operatorController = new CommandGenericHID(2);
 
-  @NotLogged DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_SPEED, 0.5);
+  @NotLogged DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_ANGULAR_VELOCITY, 0.5);
   @NotLogged DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(6, Constants.Swerve.MAX_SPEED, 0.5);
 
   DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02), TRANSLATE_RATE_CONFIG);
@@ -81,7 +81,7 @@ public class RobotContainer {
   DoubleSupplier swerve_y = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02),TRANSLATE_RATE_CONFIG);
     //   DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), ));
 
-  DoubleSupplier swerve_turn = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TRANSLATE_RATE_CONFIG);
+  DoubleSupplier swerve_turn = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG);
     //   DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), TRANSLATE_RATE_CONFIG));
 
   private final SendableChooser<Command> autoChooser;
