@@ -43,148 +43,142 @@ import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
 
 import java.io.File;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.ReefUtils;
 import swervelib.math.Matter;
 
 /**
- * This class is where almost all of the robot is defined - logic and subsystems are all set up
+ * This class is where almost all of the robot is defined - logic and subsystems
+ * are all set up
  * here.
  */
 @Logged
 public class RobotContainer {
-  AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
-  public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
-  Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
-  SwerveSubsystem swerve =
-      new SwerveSubsystem(
-          new File(Filesystem.getDeployDirectory(), "swerve2"),
-          () -> new Matter(new Translation3d(), 0));
-  VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
-  WinchSubsystem winch = new WinchSubsystem();
-  LEDSubsystem led = new LEDSubsystem();
-  // BatteryIdentification batteryIdentification = new BatteryIdentification();
+    AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
+    public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+    Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
+    SwerveSubsystem swerve = new SwerveSubsystem(
+            new File(Filesystem.getDeployDirectory(), "swerve2"),
+            () -> new Matter(new Translation3d(), 0));
+    VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
+    WinchSubsystem winch = new WinchSubsystem();
+    LEDSubsystem led = new LEDSubsystem();
+    // BatteryIdentification batteryIdentification = new BatteryIdentification();
 
-  private static boolean manualModeEnabled = false;
+    private static boolean manualModeEnabled = false;
 
-  CommandXboxController driverXbox = new CommandXboxController(0);
-  CommandGenericHID operatorController = new CommandGenericHID(2);
+    CommandXboxController driverXbox = new CommandXboxController(0);
+    CommandGenericHID operatorController = new CommandGenericHID(2);
 
-  DoubleSupplier swerve_x =
-      () ->
-          MathUtil.applyDeadband(
-              -driverXbox.getLeftY()
-                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
-                  * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
-              0.02);
+    DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
+            -driverXbox.getLeftY()
+                    * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
+                    * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
+            0.02);
 
-  DoubleSupplier swerve_y =
-      () ->
-          MathUtil.applyDeadband(
-              -driverXbox.getLeftX()
-                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
-                  * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
-              0.02);
+    DoubleSupplier swerve_y = () -> MathUtil.applyDeadband(
+            -driverXbox.getLeftX()
+                    * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
+                    * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
+            0.02);
 
-  DoubleSupplier right_stick_up_down =
-      () ->
-          MathUtil.applyDeadband(
-              -driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
-                  * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
-                  * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
-              0.02);
+    DoubleSupplier right_stick_up_down = () -> MathUtil.applyDeadband(
+            -driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
+                    * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
+                    * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
+            0.02);
 
-  DoubleSupplier swerve_turn =
-      () ->
-          MathUtil.applyDeadband(
-              -driverXbox.getRightX() * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.08);
+    DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(
+            -driverXbox.getRightX() * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.08);
 
-  private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
 
-  AutonTeleController autonTeleController =
-      new AutonTeleController(driverXbox, swerve, swerve_x, swerve_y, swerve_turn);
+    AutonTeleController autonTeleController = new AutonTeleController(driverXbox, swerve, swerve_x, swerve_y,
+            swerve_turn);
 
-  public RobotContainer() {
-    Logging.logMetadata();
+    public RobotContainer() {
+        Logging.logMetadata();
 
-    configureTriggers();
+        configureTriggers();
 
-    Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
+        Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 
-    swerve.setDefaultCommand(driveCommand);
+        swerve.setDefaultCommand(driveCommand);
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1",
-        m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+        NamedCommands.registerCommand(
+                "Elevator_Algae_L1",
+                m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1_25",
-        m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
+        NamedCommands.registerCommand(
+                "Elevator_Algae_L1_25",
+                m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_25));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L1_5",
-        m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
+        NamedCommands.registerCommand(
+                "Elevator_Algae_L1_5",
+                m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L1_5));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L2", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+        NamedCommands.registerCommand(
+                "Elevator_Algae_L2", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+        NamedCommands.registerCommand(
+                "Elevator_Algae_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
 
-    NamedCommands.registerCommand(
-        "Elevator_Algae_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
+        NamedCommands.registerCommand(
+                "Elevator_Algae_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
-    NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(22));
+        NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(22));
 
-    NamedCommands.registerCommand(
-        "Intake_Algae",
-        Commands.sequence(
-            algaeSubsystem.intakeUntilStalled().withTimeout(3), algaeSubsystem.holdAlgae()));
+        NamedCommands.registerCommand(
+                "Intake_Algae",
+                Commands.sequence(
+                        algaeSubsystem.intakeUntilStalled().withTimeout(3), algaeSubsystem.holdAlgae()));
 
-    NamedCommands.registerCommand("Start_Intake", algaeSubsystem.startIntake());
+        NamedCommands.registerCommand("Start_Intake", algaeSubsystem.startIntake());
 
-    NamedCommands.registerCommand("Stop_Intake", algaeSubsystem.holdAlgae());
+        NamedCommands.registerCommand("Stop_Intake", algaeSubsystem.holdAlgae());
 
-    NamedCommands.registerCommand(
-        "Shoot_Algae",
-        Commands.sequence(
-            algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+        NamedCommands.registerCommand(
+                "Shoot_Algae",
+                Commands.sequence(
+                        algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
 
-    NamedCommands.registerCommand(
-        "Shoot_Choral",
-        Commands.sequence(
-            algaeSubsystem.startFastOutake(),
-            Commands.waitSeconds(0.5),
-            algaeSubsystem.stopMotors()));
+        NamedCommands.registerCommand(
+                "Shoot_Choral",
+                Commands.sequence(
+                        algaeSubsystem.startFastOutake(),
+                        Commands.waitSeconds(0.5),
+                        algaeSubsystem.stopMotors()));
 
-    new EventTrigger("Elevator_Algae_L2")
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
-    new EventTrigger("Elevator_Algae_L3")
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
-    new EventTrigger("Elevator_Algae_L4")
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
-    new EventTrigger("Elevator_Algae_L1")
-        .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
-    new EventTrigger("Elevator_Choral_L1").onTrue(m_elevator.setHeightCommand(25));
-    new EventTrigger("Intake")
-        .onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
-    new EventTrigger("Start_Intake").onTrue(algaeSubsystem.startIntake());
-    new EventTrigger("Stop_Intake").onTrue(algaeSubsystem.holdAlgae());
-    new EventTrigger("Shoot").onTrue(algaeSubsystem.startOutake());
+        new EventTrigger("Elevator_Algae_L2")
+                .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+        new EventTrigger("Elevator_Algae_L3")
+                .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
+        new EventTrigger("Elevator_Algae_L4")
+                .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
+        new EventTrigger("Elevator_Algae_L1")
+                .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+        new EventTrigger("Elevator_Choral_L1").onTrue(m_elevator.setHeightCommand(25));
+        new EventTrigger("Intake")
+                .onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
+        new EventTrigger("Start_Intake").onTrue(algaeSubsystem.startIntake());
+        new EventTrigger("Stop_Intake").onTrue(algaeSubsystem.holdAlgae());
+        new EventTrigger("Shoot").onTrue(algaeSubsystem.startOutake());
 
-    Pathfinding.setPathfinder(new LocalADStar());
-    PathfindingCommand.warmupCommand().schedule();
+        Pathfinding.setPathfinder(new LocalADStar());
+        PathfindingCommand.warmupCommand().schedule();
 
-    OrcestraManager.getInstance().load("acdc.chrp");
+        OrcestraManager.getInstance().load("acdc.chrp");
 
-    // Initialize autonomous chooser
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auton Path", autoChooser);
+        // Initialize autonomous chooser
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auton Path", autoChooser);
 
-    SmartDashboard.putBoolean("ManualModeEnabled", manualModeEnabled);
-  }
+        SmartDashboard.putBoolean("ManualModeEnabled", manualModeEnabled);
+    }
 
   /**
    * This method is where all of the robot's logic is defined. We link {@link
@@ -258,31 +252,23 @@ public class RobotContainer {
         )
     ).until(() -> autonTeleController.isDriverInputting()));
 
-    // driverXbox
-    // .x()
-    // .onTrue(
-    // Commands.either(
-    // m_elevator.setHeightCommand(ElevatorHeights.L3)
-    // Commands.sequence(
-    // Commands.parallel(
-    // Commands.defer(
-    // () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
-    // Set.of(swerve))),
-    // new TurnToAngle(
-    // swerve,
-    // () -> (DriverStation.getAlliance().get() == Alliance.Blue) ? -90 : 90,
-    // swerve_x,
-    // swerve_y),
-    // m_elevator.setHeightCommand(ElevatorHeights.L1_25),
-    // Commands.waitSeconds(0.15),
-    // Commands.sequence(
-    // algaeSubsystem.startOutake(),
-    // Commands.waitSeconds(0.5),
-    // algaeSubsystem.stopMotors(),
-    // m_elevator.setHeightCommand(ElevatorHeights.GROUND)))
-    // .until(() -> autonTeleController.isDriverInputting()),
-    // () -> manualModeEnabled));
-    // );
+    driverXbox
+    .x()
+    .onTrue(
+        Commands.sequence(
+            Commands.defer(
+                () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
+                Set.of(swerve)
+            ),
+            m_elevator.setHeightCommand(ElevatorHeights.L1_25),
+            Commands.waitSeconds(0.15),
+            Commands.sequence(
+            algaeSubsystem.startOutake(),
+            Commands.waitSeconds(0.5),
+            algaeSubsystem.stopMotors(),
+            m_elevator.setHeightCommand(ElevatorHeights.GROUND))
+        ).until(() -> autonTeleController.isDriverInputting())
+    );
 
     // driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
 
@@ -294,21 +280,35 @@ public class RobotContainer {
                 Commands.waitUntil(() -> m_elevator.getHeight() > 4),
                 m_elevator.setHeightCommand(ElevatorHeights.TOP)));
 
-    driverXbox
-        .x()
-        .onTrue(
-            Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                m_elevator.setHeightCommand(ElevatorHeights.L3)));
+    // driverXbox
+    //     .x()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+    //             Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+    //             m_elevator.setHeightCommand(ElevatorHeights.L3)));
+
+    // driverXbox
+    //     .b()
+    //     .onTrue(
+    //         Commands.sequence(
+    //             m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+    //             Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+    //             m_elevator.setHeightCommand(ElevatorHeights.L2)));
 
     driverXbox
         .b()
         .onTrue(
-            Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                m_elevator.setHeightCommand(ElevatorHeights.L2)));
+            Commands.defer(
+                () -> ReefUtils.GenerateReefCommand(
+                    swerve.getPose(), 
+                    autonTeleController, 
+                    m_elevator,
+                    algaeSubsystem
+                ),
+                Set.of(swerve, m_elevator, algaeSubsystem))
+            .until(() -> autonTeleController.isDriverInputting())
+        );
 
     driverXbox
         .povLeft()
@@ -424,25 +424,25 @@ public class RobotContainer {
     // spotless:on
   }
 
-  public Command toggleBrakeMode() {
-    return Commands.runOnce(
-        () -> {
-          m_elevator.toggleBrakeMode();
-          OrcestraManager.getInstance().getOrchestra().play();
-        },
-        m_elevator);
-  }
+    public Command toggleBrakeMode() {
+        return Commands.runOnce(
+                () -> {
+                    m_elevator.toggleBrakeMode();
+                    OrcestraManager.getInstance().getOrchestra().play();
+                },
+                m_elevator);
+    }
 
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-  }
+    public Command getAutonomousCommand() {
+        return autoChooser.getSelected();
+    }
 
-  public void OnDisable() {
-    m_elevator.setHeight(ElevatorHeights.GROUND);
-    m_elevator.brake();
-  }
+    public void OnDisable() {
+        m_elevator.setHeight(ElevatorHeights.GROUND);
+        m_elevator.brake();
+    }
 
-  public void OnEnable() {
-    m_elevator.brake();
-  }
+    public void OnEnable() {
+        m_elevator.brake();
+    }
 }

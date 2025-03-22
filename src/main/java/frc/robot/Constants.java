@@ -218,8 +218,8 @@ public final class Constants {
      */
     public static final Pose2d BARGE_BLUE = new Pose2d(7.104, 5.65, Rotation2d.fromDegrees(0));
     public static final Pose2d BARGE_BLUE_FLIPPED =
-        new Pose2d(10.250, 6, Rotation2d.fromDegrees(0));
-    public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(0));
+        new Pose2d(10.250, 6, Rotation2d.fromDegrees(180));
+    public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(180));
     public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
 
     public static final Pose2d BLUE_REEF_CENTER = new Pose2d(4.486, 4.027, Rotation2d.kZero);

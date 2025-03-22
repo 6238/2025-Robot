@@ -93,7 +93,7 @@ public class ReefUtils {
           elevator.setHeightCommand(ElevatorHeights.L1_25)
         )
       )
-  ).until(() -> autonTeleController.isDriverInputting());
+  );
   }
 
   public static Pose2d GetBargePose(Pose2d currentPose2d) {
