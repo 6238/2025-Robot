@@ -159,20 +159,20 @@ public final class Constants {
                 Degrees.of(-10).in(Radians),
                 Degrees.of(20).in(Radians)))),
       new CameraSettings(
-          "FR",
+          "BR",
           new Transform3d(
-              new Translation3d(Inches.of(7), Inches.of(-10), Inches.of(26.25)),
+              new Translation3d(Inches.of(-12.306612), Inches.of(-12.743715), Inches.of(7.598246+1.875)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(270).in(Radians)))),
+                  Degrees.of(-10).in(Radians),
+                  Degrees.of(180+45).in(Radians)))),
       new CameraSettings(
         "BL",
         new Transform3d(
             new Translation3d(Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246+2)),
             new Rotation3d(
                 Degrees.of(0).in(Radians),
-                Degrees.of(0).in(Radians),
+                Degrees.of(-10).in(Radians),
                 Degrees.of(180 - 45).in(Radians)))),
     };
 
