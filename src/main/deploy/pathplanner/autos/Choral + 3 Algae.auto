@@ -56,37 +56,81 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator_Algae_L4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "name": "Raise_And_Shoot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot_Algae"
+            "name": "Elevator_Algae_L2"
           }
         },
         {
-          "type": "wait",
+          "type": "parallel",
           "data": {
-            "waitTime": 0.125
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start_Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BL algae"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop_Intake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "BL algae"
+            "name": "Raise_And_Shoot"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "BR algae"
+            "name": "Elevator_Algae_L2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start_Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BR algae"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop_Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Raise_And_Shoot"
           }
         },
         {
