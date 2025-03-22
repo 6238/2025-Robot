@@ -134,6 +134,18 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Algae_L1"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Leave After Barge"
