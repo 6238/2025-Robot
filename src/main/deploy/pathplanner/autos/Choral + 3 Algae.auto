@@ -1,0 +1,104 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Choral_L1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Deposit Choral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_Choral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Algae_L2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start_Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B Algae"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop_Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Algae_L4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_Algae"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.125
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BL algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BR algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Leave After Barge"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

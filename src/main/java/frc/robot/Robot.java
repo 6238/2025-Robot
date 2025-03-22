@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.telemetry.GeneralLogger;
+import frc.robot.util.ReefUtils;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -71,6 +72,8 @@ public class Robot extends TimedRobot {
     Constants.Elevator.MAX_VELOCITY = SmartDashboard.getNumber("Elevator/MaxV", Constants.Elevator.MAX_VELOCITY);
     Constants.Elevator.MAX_ACCEL = SmartDashboard.getNumber("Elevator/MaxA", Constants.Elevator.MAX_ACCEL);
     Constants.Elevator.MAX_JERK = SmartDashboard.getNumber("Elevator/MaxJ", Constants.Elevator.MAX_JERK);
+    
+    SmartDashboard.putNumber("reefAngle", ReefUtils.AngleToReef(m_robotContainer.swerve.getPose()));
 
     if (SmartDashboard.getBoolean("Elevator/UpdateConf", false)) {
       m_robotContainer.m_elevator.reapplyconf();

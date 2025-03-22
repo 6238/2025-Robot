@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.867143012152777,
-        "y": 4.944833622685184
+        "x": 7.283,
+        "y": 5.669037301199776
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.9115158420138885,
-        "y": 2.7285796440972208
+        "x": 5.532683504740294,
+        "y": 6.213511223244041
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Barge End Shoot"
     },
     {
       "anchor": {
-        "x": 5.987140118634259,
-        "y": 4.000367838541666
+        "x": 5.920084926060267,
+        "y": 6.1374943324497755
       },
       "prevControl": {
-        "x": 6.648365162037036,
-        "y": 3.972765842013888
+        "x": 7.821351341092163,
+        "y": 5.549780729864254
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 179.9493534092524
+    "rotation": 45.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "3 Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 45.0
   },
   "useDefaultConstraints": true
 }
