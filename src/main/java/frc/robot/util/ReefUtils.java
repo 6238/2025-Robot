@@ -30,7 +30,7 @@ public class ReefUtils {
    * Returns angle to reef in degrees
    */
   public static double AngleToReef(Pose2d pose) {
-    Alliance alliance = DriverStation.getAlliance().get();
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
 
     Pose2d reef_center =
         alliance == Alliance.Blue
