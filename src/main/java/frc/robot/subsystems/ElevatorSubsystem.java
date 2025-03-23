@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
@@ -174,7 +175,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     double elvMax = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
 
     double percentHeight = (getHeight() - elvMin) / elvMax;
-    double heightCOM = ((elvMax - elvMin) * percentHeight) + elvMin;
+    double heightCOM = Units.inchesToMeters(((elvMax - elvMin) * percentHeight) + elvMin);
     Translation3d centerOfMass =
         new Translation3d(DYNAMICS.COM_LOCATION.getX(), DYNAMICS.COM_LOCATION.getY(), heightCOM);
 

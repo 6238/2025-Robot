@@ -11,9 +11,11 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -29,12 +31,16 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import org.dyn4j.geometry.Translatable;
 import org.photonvision.EstimatedRobotPose;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.imu.NavXSwerve;
@@ -47,19 +53,19 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 @Logged
 public class SwerveSubsystem extends SubsystemBase {
-  // intentionally uninit since elevator isnt exist
-  private Supplier<Matter> elevatorMatter;
 
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
+
+  private Supplier<Matter> elevatorMatter;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
    */
-  public SwerveSubsystem(File directory, Supplier<Matter> matter) {
-    elevatorMatter = matter;
+  public SwerveSubsystem(File directory, Supplier<Matter> elevatorMatter) {
+    this.elevatorMatter = elevatorMatter;
     // // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     // // In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     // // The encoder resolution per motor revolution is 1 per motor revolution.
@@ -87,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
       // Alternative method if you don't want to supply the conversion factor via JSON
       // files.
       swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED);
-
+      swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
     } catch (Exception e) {
       DataLogManager.log("EXSITS: " + directory.exists());
       throw new RuntimeException(e);
@@ -115,24 +121,21 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param fieldRelative Drive mode. True for field-relative, false for robot-relative.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
-    // todo: all this is dead code and i wanna test it
-    List<Matter> objects = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
-    double totalMass = objects.stream().mapToDouble((x) -> x.mass).sum(); // yagsl shoud calc this
-    // Translation2d limitedTranslation =
-    //     SwerveMath.limitVelocity(
-    //         translation,
-    //         getFieldVelocity(),
-    //         getPose(),
-    //         Constants.LOOP_TIME,
-    //         totalMass,
-    //         objects,
-    //         swerveDrive.swerveDriveConfiguration);
+    
+    List<Matter> matter = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
 
-    // SmartDashboard.putNumber("translation_X", limitedTranslation.getX());
-    // SmartDashboard.putNumber("translation_Y", limitedTranslation.getY());
+    Translation2d limitedTranslation = SwerveMath.limitVelocity(
+      translation, 
+      getFieldVelocity(), 
+      getPose(),
+      Constants.LOOP_TIME, 
+      125,
+      matter,
+      swerveDrive.swerveDriveConfiguration
+    );
 
     swerveDrive.drive(
-        translation,
+        limitedTranslation,
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.
@@ -481,7 +484,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return Drive command.
    */
   public Command driveCommand(
-      DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotationSpeed) {
+      DoubleSupplier translationSpeedX, DoubleSupplier translationSpeedY, DoubleSupplier rotationSpeed) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
     return run(
@@ -494,14 +497,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
           sign *= Constants.FLIP_DIR ? -1.0 : 1.0;
 
-          double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-          double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
-          // Make the robot move
-          double rotation = Math.pow(rotationSpeed.getAsDouble(), 5) * MAX_ANGULAR_VELOCITY;
-
           Translation2d translation =
-              new Translation2d(sign * xInput * MAX_SPEED, sign * yInput * MAX_SPEED);
-          this.drive(translation, rotation, true);
+              new Translation2d(sign * translationSpeedX.getAsDouble(), sign * translationSpeedY.getAsDouble());
+          this.drive(translation, rotationSpeed.getAsDouble(), true);
         });
   }
 
@@ -515,18 +513,14 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return Drive command.
    */
   public Command driveCommandRobotRelative(
-      DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotationSpeed) {
+      DoubleSupplier translationSpeedX, DoubleSupplier translationSpeedY, DoubleSupplier rotationSpeed) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
     return run(
         () -> {
-          double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-          double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
-          // Make the robot move
-          double rotation = rotationSpeed.getAsDouble() * MAX_ANGULAR_VELOCITY;
-
-          Translation2d translation = new Translation2d(xInput * MAX_SPEED, yInput * MAX_SPEED);
-          this.drive(translation, rotation, false);
+          Translation2d translation =
+              new Translation2d(translationSpeedX.getAsDouble(), translationSpeedY.getAsDouble());
+          this.drive(translation, rotationSpeed.getAsDouble(), true);
         });
   }
 
