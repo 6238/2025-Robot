@@ -326,6 +326,7 @@ public class RobotContainer {
             Commands.defer(
                 () -> ReefUtils.GenerateReefCommand(
                     swerve.getPose(), 
+                    swerve,
                     autonTeleController, 
                     m_elevator,
                     algaeSubsystem
