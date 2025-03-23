@@ -278,7 +278,7 @@ public class RobotContainer {
 
     driverXbox
     .x()
-    .onTrue(
+    .whileTrue(
         Commands.sequence(
             Commands.defer(
                 () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
@@ -291,7 +291,7 @@ public class RobotContainer {
             Commands.waitSeconds(0.4),
             algaeSubsystem.stopMotors(),
             m_elevator.setHeightCommand(ElevatorHeights.GROUND))
-        .until(() -> autonTeleController.isDriverInputting()));
+    );
 
     // driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
 
@@ -322,7 +322,7 @@ public class RobotContainer {
 
     driverXbox
         .b()
-        .onTrue(
+        .whileTrue(
             Commands.defer(
                 () -> ReefUtils.GenerateReefCommand(
                     swerve.getPose(), 
@@ -331,7 +331,6 @@ public class RobotContainer {
                     algaeSubsystem
                 ),
                 Set.of(swerve, m_elevator, algaeSubsystem))
-            .until(() -> autonTeleController.isDriverInputting())
         );
 
     driverXbox

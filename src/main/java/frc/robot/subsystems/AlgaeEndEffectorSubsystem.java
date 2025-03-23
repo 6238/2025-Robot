@@ -134,8 +134,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     return runOnce(
         () ->
             setMotorPositions(
-                leftMotor.getPosition().getValueAsDouble() - 0.125,
-                rightMotor.getPosition().getValueAsDouble() - 0.125));
+                leftMotor.getPosition().getValueAsDouble(),
+                rightMotor.getPosition().getValueAsDouble()));
   }
 
   public Command reverse() {
@@ -150,11 +150,11 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startOutake() {
-    return runOnce(() -> setDuty(-AlgaeEndEffector.OUTAKE_SPEED));
+    return runOnce(() -> setMotorSpeed(100*-AlgaeEndEffector.OUTAKE_SPEED));
   }
 
   public Command startFastOutake() {
-    return runOnce(() -> setDuty(-0.12));
+    return runOnce(() -> setMotorSpeed(100*-0.12));
   }
 
   public Command stopMotors() {

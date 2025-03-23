@@ -15,7 +15,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -85,18 +84,6 @@ public class Camera {
       swerve.addVisionPose(pose.get(), stdDvs);
 
       double[] poseArray = new double[8];
-
-      // Add data for std dvs algorithm
-      poseArray[0] = pose.get().timestampSeconds;
-      poseArray[1] = pose.get().estimatedPose.getMeasureX().magnitude();
-      poseArray[2] = pose.get().estimatedPose.getMeasureY().magnitude();
-      poseArray[3] = pose.get().estimatedPose.getRotation().toRotation2d().getDegrees();
-
-      poseArray[4] = pose.get().targetsUsed.get(0).yaw;
-      poseArray[5] = pose.get().targetsUsed.get(0).area;
-      poseArray[6] = pose.get().targetsUsed.get(0).poseAmbiguity;
-
-      SmartDashboard.putNumberArray("CAMERA_"+settings.getCameraName(), poseArray);
     }
   }
 
