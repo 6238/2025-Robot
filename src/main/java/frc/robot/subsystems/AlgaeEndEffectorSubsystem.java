@@ -6,9 +6,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -37,9 +35,9 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
 
     var slot0Configs = talonFXConfigs.Slot0;
 
-    slot0Configs.kP = 16; // An error of 1 rotation results in 2.4 V output
-    slot0Configs.kI = 0.2; // no output for integrated error
-    slot0Configs.kD = 0.2; // A velocity of 1 rps results in 0.1 V output
+    slot0Configs.kP = 18; // An error of 1 rotation results in 2.4 V output
+    slot0Configs.kI = 0.03; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
     var slot1Configs = talonFXConfigs.Slot1;
 
@@ -120,7 +118,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   public Command startIntake() {
     return runOnce(() -> setMotorSpeed(AlgaeEndEffector.INTAKE_SPEED));
   }
- 
+
   // public Command intakeUntilStalled() {
   //     return startIntake().until(() -> isMotorStopped());
   // }
@@ -136,8 +134,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     return runOnce(
         () ->
             setMotorPositions(
-                leftMotor.getPosition().getValueAsDouble() - 0.125,
-                rightMotor.getPosition().getValueAsDouble() - 0.125));
+                leftMotor.getPosition().getValueAsDouble(),
+                rightMotor.getPosition().getValueAsDouble()));
   }
 
   public Command reverse() {
@@ -152,11 +150,11 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startOutake() {
-    return runOnce(() -> setDuty(-AlgaeEndEffector.OUTAKE_SPEED));
+    return runOnce(() -> setMotorSpeed(100*-AlgaeEndEffector.OUTAKE_SPEED));
   }
 
   public Command startFastOutake() {
-    return runOnce(() -> setDuty(-0.15));
+    return runOnce(() -> setMotorSpeed(100*-0.12));
   }
 
   public Command stopMotors() {

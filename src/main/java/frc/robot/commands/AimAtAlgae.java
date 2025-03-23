@@ -1,36 +1,34 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.Swerve.MAX_SPEED;
-
-import edu.wpi.first.epilogue.Logged;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 import java.util.List;
+
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-@Logged
+import frc.robot.Constants;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+
 public class AimAtAlgae extends TurnToAngle {
-  public VisionSubsystem vision;
-  public SwerveSubsystem swerve;
-  public static double targetYaw;
-  public static double swerve_x;
-  public static double swerve_y;
-  boolean targetVisible = false;
+    private static double swerveX = 0.0;
+    private static double swerveY = 0.0;
+    private static double targetYaw = 0.0;
+    private boolean targetVisible = false;
 
-  public AimAtAlgae(VisionSubsystem vision, SwerveSubsystem swerve) {
-    super(swerve, () -> targetYaw, () -> swerve_x, () -> swerve_y, true);
-    this.vision = vision;
-    this.swerve = swerve;
-  }
+    VisionSubsystem vision;
 
-  @Override
+    public AimAtAlgae(VisionSubsystem vision, SwerveSubsystem swerve) {
+        super(swerve, () -> targetYaw, () -> swerveX, () -> swerveY, true);
+        this.vision = vision;
+    }
+
+    @Override
   public void initialize() {}
 
   @Override
   public void execute() {
     targetVisible = false;
-    List<PhotonPipelineResult> results = vision.algaeCam.getAllUnreadResults();
+    List<PhotonPipelineResult> results = vision.getAlgaeCamResults();
 
     if (!results.isEmpty()) {
       PhotonPipelineResult result = results.get(results.size() - 1);
@@ -43,6 +41,7 @@ public class AimAtAlgae extends TurnToAngle {
             });
 
         if (targets.size() == 0) {
+          super.execute();
           return;
         }
 
@@ -56,19 +55,24 @@ public class AimAtAlgae extends TurnToAngle {
         }
 
         targetYaw = swerve.getPose().getRotation().getDegrees() - bestTarget.getYaw();
-        swerve_x = MAX_SPEED / 2;
+        swerveX = Constants.Swerve.MAX_SPEED;
         targetVisible = true;
       }
     }
 
     super.execute();
-  }
+    }
 
-  @Override
-  public void end(boolean interrupted) {}
+    @Override
+    public void end(boolean interrupted) {
+      targetVisible = false;
+      swerveX = 0.0;
+      swerveY = 0.0;
+      targetYaw = swerve.getPose().getRotation().getDegrees();
+    }
 
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

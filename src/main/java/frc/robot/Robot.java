@@ -8,12 +8,14 @@ import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.telemetry.GeneralLogger;
+import frc.robot.util.ReefUtils;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -23,13 +25,22 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog()); // Log controller and ds data
+
     m_robotContainer = new RobotContainer();
     WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
+    SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
+    SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
   }
 
   @Override
   public void robotPeriodic() {
+    Constants.AlgaeEndEffector.INTAKE_SPEED =
+        SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
+    Constants.AlgaeEndEffector.OUTAKE_SPEED =
+        SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
     GeneralLogger.log();
@@ -37,7 +48,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    // m_robotContainer.OnDisable();
+    m_robotContainer.OnDisable();
   }
 
   @Override
@@ -66,8 +77,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    Constants.Vision.USE_VISION = true;
-    SmartDashboard.putBoolean("USE_VISION", Constants.Vision.USE_VISION);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

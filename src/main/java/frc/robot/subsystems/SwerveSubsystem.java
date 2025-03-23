@@ -431,8 +431,8 @@ public class SwerveSubsystem extends SubsystemBase {
           // Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController( // PPHolonomicController is the built in path following
               // controller for holonomic drive trains
-              new PIDConstants(1.0, 0.0005, 0.02), // Translation PID constants
-              new PIDConstants(1.0, 0.0005, 0.02) // Rotation PID constants
+              new PIDConstants(3, 0.0005, 0.05), // Translation PID constants
+              new PIDConstants(3, 0.0005, 0.05) // Rotation PID constants
               ),
           config, // The robot configuration
           () -> {
@@ -522,5 +522,9 @@ public class SwerveSubsystem extends SubsystemBase {
               new Translation2d(translationSpeedX.getAsDouble(), translationSpeedY.getAsDouble());
           this.drive(translation, rotationSpeed.getAsDouble(), true);
         });
+  }
+
+  public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
+    return swerveDrive.swerveDrivePoseEstimator.sampleAt(timestampSeconds);
   }
 }
