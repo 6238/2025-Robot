@@ -7,7 +7,7 @@
     "Reef"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 2.75,
+  "defaultMaxVel": 2.25,
   "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,

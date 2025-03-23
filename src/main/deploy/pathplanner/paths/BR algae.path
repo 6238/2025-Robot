@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.161447844328703,
-        "y": 5.684497251157406
+        "x": 6.797672164351851,
+        "y": 4.423190827546296
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.09662324192915,
-        "y": 0.1495223627645501
+        "x": 5.732847561952298,
+        "y": -1.11178406084656
       },
       "isLocked": false,
       "linkedName": "Barge End Shoot"
@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 7.161447844328703,
-        "y": 5.684497251157406
+        "x": 6.797672164351851,
+        "y": 4.423190827546296
       },
       "prevControl": {
-        "x": 6.00088131600839,
-        "y": 0.5187689273571845
+        "x": 5.637105636031538,
+        "y": -0.7425374962539255
       },
       "nextControl": null,
       "isLocked": false,
@@ -58,7 +58,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.75,
+    "maxVelocity": 2.25,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,

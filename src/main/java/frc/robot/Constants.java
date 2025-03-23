@@ -128,7 +128,7 @@ public final class Constants {
     public static final double STALL_THRESHOLD = 0.1;
 
     public static double INTAKE_SPEED = 80;
-    public static double OUTAKE_SPEED = 0.05;
+    public static double OUTAKE_SPEED = 0.04;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -216,11 +216,11 @@ public final class Constants {
      *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_BLUE = new Pose2d(7.20, 5.65, Rotation2d.fromDegrees(25));
+    public static final Pose2d BARGE_BLUE = new Pose2d(7.10, 5.65, Rotation2d.fromDegrees(25));
     public static final Pose2d BARGE_BLUE_FLIPPED =
-        new Pose2d(10.25, 6, Rotation2d.fromDegrees(180-25));
-    public static final Pose2d BARGE_RED = new Pose2d(10.25, 2, Rotation2d.fromDegrees(180-25));
-    public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.2, 2, Rotation2d.fromDegrees(25));
+        new Pose2d(10.35, 6, Rotation2d.fromDegrees(180-25));
+    public static final Pose2d BARGE_RED = new Pose2d(10.35, 2, Rotation2d.fromDegrees(180-25));
+    public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.1, 2, Rotation2d.fromDegrees(25));
 
     public static final Pose2d BLUE_REEF_CENTER = new Pose2d(4.486, 4.027, Rotation2d.kZero);
     public static final Pose2d RED_REEF_CENTER = new Pose2d(13.062, 4.027, Rotation2d.kZero);

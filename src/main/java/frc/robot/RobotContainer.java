@@ -157,7 +157,7 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "Shoot_Algae",
                 Commands.sequence(
-                        algaeSubsystem.startOutake(), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+                        algaeSubsystem.startVariableOutake(1), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
 
         NamedCommands.registerCommand(
             "Raise_And_Shoot",
@@ -285,12 +285,7 @@ public class RobotContainer {
                 Set.of(swerve)
             ),
             m_elevator.setHeightCommand(ElevatorHeights.TOP),
-            Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
-            Commands.waitSeconds(0.15),
-            algaeSubsystem.startOutake(),
-            Commands.waitSeconds(0.4),
-            algaeSubsystem.stopMotors(),
-            m_elevator.setHeightCommand(ElevatorHeights.GROUND))
+            Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4))
     );
 
     // driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));

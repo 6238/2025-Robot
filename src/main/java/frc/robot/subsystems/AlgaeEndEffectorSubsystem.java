@@ -153,6 +153,10 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     return runOnce(() -> setMotorSpeed(100*-AlgaeEndEffector.OUTAKE_SPEED));
   }
 
+  public Command startVariableOutake(double speed) {
+    return runOnce(() -> setMotorSpeed(100*-speed));
+  }
+
   public Command startFastOutake() {
     return runOnce(() -> setMotorSpeed(100*-0.12));
   }

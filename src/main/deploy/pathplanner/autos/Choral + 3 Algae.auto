@@ -29,12 +29,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Elevator_Algae_L2"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
@@ -45,9 +39,35 @@
                 }
               },
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "B Algae"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "B Algae"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.35
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Elevator_Algae_L2"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {

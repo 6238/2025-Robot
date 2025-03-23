@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.161447844328703,
-        "y": 5.684497251157406
+        "x": 6.797672164351851,
+        "y": 4.423190827546296
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.147918836805555,
-        "y": 6.733897207754629
+        "x": 5.694349320023147,
+        "y": 6.313228804976852
       },
       "isLocked": false,
       "linkedName": "Barge End Shoot"
@@ -20,24 +20,24 @@
         "y": 5.035966796874999
       },
       "prevControl": {
-        "x": 6.071227213541666,
-        "y": 6.551863787615739
+        "x": 5.7988521997906135,
+        "y": 6.584064333587048
       },
       "nextControl": {
-        "x": 4.974845632118579,
-        "y": 4.685462706814942
+        "x": 5.088040913600158,
+        "y": 4.803789264027821
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.161447844328703,
-        "y": 5.684497251157406
+        "x": 6.797672164351851,
+        "y": 4.423190827546296
       },
       "prevControl": {
-        "x": 5.93874927662037,
-        "y": 7.61471535011574
+        "x": 5.722475405092593,
+        "y": 7.8655790653935185
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.8302771226415094,
-      "rotationDegrees": -119.99999999999999
+      "rotationDegrees": -120.38127981687705
     },
     {
       "waypointRelativePos": 1.3773290094339616,
@@ -72,7 +72,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.75,
+    "maxVelocity": 2.25,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,

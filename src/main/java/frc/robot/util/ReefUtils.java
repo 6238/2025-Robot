@@ -89,26 +89,26 @@ public class ReefUtils {
   }
 
   public static Command GenerateReefCommand(Pose2d currentPos, SwerveSubsystem swerve, AutonTeleController autonTeleController, ElevatorSubsystem elevator, AlgaeEndEffectorSubsystem algaeEndEffector) {
-    final Pose2d reefCenter = currentPos.getX() > 8.767 ? PathfindingConfig.BLUE_REEF_CENTER : PathfindingConfig.RED_REEF_CENTER;
+    final Pose2d reefCenter = currentPos.getX() < 8.767 ? PathfindingConfig.BLUE_REEF_CENTER : PathfindingConfig.RED_REEF_CENTER;
 
     Pose2d reefStartPose = GetReefPose(reefCenter, currentPos, 2.286);
     Pose2d reefPickupPose = GetReefPose(reefCenter, currentPos, 1.294);
     Pose2d reefEndPose = GetReefPose(reefCenter, currentPos, 3.112);
 
     return Commands.sequence(
-      Commands.either(
+      // Commands.either(
         Commands.sequence(
           elevator.setHeightCommand(ElevatorHeights.STOW),
           autonTeleController.GoToPose(reefStartPose, 3.0, 0.5),
           elevator.setHeightCommand(ElevatorHeights.GROUND),
           Commands.waitSeconds(0.35)
         ),
-        Commands.sequence(
-          elevator.setHeightCommand(ElevatorHeights.GROUND),
-          new TurnToAngle(swerve, () -> AngleToReef(currentPos, reefCenter), () -> 0, () -> 0)
-        ),
-        () -> currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4
-      ),
+      //   Commands.sequence(
+      //     elevator.setHeightCommand(ElevatorHeights.GROUND),
+      //     new TurnToAngle(swerve, () -> AngleToReef(currentPos, reefCenter), () -> 0, () -> 0)
+      //   ),
+      //   () -> currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4
+      // ),
       elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
       Commands.waitSeconds(0.5),
       Commands.parallel(
