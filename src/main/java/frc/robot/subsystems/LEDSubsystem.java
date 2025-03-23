@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Logged
 public class LEDSubsystem extends SubsystemBase {
-  private CANdle candle = new CANdle(40);
+  private CANdle candle = new CANdle(45);
   private final int LED_COUNT = 62; // Just the onboard LEDs
   private LEDMode currentMode = null;
   private LEDMode lastSentMode = null;

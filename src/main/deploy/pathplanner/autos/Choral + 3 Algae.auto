@@ -17,6 +17,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.35
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Shoot_Choral"
@@ -62,29 +68,42 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator_Algae_L2"
+            "name": "Elevator_Algae_L1"
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Start_Intake"
+                  "name": "Elevator_Algae_L3_Close_To_Reef"
                 }
               },
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "BL algae"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop_Intake"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Start_Intake"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "BL algae"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Stop_Intake"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -94,49 +113,6 @@
           "type": "named",
           "data": {
             "name": "Raise_And_Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator_Algae_L2"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Start_Intake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BR algae"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop_Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Raise_And_Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
           }
         },
         {

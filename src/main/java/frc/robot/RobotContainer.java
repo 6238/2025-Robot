@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Elevator.ElevatorHeights;
+import frc.robot.commands.AimAtAlgae;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
@@ -123,6 +124,18 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
                 "Elevator_Algae_L2", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+        
+        NamedCommands.registerCommand(
+            "Elevator_Algae_L2_Close_To_Reef", Commands.sequence(
+                Commands.waitUntil(() -> ReefUtils.GetAllianceReefPose().getTranslation().getDistance(swerve.getPose().getTranslation()) < 3),
+                m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2)
+            ));
+        
+        NamedCommands.registerCommand(
+            "Elevator_Algae_L3_Close_To_Reef", Commands.sequence(
+                Commands.waitUntil(() -> ReefUtils.GetAllianceReefPose().getTranslation().getDistance(swerve.getPose().getTranslation()) < 3),
+                m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3)
+            ));
 
         NamedCommands.registerCommand(
                 "Elevator_Algae_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
@@ -150,7 +163,8 @@ public class RobotContainer {
             "Raise_And_Shoot",
             Commands.sequence(
                 m_elevator.setHeightCommand(ElevatorHeights.TOP),
-                Commands.waitSeconds(0.5),
+                Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
+                Commands.waitSeconds(0.1),
                 algaeSubsystem.startOutake(),
                 Commands.waitSeconds(0.5),
                 algaeSubsystem.stopMotors()));
@@ -181,6 +195,7 @@ public class RobotContainer {
         PathfindingCommand.warmupCommand().schedule();
 
         OrcestraManager.getInstance().load("acdc.chrp");
+        // OrcestraManager.getInstance().getOrchestra().play();
 
         // Initialize autonomous chooser
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -239,27 +254,27 @@ public class RobotContainer {
     //             () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
     //             Set.of(swerve)));
     
-    driverXbox.leftStick().onTrue(
-      Commands.sequence(
-        m_elevator.setHeightCommand(ElevatorHeights.STOW),
-        autonTeleController.GoToPose(new Pose2d(2.2, 3.971, new Rotation2d(Math.toRadians(0))), 2.0, 0.5),
-        m_elevator.setHeightCommand(ElevatorHeights.L2),
-        Commands.waitSeconds(0.5),
-        Commands.parallel(
-            algaeSubsystem.intakeUntilStalled(),
-          autonTeleController.GoToPose(new Pose2d(3.192, 3.971, new Rotation2d(Math.toRadians(0))), 0.75, 0.0)
-        ),
-        algaeSubsystem.holdAlgae(),
-        Commands.parallel(
-          Commands.sequence(
-            autonTeleController.GoToPose(new Pose2d(1.374, 3.971, new Rotation2d(Math.toRadians(0))), 2.5, 2.5, 2)
-          ),
-          Commands.sequence(
-            Commands.waitSeconds(0.5),
-            m_elevator.setHeightCommand(ElevatorHeights.L1_25)
-          )
-        )
-    ).until(() -> autonTeleController.isDriverInputting()));
+    // driverXbox.leftStick().onTrue(
+    //   Commands.sequence(
+    //     m_elevator.setHeightCommand(ElevatorHeights.STOW),
+    //     autonTeleController.GoToPose(new Pose2d(2.2, 3.971, new Rotation2d(Math.toRadians(0))), 2.0, 0.5),
+    //     m_elevator.setHeightCommand(ElevatorHeights.L2),
+    //     Commands.waitSeconds(0.5),
+    //     Commands.parallel(
+    //         algaeSubsystem.intakeUntilStalled(),
+    //       autonTeleController.GoToPose(new Pose2d(3.192, 3.971, new Rotation2d(Math.toRadians(0))), 0.75, 0.0)
+    //     ),
+    //     algaeSubsystem.holdAlgae(),
+    //     Commands.parallel(
+    //       Commands.sequence(
+    //         autonTeleController.GoToPose(new Pose2d(1.374, 3.971, new Rotation2d(Math.toRadians(0))), 2.5, 2.5, 2)
+    //       ),
+    //       Commands.sequence(
+    //         Commands.waitSeconds(0.5),
+    //         m_elevator.setHeightCommand(ElevatorHeights.L1_25)
+    //       )
+    //     )
+    // ).until(() -> autonTeleController.isDriverInputting()));
 
     driverXbox
     .x()
@@ -269,15 +284,14 @@ public class RobotContainer {
                 () -> autonTeleController.GoToPose(ReefUtils.GetBargePose(swerve.getPose())),
                 Set.of(swerve)
             ),
-            m_elevator.setHeightCommand(ElevatorHeights.L1_25),
+            m_elevator.setHeightCommand(ElevatorHeights.TOP),
+            Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
             Commands.waitSeconds(0.15),
-            Commands.sequence(
             algaeSubsystem.startOutake(),
-            Commands.waitSeconds(0.5),
+            Commands.waitSeconds(0.4),
             algaeSubsystem.stopMotors(),
             m_elevator.setHeightCommand(ElevatorHeights.GROUND))
-        ).until(() -> autonTeleController.isDriverInputting())
-    );
+        .until(() -> autonTeleController.isDriverInputting()));
 
     // driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
 
@@ -287,6 +301,7 @@ public class RobotContainer {
             Commands.sequence(
                 m_elevator.setHeightCommand(ElevatorHeights.GROUND),
                 Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                Commands.waitSeconds(0.25),
                 m_elevator.setHeightCommand(ElevatorHeights.TOP)));
 
     // driverXbox
@@ -335,7 +350,13 @@ public class RobotContainer {
                 Commands.waitUntil(() -> m_elevator.getHeight() > 4),
                 m_elevator.setHeightCommand(ElevatorHeights.L1_5)));
 
-    driverXbox.a().whileTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
+    driverXbox.a().whileTrue(
+        Commands.sequence(
+            m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+            algaeSubsystem.startIntake(),
+            new AimAtAlgae(visionSubsystem, swerve)
+        ).until(() -> autonTeleController.isDriverInputting() || algaeSubsystem.hasBall().getAsBoolean())
+        );
 
     // Commands.either(
     // Commands.parallel(
@@ -406,9 +427,9 @@ public class RobotContainer {
         .onTrue(
             Commands.sequence(
                 algaeSubsystem.intakeUntilStalled(),
-                Commands.waitSeconds(0.1),
+                Commands.waitSeconds(0.2),
                 algaeSubsystem.holdAlgae()));
-
+    
     driverXbox
         .rightBumper()
         .onTrue(

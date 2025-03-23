@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Logged;
@@ -20,6 +23,8 @@ public class VisionSubsystem extends SubsystemBase {
   private boolean failedLoadingLayout = false;
 
   private Camera cameras[] = new Camera[Vision.CAMERA_SETTINGS.length];
+
+  PhotonCamera algaeCamera = new PhotonCamera("AlgaeCam");
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(SwerveSubsystem swerve) {
@@ -50,6 +55,10 @@ public class VisionSubsystem extends SubsystemBase {
     for (Camera camera : cameras) {
       camera.update();
     }
+  }
+
+  public List<PhotonPipelineResult> getAlgaeCamResults() { 
+    return algaeCamera.getAllUnreadResults();
   }
 
   /* Camera Enable Functions */

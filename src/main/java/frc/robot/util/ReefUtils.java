@@ -41,10 +41,24 @@ public class ReefUtils {
   }
 
   public static double ReefHeight(Pose2d pose) {
-    Alliance alliance = DriverStation.getAlliance().get();
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
     double angle = AngleToReef(pose);
 
-    if ((30 + angle) / 60 % 2 >= 1) {
+    if (Math.floor((30 + angle) / 60) % 2 >= 1) {
+      return alliance == Alliance.Blue ? ElevatorHeights.L3 : ElevatorHeights.L2;
+    }
+
+    return alliance == Alliance.Blue ? ElevatorHeights.L2 : ElevatorHeights.L3;
+  }
+
+  public static double ReefHeight(Pose2d pose, Pose2d reefCenter) {
+    Alliance alliance = Alliance.Blue;
+    if (reefCenter.getMeasureX().baseUnitMagnitude() > 8) {
+      alliance = Alliance.Red;
+    }
+    double angle = AngleToReef(pose, reefCenter);
+    
+    if (Math.floor((30 + Math.abs(angle)) / 60) % 2 >= 1) {
       return alliance == Alliance.Blue ? ElevatorHeights.L3 : ElevatorHeights.L2;
     }
 
@@ -61,7 +75,15 @@ public class ReefUtils {
     double x = reefPose.getX() + dx * distAway;
     double y = reefPose.getY() + dy * distAway;
 
-    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(targetAngle)));
+    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(180+targetAngle)));
+  }
+
+  public static Pose2d GetAllianceReefPose() {
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+
+    return alliance == Alliance.Blue
+            ? PathfindingConfig.BLUE_REEF_CENTER
+            : PathfindingConfig.RED_REEF_CENTER;
   }
 
   public static Command GenerateReefCommand(Pose2d currentPos, AutonTeleController autonTeleController, ElevatorSubsystem elevator, AlgaeEndEffectorSubsystem algaeEndEffector) {
@@ -76,12 +98,14 @@ public class ReefUtils {
 
     return Commands.sequence(
       elevator.setHeightCommand(ElevatorHeights.STOW),
-      autonTeleController.GoToPose(reefStartPose, 2.0, 0.5),
-      elevator.setHeightCommand(ElevatorHeights.L2),
+      autonTeleController.GoToPose(reefStartPose, 3.0, 0.5),
+      elevator.setHeightCommand(ElevatorHeights.GROUND),
+      Commands.waitSeconds(0.35),
+      elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
       Commands.waitSeconds(0.5),
       Commands.parallel(
         algaeEndEffector.intakeUntilStalled(),
-        autonTeleController.GoToPose(reefPickupPose, 0.75, 0.0)
+        autonTeleController.GoToPose(reefPickupPose, 1.5, 0.0)
       ),
       algaeEndEffector.holdAlgae(),
       Commands.parallel(
@@ -98,7 +122,7 @@ public class ReefUtils {
 
   public static Pose2d GetBargePose(Pose2d currentPose2d) {
     Alliance alliance = DriverStation.getAlliance().get();
-    Transform2d offset = new Transform2d(new Translation2d(0, 0), new Rotation2d());
+    Transform2d offset = new Transform2d(new Translation2d(0, (Math.random()*2-1)/2), new Rotation2d());
 
     if (alliance == Alliance.Blue) {
       if (currentPose2d.getX() > 7.25) {

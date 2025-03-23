@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.283,
-        "y": 5.669037301199776
+        "x": 7.161447844328703,
+        "y": 5.684497251157406
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.588646153041294,
-        "y": 6.694093104771205
+        "x": 6.147918836805555,
+        "y": 6.733897207754629
       },
       "isLocked": false,
       "linkedName": "Barge End Shoot"
     },
     {
       "anchor": {
-        "x": 5.249075317382813,
-        "y": 5.281376865931919
+        "x": 5.180742549189814,
+        "y": 5.035966796874999
       },
       "prevControl": {
-        "x": 5.8515638300391375,
-        "y": 6.193614709548619
+        "x": 6.071227213541666,
+        "y": 6.551863787615739
       },
       "nextControl": {
-        "x": 5.025048392159598,
-        "y": 4.942173985072544
+        "x": 4.974845632118579,
+        "y": 4.685462706814942
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.283,
-        "y": 5.669037301199776
+        "x": 7.161447844328703,
+        "y": 5.684497251157406
       },
       "prevControl": {
-        "x": 6.355743844168526,
-        "y": 7.226361083984375
+        "x": 5.93874927662037,
+        "y": 7.61471535011574
       },
       "nextControl": null,
       "isLocked": false,
@@ -54,12 +54,26 @@
       "rotationDegrees": -119.99999999999999
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7555122679045093,
+      "maxWaypointRelativePos": 1.3336372679045092,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.75,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -67,13 +81,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 45.0
+    "rotation": 29.999999999999996
   },
   "reversed": false,
   "folder": "3 Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 45.0
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": true
 }

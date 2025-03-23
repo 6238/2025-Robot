@@ -96,11 +96,11 @@ public final class Constants {
       public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
       public static final double STOW = 0;
-      public static final double GROUND = 7;
-      public static final double L1_25 = 13.5;
-      public static final double L1_5 = 18.5;
-      public static final double L2 = 34.5;
-      public static final double L3 = 48.5;
+      public static final double GROUND = 7-1.5;
+      public static final double L1_25 = 13.5-1.5;
+      public static final double L1_5 = 18.5-1.5;
+      public static final double L2 = 34.5-1.5;
+      public static final double L3 = 48.5-1.5;
       public static final double TOP = 80; // MAX HEIGHT
 
       // TODO
@@ -114,21 +114,21 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static double MAX_VELOCITY = 80.0;
+    public static double MAX_VELOCITY = 90.0;
     public static double MAX_ACCEL = 90.0;
-    public static double MAX_JERK = 1800.0;
+    public static double MAX_JERK = 2200.0;
 
     public static double ELEVATOR_OFFSET = 0;
   }
 
   public final class AlgaeEndEffector {
-    public static final int LEFT_MOTOR_ID = 41;
-    public static final int RIGHT_MOTOR_ID = 40;
+    public static final int LEFT_MOTOR_ID = 40;
+    public static final int RIGHT_MOTOR_ID = 41;
 
     public static final double STALL_THRESHOLD = 0.1;
 
     public static double INTAKE_SPEED = 80;
-    public static double OUTAKE_SPEED = 0.07;
+    public static double OUTAKE_SPEED = 0.05;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -176,7 +176,7 @@ public final class Constants {
                 Degrees.of(180 - 45).in(Radians)))),
     };
 
-    public static final double CLOSE_FAR_CUTOFF = Units.feetToMeters(5);
+    public static final double CLOSE_FAR_CUTOFF = Units.feetToMeters(9);
     public static final double AMBIGUITY_CUTOFF = 0.2;
 
     public static final Matrix<N3, N1> REEF_CLOSE_VISION_STDDEV =
@@ -207,7 +207,7 @@ public final class Constants {
   }
 
   public class PathfindingConfig {
-    public static final double DRIVE_RESUME_DEADBAND = 0.05;
+    public static final double DRIVE_RESUME_DEADBAND = 0.2;
 
     /*
      * Values were from path planner
@@ -216,11 +216,11 @@ public final class Constants {
      *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_BLUE = new Pose2d(7.104, 5.65, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_BLUE = new Pose2d(7.20, 5.65, Rotation2d.fromDegrees(25));
     public static final Pose2d BARGE_BLUE_FLIPPED =
-        new Pose2d(10.250, 6, Rotation2d.fromDegrees(180));
-    public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(180));
-    public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+        new Pose2d(10.25, 6, Rotation2d.fromDegrees(180-25));
+    public static final Pose2d BARGE_RED = new Pose2d(10.25, 2, Rotation2d.fromDegrees(180-25));
+    public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.2, 2, Rotation2d.fromDegrees(25));
 
     public static final Pose2d BLUE_REEF_CENTER = new Pose2d(4.486, 4.027, Rotation2d.kZero);
     public static final Pose2d RED_REEF_CENTER = new Pose2d(13.062, 4.027, Rotation2d.kZero);

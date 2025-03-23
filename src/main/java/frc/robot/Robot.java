@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     Constants.Elevator.MAX_VELOCITY = SmartDashboard.getNumber("Elevator/MaxV", Constants.Elevator.MAX_VELOCITY);
     Constants.Elevator.MAX_ACCEL = SmartDashboard.getNumber("Elevator/MaxA", Constants.Elevator.MAX_ACCEL);
     Constants.Elevator.MAX_JERK = SmartDashboard.getNumber("Elevator/MaxJ", Constants.Elevator.MAX_JERK);
-    
+
     SmartDashboard.putNumber("reefAngle", ReefUtils.AngleToReef(m_robotContainer.swerve.getPose()));
 
     if (SmartDashboard.getBoolean("Elevator/UpdateConf", false)) {
@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    // m_robotContainer.OnDisable();
+    m_robotContainer.OnDisable();
   }
 
   @Override

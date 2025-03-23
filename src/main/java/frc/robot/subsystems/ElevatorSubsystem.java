@@ -203,6 +203,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
 
+    
+    SmartDashboard.putNumber("elevator voltage", leaderMotor.getMotorVoltage().getValueAsDouble());
+
     if (getHeight() < 0.5 && getTargetHeight() < 4.5) {
       leaderMotor.setVoltage(0);
       return;
