@@ -12,6 +12,7 @@ import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,6 +41,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WinchSubsystem;
 import frc.robot.util.AutonTeleController;
+import frc.robot.util.DrivingRate.DrivingRateConfig;
 import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
 
@@ -48,8 +50,12 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import frc.robot.util.DrivingRate;
+
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.ReefUtils;
+
 import swervelib.math.Matter;
 
 /**
@@ -75,26 +81,14 @@ public class RobotContainer {
     CommandXboxController driverXbox = new CommandXboxController(0);
     CommandGenericHID operatorController = new CommandGenericHID(2);
 
-    DoubleSupplier swerve_x = () -> MathUtil.applyDeadband(
-            -driverXbox.getLeftY()
-                    * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
-                    * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
-            0.02);
+    DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02), TRANSLATE_RATE_CONFIG);
+        // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), TRANSLATE_RATE_CONFIG));
 
-    DoubleSupplier swerve_y = () -> MathUtil.applyDeadband(
-            -driverXbox.getLeftX()
-                    * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
-                    * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
-            0.02);
+    DoubleSupplier swerve_y = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02),TRANSLATE_RATE_CONFIG);
+      //   DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), ));
 
-    DoubleSupplier right_stick_up_down = () -> MathUtil.applyDeadband(
-            -driverXbox.getRawAxis(XboxController.Axis.kRightY.value)
-                    * (1 - Math.pow((m_elevator.getHeight() / 300), 2))
-                    * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0),
-            0.02);
-
-    DoubleSupplier swerve_turn = () -> MathUtil.applyDeadband(
-            -driverXbox.getRightX() * (driverXbox.getRightTriggerAxis() > 0.5 ? 0.5 : 1.0), 0.08);
+    DoubleSupplier swerve_turn = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG);
+      //   DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), TRANSLATE_RATE_CONFIG));
 
     private final SendableChooser<Command> autoChooser;
 
@@ -206,9 +200,12 @@ public class RobotContainer {
 
   /**
    * This method is where all of the robot's logic is defined. We link {@link
-   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons and subsystem
-   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The advantage of
-   * configuring all the robot's logic here is that it's easy to find, and therefore easy to modify,
+   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons
+   * and subsystem
+   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The
+   * advantage of
+   * configuring all the robot's logic here is that it's easy to find, and
+   * therefore easy to modify,
    * what the robot does when something happens and why.
    */
   private void configureTriggers() {
@@ -227,15 +224,6 @@ public class RobotContainer {
             Commands.runOnce(() -> m_elevator.resetEncoder())
                 .ignoringDisable(true)); // left menu button
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
-
-    driverXbox
-        .axisMagnitudeGreaterThan(XboxController.Axis.kRightY.value, 0.3)
-        .whileTrue(
-            new RepeatCommand(
-                swerve.driveCommandRobotRelative(
-                    right_stick_up_down,
-                    () -> 0,
-                    () -> MathUtil.applyDeadband(swerve_turn.getAsDouble(), 0.1))));
 
     SmartDashboard.putBoolean("RAISE_CLIMBER", false);
     new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false))
@@ -409,12 +397,12 @@ public class RobotContainer {
     driverXbox.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
 
     // driverXbox
-    //     .leftBumper()
-    //     .onTrue(
-    //         algaeSubsystem.startIntake());
+    // .leftBumper()
+    // .onTrue(
+    // algaeSubsystem.startIntake());
 
     // driverXbox.leftBumper().onFalse(
-    // 	algaeSubsystem.reverse()
+    // algaeSubsystem.reverse()
     // );
 
     driverXbox
