@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Velocity;
@@ -58,7 +59,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.hasBall = hasBall;
 
     var elevatorMotorConfigs = new TalonFXConfiguration();
-    var fastElevatorMotorConfigs = new TalonFXConfiguration();
 
     Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
 
@@ -75,7 +75,39 @@ public class ElevatorSubsystem extends SubsystemBase {
         Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
     elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
         Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
-    elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.JERK;
+    elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.MAX_JERK;
+    leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
+
+    followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));
+
+    leaderMotor.setNeutralMode(neutralModeValue);
+    followerMotor.setNeutralMode(neutralModeValue);
+
+    OrcestraManager.getInstance().addInstrument(leaderMotor);
+    OrcestraManager.getInstance().addInstrument(followerMotor);
+
+    this.setHeight(ElevatorHeights.ELEVATOR_MIN_HEIGHT);
+  }
+
+  public void reapplyconf() {
+    var elevatorMotorConfigs = new TalonFXConfiguration();
+
+    Slot0Configs motorConfig = elevatorMotorConfigs.Slot0;
+
+    motorConfig.GravityType = GravityTypeValue.Elevator_Static;
+    motorConfig.kS = Gains.kS;
+    motorConfig.kG = Gains.kG;
+    motorConfig.kV = Gains.kV;
+    motorConfig.kA = Gains.kA;
+    motorConfig.kP = Gains.kP;
+    motorConfig.kI = Gains.kI;
+    motorConfig.kD = Gains.kD;
+
+    elevatorMotorConfigs.MotionMagic.MotionMagicCruiseVelocity =
+        Elevator.MAX_VELOCITY; // Target cruise velocity of 80 rps
+    elevatorMotorConfigs.MotionMagic.MotionMagicAcceleration =
+        Elevator.MAX_ACCEL; // Target acceleration of 160 rps/s (0.5 seconds)
+    elevatorMotorConfigs.MotionMagic.MotionMagicJerk = Elevator.MAX_JERK;
     leaderMotor.getConfigurator().apply(elevatorMotorConfigs);
 
     followerMotor.setControl(new Follower(IDs.ELEVATOR_LEADER_MOTOR, true));
@@ -143,7 +175,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     double elvMax = ElevatorHeights.ELEVATOR_MAX_HEIGHT;
 
     double percentHeight = (getHeight() - elvMin) / elvMax;
-    double heightCOM = ((elvMax - elvMin) * percentHeight) + elvMin;
+    double heightCOM = Units.inchesToMeters(((elvMax - elvMin) * percentHeight) + elvMin);
     Translation3d centerOfMass =
         new Translation3d(DYNAMICS.COM_LOCATION.getX(), DYNAMICS.COM_LOCATION.getY(), heightCOM);
 
@@ -171,6 +203,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         leaderMotor.getPosition().getValueAsDouble() / ElevatorHeights.ELEVATOR_GEAR_RATIO);
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
+
+    
+    SmartDashboard.putNumber("elevator voltage", leaderMotor.getMotorVoltage().getValueAsDouble());
 
     if (getHeight() < 0.5 && getTargetHeight() < 4.5) {
       leaderMotor.setVoltage(0);

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
+
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
@@ -21,9 +22,14 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.util.CameraSettings;
+
 import java.io.File;
 import java.util.Map;
+
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import frc.robot.util.DrivingRate;
+import frc.robot.util.DrivingRate.DrivingRateConfig;
 import swervelib.math.Matter;
 
 /** Constants for the robot. */
@@ -71,20 +77,20 @@ public final class Constants {
   public final class Elevator {
     public final class Gains {
       // From SysID routine
-      public static final double kS = 0.041645; // voltage to overcome static friction
-      public static final double kG = 0.38; // voltage to overcome gravity
-      public static final double kV =
+      public static double kS = 0.041645; // voltage to overcome static friction
+      public static double kG = 0.38; // voltage to overcome gravity
+      public static double kV =
           8.84 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps
-      public static final double kA =
+      public static double kA =
           0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
-      public static final double kg_Ball = 0.465;
-      public static final double kg_Top = 1.7;
+      public static double kg_Ball = 0.465;
+      public static double kg_Top = 1.7;
 
       // PID for correcting errors
-      public static final double kP = 3;
-      public static final double kI = 0.05;
-      public static final double kD = 0;
+      public static double kP = 3;
+      public static double kI = 0.05;
+      public static double kD = 0;
     }
 
     public final class ElevatorHeights {
@@ -95,11 +101,11 @@ public final class Constants {
       public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
       public static final double STOW = 0;
-      public static final double GROUND = 7;
-      public static final double L1_25 = 13.5;
-      public static final double L1_5 = 18.5;
-      public static final double L2 = 33.5;
-      public static final double L3 = 48.5;
+      public static final double GROUND = 7-1.5;
+      public static final double L1_25 = 13.5-1.5;
+      public static final double L1_5 = 18.5-1.5;
+      public static final double L2 = 34.5-1.5;
+      public static final double L3 = 48.5-1.5;
       public static final double TOP = 80; // MAX HEIGHT
 
       // TODO
@@ -113,26 +119,21 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static final double MAX_VELOCITY = 40.0;
-    public static final double MAX_ACCEL = 50.0;
-    public static final double JERK = 1000.0;
-
-    // Alternate Profiles
-    public static final double FALLING_MAX_VELOCITY = 70.0;
-    public static final double FALLING_MAX_ACCEL = 90.0;
-    public static final double FALLING_JERK = 1600.0;
+    public static double MAX_VELOCITY = 90.0;
+    public static double MAX_ACCEL = 90.0;
+    public static double MAX_JERK = 2200.0;
 
     public static double ELEVATOR_OFFSET = 0;
   }
 
   public final class AlgaeEndEffector {
-    public static final int LEFT_MOTOR_ID = 41;
-    public static final int RIGHT_MOTOR_ID = 40;
+    public static final int LEFT_MOTOR_ID = 40;
+    public static final int RIGHT_MOTOR_ID = 41;
 
     public static final double STALL_THRESHOLD = 0.1;
 
     public static double INTAKE_SPEED = 80;
-    public static double OUTAKE_SPEED = 0.07;
+    public static double OUTAKE_SPEED = 0.04;
 
     public static final double OUTAKE_WAIT = 3.0;
 
@@ -143,44 +144,51 @@ public final class Constants {
 
   public final class Vision {
     public static final PoseStrategy VISION_POSE_STRATEGY =
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+        PoseStrategy.LOWEST_AMBIGUITY;
 
-    public static final CameraSettings CAMERA_SETTINGS[] = {
+    public static final CameraSettings[] CAMERA_SETTINGS = {
       new CameraSettings(
-          "BR",
+          "Reef_L",
           new Transform3d(
-              new Translation3d(Inches.of(-13.5), Inches.of(13.5), Inches.of(9.5)),
+              new Translation3d(Inches.of(12.615295), Inches.of(10.696954), Inches.of(7.612962+1.4785)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-10).in(Radians),
-                  Degrees.of(180 + 45).in(Radians)))),
-      // new CameraSettings(
-      //     "BL",
-      //     new Transform3d(
-      //         new Translation3d(Inches.of(7), Inches.of(-10), Inches.of(26.25)),
-      //         new Rotation3d(
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(0).in(Radians),
-      //             Degrees.of(90).in(Radians)))),
+                  Degrees.of(-20).in(Radians)))),
       new CameraSettings(
-          "FR",
+        "Reef_R",
+        new Transform3d(
+            new Translation3d(Inches.of(12.615), Inches.of(-10.841124), Inches.of(7.612962+1.4785)),
+            new Rotation3d(
+                Degrees.of(0).in(Radians),
+                Degrees.of(-10).in(Radians),
+                Degrees.of(20).in(Radians)))),
+      new CameraSettings(
+          "BR",
           new Transform3d(
-              new Translation3d(Inches.of(7), Inches.of(10), Inches.of(26.25)),
+              new Translation3d(Inches.of(-12.306612), Inches.of(-12.743715), Inches.of(7.598246+1.875)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(270).in(Radians)))),
+                  Degrees.of(-10).in(Radians),
+                  Degrees.of(180+45).in(Radians)))),
+      new CameraSettings(
+        "BL",
+        new Transform3d(
+            new Translation3d(Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246+2)),
+            new Rotation3d(
+                Degrees.of(0).in(Radians),
+                Degrees.of(-10).in(Radians),
+                Degrees.of(180 - 45).in(Radians)))),
     };
 
-    public static final String ALGAECAM_NAME = "AlgaeCam";
+    public static final double CLOSE_FAR_CUTOFF = Units.feetToMeters(9);
+    public static final double AMBIGUITY_CUTOFF = 0.2;
 
-    public static boolean USE_VISION = false;
-
-    public static final Matrix<N3, N1> VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.PI / 8});
-
-    public static final Matrix<N3, N1> INCREMENT_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.07, 0.07, 0});
+    public static final Matrix<N3, N1> REEF_CLOSE_VISION_STDDEV =
+      new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.01, 0.01, Math.toRadians(5)});
+    
+    public static final Matrix<N3, N1> REEF_FAR_VISION_STDDEV =
+      new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.toRadians(15)});
   }
 
   public final class Winch {
@@ -201,14 +209,10 @@ public final class Constants {
 
     public static final double BARGE_SPEED = 0.8;
     public static final double BARGE_THRESHOLD = 0.2;
-
-    public static final Pose2d REEF_CENTER_BLUE = new Pose2d(4.485, 4.042, new Rotation2d());
-
-    public static final Pose2d REEF_CENTER_RED = new Pose2d(4.485, 4.042, new Rotation2d());
   }
 
   public class PathfindingConfig {
-    public static final double DRIVE_RESUME_DEADBAND = 0.05;
+    public static final double DRIVE_RESUME_DEADBAND = 0.2;
 
     /*
      * Values were from path planner
@@ -217,13 +221,13 @@ public final class Constants {
      *
      * Each Point has a Pose2d and a GoalEndState
      */
-    public static final Pose2d BARGE_BLUE = new Pose2d(7.104, 5.65, Rotation2d.fromDegrees(0));
+    public static final Pose2d BARGE_BLUE = new Pose2d(7.10, 5.65, Rotation2d.fromDegrees(25));
     public static final Pose2d BARGE_BLUE_FLIPPED =
-        new Pose2d(10.250, 6, Rotation2d.fromDegrees(0));
-    public static final Pose2d BARGE_RED = new Pose2d(10.250, 2, Rotation2d.fromDegrees(0));
-    public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.250, 2, Rotation2d.fromDegrees(0));
+        new Pose2d(10.35, 6, Rotation2d.fromDegrees(180-25));
+    public static final Pose2d BARGE_RED = new Pose2d(10.35, 2, Rotation2d.fromDegrees(180-25));
+    public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.1, 2, Rotation2d.fromDegrees(25));
 
-    public static final Pose2d PROCESSOR_RED = new Pose2d();
-    public static final Pose2d PROCESSOR_BLUE = new Pose2d();
+    public static final Pose2d BLUE_REEF_CENTER = new Pose2d(4.486, 4.027, Rotation2d.kZero);
+    public static final Pose2d RED_REEF_CENTER = new Pose2d(13.062, 4.027, Rotation2d.kZero);
   }
 }

@@ -1,66 +1,96 @@
 package frc.robot.util;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants.Vision;
-import frc.robot.telemetry.Alert;
+import frc.robot.subsystems.SwerveSubsystem;
 
-/**
- * Utility class to work with reading from a camera attached via PhotonVision and feeding the data
- * into a {@link org.photonvision.PhotonPoseEstimator}.
- */
+@Logged
 public class Camera {
-  private PhotonCamera cam;
-  private PhotonPoseEstimator poseEst;
+  @NotLogged CameraSettings settings;
+  @NotLogged SwerveSubsystem swerve;
 
-  private Alert camDisconnected;
-  public double ambiguity;
+  @NotLogged PhotonCamera camera;
+  @NotLogged PhotonPoseEstimator estimator;
 
-  /**
-   * Creates a new Camera.
-   *
-   * @param camName The name of the camera - this must match what's set in the PhotonVision
-   *     settings.
-   * @param robotToCam An {@link edu.wpi.first.math.geometry.Transform3d} representing the distance
-   *     and rotation from the robot's center to the camera's lens.
-   * @param layout The layout of the field.
-   */
-  public Camera(CameraSettings settings, AprilTagFieldLayout layout) {
-    cam = new PhotonCamera(settings.getCameraName());
-    poseEst =
-        new PhotonPoseEstimator(
-            layout, Vision.VISION_POSE_STRATEGY, settings.getCameraToRobotTransform());
+  private boolean enabled;
 
-    camDisconnected =
-        new Alert(
-            "Camera " + settings.getCameraName() + " is disconnected!", Alert.AlertType.ERROR);
+  public Camera(CameraSettings settings, AprilTagFieldLayout layout, SwerveSubsystem swerve) {
+    this.settings = settings;
+    this.swerve = swerve;
+
+    enabled = true;
+
+    camera = new PhotonCamera(settings.getCameraName());
+    estimator = new PhotonPoseEstimator(
+        layout, Vision.VISION_POSE_STRATEGY, settings.getCameraToRobotTransform());
   }
 
-  public Optional<EstimatedRobotPose> update() {
-    if (!cam.isConnected()) {
-      camDisconnected.set(true);
-      return Optional.empty();
+  @NotLogged public CameraSettings getCameraSettings() {
+    return settings;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public boolean getEnabled() {
+    return enabled;
+  }
+
+  public void update() {
+    if (!enabled) {
+      return;
     }
-    camDisconnected.set(false);
 
-    Optional<EstimatedRobotPose> pose = Optional.empty();
-    for (PhotonPipelineResult result : cam.getAllUnreadResults()) {
-      ambiguity = 0.0;
+    List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 
-      for (PhotonTrackedTarget target : result.getTargets()) {
-        ambiguity += target.poseAmbiguity;
+    if (results.isEmpty()) {
+      return;
+    }
+    
+    for (PhotonPipelineResult result : results) {
+      Optional<EstimatedRobotPose> pose = estimator.update(result);
+      if (pose.isEmpty()) {
+        continue;
       }
 
-      pose = poseEst.update(result, cam.getCameraMatrix(), cam.getDistCoeffs());
-    }
+      // Calculate Ambiguity of pose
+      double ambiguity = result.getBestTarget().poseAmbiguity;
+      if (ambiguity > Vision.AMBIGUITY_CUTOFF) {
+        continue;
+      }
 
-    return pose;
+      // Calculate Average Target Area
+      double distanceToTag = result.getBestTarget().bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
+      if (distanceToTag > Vision.CLOSE_FAR_CUTOFF) {
+        continue;
+      }
+      
+      Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, distanceToTag);
+      swerve.addVisionPose(pose.get(), stdDvs);
+
+      double[] poseArray = new double[8];
+    }
+  }
+
+  private Matrix<N3, N1> calculateStandardDevs(double ambiguity, double targetDistance) {
+    if (targetDistance > Vision.CLOSE_FAR_CUTOFF) {
+      return Vision.REEF_FAR_VISION_STDDEV;
+    }
+    return Vision.REEF_CLOSE_VISION_STDDEV;
   }
 }

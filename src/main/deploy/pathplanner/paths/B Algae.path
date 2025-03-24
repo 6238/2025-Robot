@@ -3,81 +3,77 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.151140769675925,
-        "y": 6.0
+        "x": 6.065457589285713,
+        "y": 4.059648075810185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.915864076967592,
-        "y": 7.256821108217593
+        "x": 6.315253318789472,
+        "y": 4.0495439419193175
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.502183521412036,
-        "y": 5.7713794849537035
+        "x": 6.065457589285713,
+        "y": 4.059648075810185
       },
       "prevControl": {
-        "x": 5.736276403356481,
-        "y": 6.097537254050926
+        "x": 7.2641761956485205,
+        "y": 4.061968028716426
       },
       "nextControl": {
-        "x": 5.331795644873721,
-        "y": 5.533980853985768
+        "x": 5.213133084887755,
+        "y": 4.05799852044286
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.291558159722221,
-        "y": 5.401780598958332
+        "x": 5.721601924189814,
+        "y": 4.059648075810185
       },
       "prevControl": {
-        "x": 5.446571903935185,
-        "y": 5.644142433449072
+        "x": 5.29889065596892,
+        "y": 4.052664061851398
       },
       "nextControl": {
-        "x": 5.156855050259515,
-        "y": 5.191174159595529
+        "x": 6.20446216724537,
+        "y": 4.067625868055555
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.151140769675925,
-        "y": 6.0
+        "x": 6.797672164351851,
+        "y": 4.423190827546296
       },
       "prevControl": {
-        "x": 6.0433922887731475,
-        "y": 7.820390986689815
+        "x": 6.788005642361111,
+        "y": 3.916455439814815
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Barge End Shoot"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0704923930921053,
-      "rotationDegrees": -119.98285226834226
-    },
-    {
-      "waypointRelativePos": 2.4527652138157894,
-      "rotationDegrees": -121.80919999539374
+      "waypointRelativePos": 2.3874631485849065,
+      "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5918124171087537,
-      "maxWaypointRelativePos": 2.5344516744031855,
+      "minWaypointRelativePos": 0.38050190649867366,
+      "maxWaypointRelativePos": 1.6141101624668424,
       "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 3.0,
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.2,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -97,13 +93,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.6812322134733855
+    "rotation": 29.999999999999996
   },
   "reversed": false,
-  "folder": "Reef",
+  "folder": "3 Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
