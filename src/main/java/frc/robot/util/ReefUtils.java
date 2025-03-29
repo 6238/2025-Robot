@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.PathfindingConfig;
-import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -97,11 +96,12 @@ public class ReefUtils {
 
     return Commands.sequence(
       // Commands.either(
-        Commands.sequence(
-          elevator.setHeightCommand(ElevatorHeights.STOW),
+        Commands.parallel(
           autonTeleController.GoToPose(reefStartPose, 3.0, 0.5),
-          elevator.setHeightCommand(ElevatorHeights.GROUND),
-          Commands.waitSeconds(0.35)
+          Commands.sequence(
+            elevator.setHeightCommand(ElevatorHeights.GROUND),
+            Commands.waitSeconds(0.3)
+          )
         ),
       //   Commands.sequence(
       //     elevator.setHeightCommand(ElevatorHeights.GROUND),
@@ -110,7 +110,7 @@ public class ReefUtils {
       //   () -> currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4
       // ),
       elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
-      Commands.waitSeconds(0.5),
+      Commands.waitSeconds(0.4),
       Commands.parallel(
         algaeEndEffector.intakeUntilStalled(),
         autonTeleController.GoToPose(reefPickupPose, 1.5, 0.0)
@@ -130,7 +130,7 @@ public class ReefUtils {
 
   public static Pose2d GetBargePose(Pose2d currentPose2d) {
     Alliance alliance = DriverStation.getAlliance().get();
-    Transform2d offset = new Transform2d(new Translation2d(0, (Math.random()*2-1)/2), new Rotation2d());
+    Transform2d offset = new Transform2d(new Translation2d(0, (Math.random()*2-1)), new Rotation2d());
 
     if (alliance == Alliance.Blue) {
       if (currentPose2d.getX() > 7.25) {

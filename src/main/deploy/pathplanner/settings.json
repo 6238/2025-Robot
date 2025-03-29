@@ -7,7 +7,7 @@
     "Reef"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 2.25,
+  "defaultMaxVel": 2.5,
   "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
@@ -32,6 +32,6 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": [
-    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.6,\"y\":0.0},\"size\":{\"width\":0.75,\"length\":0.4},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
+    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.6,\"y\":0.0},\"size\":{\"width\":0.75,\"length\":0.5},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
   ]
 }

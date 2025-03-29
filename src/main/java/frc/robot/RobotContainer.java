@@ -45,6 +45,9 @@ import frc.robot.util.DrivingRate.DrivingRateConfig;
 import frc.robot.util.Logging;
 import frc.robot.util.OrcestraManager;
 
+import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
+import static frc.robot.Constants.Swerve.MAX_SPEED;
+
 import java.io.File;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
@@ -80,6 +83,9 @@ public class RobotContainer {
 
     CommandXboxController driverXbox = new CommandXboxController(0);
     CommandGenericHID operatorController = new CommandGenericHID(2);
+
+    DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(MAX_SPEED/2, MAX_SPEED, 0.5);
+    DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY/2.5, MAX_ANGULAR_VELOCITY, 0.5);
 
     DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02), TRANSLATE_RATE_CONFIG);
         // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), TRANSLATE_RATE_CONFIG));
@@ -137,7 +143,9 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "Elevator_Algae_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
-        NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(22));
+        NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(21));
+
+        NamedCommands.registerCommand("Elevator_Stow", m_elevator.setHeightCommand(ElevatorHeights.STOW));
 
         NamedCommands.registerCommand(
                 "Intake_Algae",
@@ -151,16 +159,16 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "Shoot_Algae",
                 Commands.sequence(
-                        algaeSubsystem.startVariableOutake(1), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+                        algaeSubsystem.startDutyOuttake(-1), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
 
         NamedCommands.registerCommand(
             "Raise_And_Shoot",
             Commands.sequence(
                 m_elevator.setHeightCommand(ElevatorHeights.TOP),
                 Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
-                Commands.waitSeconds(0.1),
-                algaeSubsystem.startOutake(),
-                Commands.waitSeconds(0.5),
+                Commands.waitSeconds(0.2),
+                algaeSubsystem.startDutyOuttake(-1),
+                Commands.waitSeconds(0.4),
                 algaeSubsystem.stopMotors()));
 
         NamedCommands.registerCommand(
@@ -282,9 +290,15 @@ public class RobotContainer {
         .y()
         .onTrue(
             Commands.sequence(
-                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                Commands.waitSeconds(0.25),
+                Commands.either(
+                    Commands.sequence(
+                        m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                        Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                        Commands.waitSeconds(0.3)
+                    ),
+                    Commands.none(),
+                    () -> m_elevator.getHeight() < 4
+                ),
                 m_elevator.setHeightCommand(ElevatorHeights.TOP)));
 
     // driverXbox
@@ -394,7 +408,7 @@ public class RobotContainer {
     driverXbox.povUp().onTrue(led.climbCommand());
 
     driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
-    driverXbox.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_25));
+    driverXbox.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.TOP));
 
     // driverXbox
     // .leftBumper()
@@ -423,7 +437,7 @@ public class RobotContainer {
                 Commands.deferredProxy(
                     () -> {
                       if (m_elevator.getHeight() >= ElevatorHeights.TOP - 1) {
-                        return m_elevator.setHeightCommand(ElevatorHeights.GROUND);
+                        return m_elevator.setHeightCommand(ElevatorHeights.STOW);
                       }
                       return Commands.none();
                     })));

@@ -124,18 +124,18 @@ public class SwerveSubsystem extends SubsystemBase {
     
     List<Matter> matter = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
 
-    Translation2d limitedTranslation = SwerveMath.limitVelocity(
-      translation, 
-      getFieldVelocity(), 
-      getPose(),
-      Constants.LOOP_TIME, 
-      125,
-      matter,
-      swerveDrive.swerveDriveConfiguration
-    );
+    // Translation2d limitedTranslation = SwerveMath.limitVelocity(
+    //   translation, 
+    //   getFieldVelocity(), 
+    //   getPose(),
+    //   Constants.LOOP_TIME, 
+    //   125,
+    //   matter,
+    //   swerveDrive.swerveDriveConfiguration
+    // );
 
     swerveDrive.drive(
-        limitedTranslation,
+        translation,
         rotation,
         fieldRelative,
         false); // Open loop is disabled since it shouldn't be used most of the time.

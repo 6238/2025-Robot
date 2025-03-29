@@ -145,8 +145,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   private void setDuty(double speed) {
     position = false;
     velocityControl = false;
-    leftMotor.setVoltage(12 * -speed);
-    rightMotor.setVoltage(12 * speed);
+    leftMotor.set(-speed);
+    rightMotor.set(speed);
   }
 
   public Command startOutake() {
@@ -157,8 +157,12 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     return runOnce(() -> setMotorSpeed(100*-speed));
   }
 
+  public Command startDutyOuttake(double speed) {
+    return runOnce(() -> setDuty(speed));
+  }
+
   public Command startFastOutake() {
-    return runOnce(() -> setMotorSpeed(100*-0.12));
+    return runOnce(() -> setMotorSpeed(100*-0.4));
   }
 
   public Command stopMotors() {

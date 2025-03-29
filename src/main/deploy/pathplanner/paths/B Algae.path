@@ -32,15 +32,15 @@
     },
     {
       "anchor": {
-        "x": 5.721601924189814,
+        "x": 5.899035011574074,
         "y": 4.059648075810185
       },
       "prevControl": {
-        "x": 5.29889065596892,
+        "x": 5.47632374335318,
         "y": 4.052664061851398
       },
       "nextControl": {
-        "x": 6.20446216724537,
+        "x": 6.3818952546296295,
         "y": 4.067625868055555
       },
       "isLocked": false,
@@ -48,12 +48,12 @@
     },
     {
       "anchor": {
-        "x": 6.797672164351851,
-        "y": 4.423190827546296
+        "x": 6.9482602719907405,
+        "y": 3.947551359953703
       },
       "prevControl": {
-        "x": 6.788005642361111,
-        "y": 3.916455439814815
+        "x": 7.0024928864454035,
+        "y": 4.191598124999689
       },
       "nextControl": null,
       "isLocked": false,
@@ -84,7 +84,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.25,
+    "maxVelocity": 2.5,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -93,7 +93,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 51.110798395167166
   },
   "reversed": false,
   "folder": "3 Algae",
