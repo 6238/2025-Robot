@@ -100,7 +100,7 @@ public class ReefUtils {
           autonTeleController.GoToPose(reefStartPose, 3.0, 0.5),
           Commands.sequence(
             elevator.setHeightCommand(ElevatorHeights.GROUND),
-            Commands.waitSeconds(0.3)
+            Commands.waitSeconds(0.5)
           )
         ),
       //   Commands.sequence(

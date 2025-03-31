@@ -85,7 +85,7 @@ public class RobotContainer {
     CommandGenericHID operatorController = new CommandGenericHID(2);
 
     DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(MAX_SPEED/2, MAX_SPEED, 0.5);
-    DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY/2.5, MAX_ANGULAR_VELOCITY, 0.5);
+    DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY*2, 0.5);
 
     DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02), TRANSLATE_RATE_CONFIG);
         // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300), 2), TRANSLATE_RATE_CONFIG));
@@ -145,7 +145,12 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(21));
 
+        NamedCommands.registerCommand("Elevator_Choral_L4_T", m_elevator.setHeightCommand(75));
+        NamedCommands.registerCommand("Elevator_Choral_L4_B", m_elevator.setHeightCommand(65));
+
         NamedCommands.registerCommand("Elevator_Stow", m_elevator.setHeightCommand(ElevatorHeights.STOW));
+
+        NamedCommands.registerCommand("Elevator_Processor", m_elevator.setHeightCommand(ElevatorHeights.L1_5));
 
         NamedCommands.registerCommand(
                 "Intake_Algae",
@@ -166,8 +171,8 @@ public class RobotContainer {
             Commands.sequence(
                 m_elevator.setHeightCommand(ElevatorHeights.TOP),
                 Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
-                Commands.waitSeconds(0.2),
-                algaeSubsystem.startDutyOuttake(-1),
+                Commands.waitSeconds(0.8),
+                algaeSubsystem.startVariableOutake(0.13),
                 Commands.waitSeconds(0.4),
                 algaeSubsystem.stopMotors()));
 
@@ -229,8 +234,9 @@ public class RobotContainer {
     driverXbox
         .back()
         .onTrue(
-            Commands.runOnce(() -> m_elevator.resetEncoder())
+            Commands.runOnce(() -> m_elevator.resetEncoder()) // m_elevator.getTargetHeight() == ElevatorHeights.STOW ? 0.75 * ElevatorHeights.ELEVATOR_GEAR_RATIO : 0)
                 .ignoringDisable(true)); // left menu button
+
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
     SmartDashboard.putBoolean("RAISE_CLIMBER", false);
@@ -283,6 +289,9 @@ public class RobotContainer {
             m_elevator.setHeightCommand(ElevatorHeights.TOP),
             Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4))
     );
+
+    // driverXbox.b().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
+    // driverXbox.x().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
 
     // driverXbox.rightStick().onTrue(m_elevator.setHeightCommand(25));
 
@@ -352,7 +361,7 @@ public class RobotContainer {
             m_elevator.setHeightCommand(ElevatorHeights.GROUND),
             algaeSubsystem.startIntake(),
             new AimAtAlgae(visionSubsystem, swerve)
-        ).until(() -> autonTeleController.isDriverInputting() || algaeSubsystem.hasBall().getAsBoolean())
+        ).until(() -> algaeSubsystem.hasBall().getAsBoolean())
         );
 
     // Commands.either(
@@ -408,7 +417,7 @@ public class RobotContainer {
     driverXbox.povUp().onTrue(led.climbCommand());
 
     driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
-    driverXbox.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.TOP));
+    driverXbox.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
 
     // driverXbox
     // .leftBumper()

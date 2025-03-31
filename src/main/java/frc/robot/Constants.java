@@ -85,7 +85,7 @@ public final class Constants {
           0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static double kg_Ball = 0.465;
-      public static double kg_Top = 1.7;
+      public static double kg_Top = 2;
 
       // PID for correcting errors
       public static double kP = 3;
@@ -97,15 +97,15 @@ public final class Constants {
       public static final double ELEVATOR_GEAR_RATIO = (42.6) / 80.5;
 
       // Min and Max Height for the Elevator
-      public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+      public static final double ELEVATOR_MIN_HEIGHT = -0.2;
       public static final double ELEVATOR_MAX_HEIGHT = 81.25;
 
       public static final double STOW = 0;
-      public static final double GROUND = 7-1.5;
+      public static final double GROUND = 7;
       public static final double L1_25 = 13.5-1.5;
       public static final double L1_5 = 18.5-1.5;
       public static final double L2 = 34.5-1.5;
-      public static final double L3 = 48.5-1.5;
+      public static final double L3 = 48.5;
       public static final double TOP = 80; // MAX HEIGHT
 
       // TODO
@@ -119,9 +119,9 @@ public final class Constants {
     }
 
     // Motion Profile
-    public static double MAX_VELOCITY = 90.0;
-    public static double MAX_ACCEL = 90.0;
-    public static double MAX_JERK = 2200.0;
+    public static double MAX_VELOCITY = 50.0;
+    public static double MAX_ACCEL = 60.0;
+    public static double MAX_JERK = 1800.0;
 
     public static double ELEVATOR_OFFSET = 0;
   }

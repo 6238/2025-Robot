@@ -169,6 +169,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     leaderMotor.setPosition(0);
     followerMotor.setPosition(0);
   }
+  public void resetEncoder(double val) {
+    leaderMotor.setPosition(val);
+    followerMotor.setPosition(val);
+  }
 
   public Matter getMatter() {
     double elvMin = ElevatorHeights.ELEVATOR_MIN_HEIGHT;
