@@ -9,8 +9,6 @@ import frc.robot.Constants.Swerve;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.util.function.DoubleSupplier;
 
-import com.pathplanner.lib.config.PIDConstants;
-
 @Logged
 public class TurnToAngle extends Command {
   DoubleSupplier targetAngle;
@@ -19,7 +17,7 @@ public class TurnToAngle extends Command {
   DoubleSupplier swerve_y;
   Boolean fieldRelative = true;
 
-  PIDController turn_pid = new PIDController(0.15, 0.0005,  0.05);
+  PIDController turn_pid = new PIDController(0.25, 0.0005,  0.04);
 
   public TurnToAngle(
       SwerveSubsystem swerve,

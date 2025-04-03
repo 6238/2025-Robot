@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.065457589285713,
-        "y": 4.059648075810185
+        "x": 6.0,
+        "y": 3.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.315253318789472,
-        "y": 4.0495439419193175
+        "x": 6.249795729503759,
+        "y": 3.7398958661091326
       },
       "isLocked": false,
       "linkedName": null
@@ -17,30 +17,30 @@
     {
       "anchor": {
         "x": 6.065457589285713,
-        "y": 4.059648075810185
+        "y": 3.87
       },
       "prevControl": {
         "x": 7.2641761956485205,
-        "y": 4.061968028716426
+        "y": 3.872319952906241
       },
       "nextControl": {
         "x": 5.213133084887755,
-        "y": 4.05799852044286
+        "y": 3.868350444632675
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.721601924189814,
+        "x": 5.899035011574074,
         "y": 4.059648075810185
       },
       "prevControl": {
-        "x": 5.29889065596892,
+        "x": 5.47632374335318,
         "y": 4.052664061851398
       },
       "nextControl": {
-        "x": 6.20446216724537,
+        "x": 6.3818952546296295,
         "y": 4.067625868055555
       },
       "isLocked": false,
@@ -48,12 +48,12 @@
     },
     {
       "anchor": {
-        "x": 6.797672164351851,
-        "y": 4.423190827546296
+        "x": 7.186080005787037,
+        "y": 4.675976200810185
       },
       "prevControl": {
-        "x": 6.788005642361111,
-        "y": 3.916455439814815
+        "x": 7.240312620241702,
+        "y": 4.920022965856173
       },
       "nextControl": null,
       "isLocked": false,
@@ -84,7 +84,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.25,
+    "maxVelocity": 2.5,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -93,7 +93,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 36.89139851197384
   },
   "reversed": false,
   "folder": "3 Algae",

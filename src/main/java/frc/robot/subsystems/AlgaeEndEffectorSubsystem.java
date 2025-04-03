@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -12,7 +13,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeEndEffector;
 import frc.robot.util.OrcestraManager;
+
 import java.util.function.BooleanSupplier;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
 public class AlgaeEndEffectorSubsystem extends SubsystemBase {
@@ -101,6 +105,9 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     position = true;
     leftMotor.setControl(p_request.withPosition(positionL));
     rightMotor.setControl(p_request.withPosition(positionR));
+
+    SmartDashboard.putNumber("tarPosR", positionR);
+    SmartDashboard.putNumber("tarPosL", positionL);
   }
 
   public Command alternateHoldAlgae() {
@@ -145,8 +152,8 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   private void setDuty(double speed) {
     position = false;
     velocityControl = false;
-    leftMotor.setVoltage(12 * -speed);
-    rightMotor.setVoltage(12 * speed);
+    leftMotor.set(-speed);
+    rightMotor.set(speed);
   }
 
   public Command startOutake() {
@@ -157,8 +164,12 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     return runOnce(() -> setMotorSpeed(100*-speed));
   }
 
+  public Command startDutyOuttake(double speed) {
+    return runOnce(() -> setDuty(speed));
+  }
+
   public Command startFastOutake() {
-    return runOnce(() -> setMotorSpeed(100*-0.12));
+    return runOnce(() -> setMotorSpeed(100*-0.4));
   }
 
   public Command stopMotors() {
@@ -170,5 +181,14 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
     if (upToSpeed == false) {
       upToSpeed = upToSpeed(0.2);
     }
+
+    if (rightMotor.getPosition().getValueAsDouble() > 7000) {
+      leftMotor.setPosition(0);
+      rightMotor.setPosition(0);
+    }
+
+
+    SmartDashboard.putNumber("currentPosL", leftMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("currentPosR", rightMotor.getPosition().getValueAsDouble());
   }
 }

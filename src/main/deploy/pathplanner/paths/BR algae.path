@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.797672164351851,
-        "y": 4.423190827546296
+        "x": 7.186080005787037,
+        "y": 4.675976200810185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.732847561952298,
-        "y": -1.11178406084656
+        "x": 6.121255403387483,
+        "y": -0.8589986875826714
       },
       "isLocked": false,
       "linkedName": "Barge End Shoot"
@@ -20,24 +20,24 @@
         "y": 2.857836042131696
       },
       "prevControl": {
-        "x": 5.014561186893493,
-        "y": 3.045795279902605
+        "x": 5.012903860114266,
+        "y": 3.044328803101862
       },
       "nextControl": {
-        "x": 5.344235722983737,
-        "y": 2.669876804360788
+        "x": 5.345893049762966,
+        "y": 2.67134328116153
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.797672164351851,
-        "y": 4.423190827546296
+        "x": 7.186080005787037,
+        "y": 4.675976200810185
       },
       "prevControl": {
-        "x": 5.637105636031538,
-        "y": -0.7425374962539255
+        "x": 6.025513477466724,
+        "y": -0.489752122990037
       },
       "nextControl": null,
       "isLocked": false,
@@ -58,7 +58,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.25,
+    "maxVelocity": 2.5,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -67,13 +67,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 36.89139851197384
   },
   "reversed": false,
   "folder": "3 Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 36.89139851197384
   },
   "useDefaultConstraints": true
 }

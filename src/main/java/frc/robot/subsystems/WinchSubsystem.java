@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.photonvision.simulation.VisionSystemSim;
+
 import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,8 +22,8 @@ public class WinchSubsystem extends SubsystemBase {
   private final TalonFX motor = new TalonFX(Winch.MOTOR_ID);
   private final NeutralOut neutralRequest = new NeutralOut();
 
-  public static final double MAX = 250;
-  public static final double MIN = 0;
+  public static final double MAX = 175;
+  public static final double MIN = -100;
 
   /** Creates a new WinchSubsystem. */
   public WinchSubsystem() {
