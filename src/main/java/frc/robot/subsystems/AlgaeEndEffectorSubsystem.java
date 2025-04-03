@@ -182,6 +182,11 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
       upToSpeed = upToSpeed(0.2);
     }
 
+    if (rightMotor.getPosition().getValueAsDouble() > 7000) {
+      leftMotor.setPosition(0);
+      rightMotor.setPosition(0);
+    }
+
 
     SmartDashboard.putNumber("currentPosL", leftMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("currentPosR", rightMotor.getPosition().getValueAsDouble());
