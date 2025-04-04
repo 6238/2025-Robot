@@ -496,8 +496,29 @@ public class RobotContainer {
                 algaeSubsystem.intakeUntilStalled(),
                 Commands.waitSeconds(0.2),
                 algaeSubsystem.holdAlgae()));
+    manualController
+        .leftBumper()
+        .onTrue(
+            Commands.sequence(
+                algaeSubsystem.intakeUntilStalled(),
+                Commands.waitSeconds(0.2),
+                algaeSubsystem.holdAlgae()));
 
     driverXbox
+        .rightBumper()
+        .onTrue(
+            Commands.sequence(
+                algaeSubsystem.startOutake(),
+                Commands.waitSeconds(0.5),
+                algaeSubsystem.stopMotors(),
+                Commands.deferredProxy(
+                    () -> {
+                      if (m_elevator.getHeight() >= ElevatorHeights.TOP - 1) {
+                        return m_elevator.setHeightCommand(ElevatorHeights.STOW);
+                      }
+                      return Commands.none();
+                    })));
+    manualController
         .rightBumper()
         .onTrue(
             Commands.sequence(

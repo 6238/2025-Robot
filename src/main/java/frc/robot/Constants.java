@@ -174,12 +174,14 @@ public final class Constants {
       new CameraSettings(
         "BL",
         new Transform3d(
-            new Translation3d(Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246+2)),
+            new Translation3d(Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246+2-0.25)),
             new Rotation3d(
                 Degrees.of(0).in(Radians),
                 Degrees.of(-10).in(Radians),
                 Degrees.of(180 - 45).in(Radians)))),
     };
+
+    public static boolean ENABLE = true;
 
     public static final double CLOSE_FAR_CUTOFF = Units.feetToMeters(9);
     public static final double AMBIGUITY_CUTOFF = 0.2;

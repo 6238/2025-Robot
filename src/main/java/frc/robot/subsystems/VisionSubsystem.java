@@ -52,6 +52,10 @@ public class VisionSubsystem extends SubsystemBase {
       return;
     }
 
+    if (!Vision.ENABLE) {
+      return;
+    }
+
     for (Camera camera : cameras) {
       camera.update();
     }

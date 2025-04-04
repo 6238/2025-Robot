@@ -30,12 +30,14 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
+    SmartDashboard.putBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
     SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
   }
 
   @Override
   public void robotPeriodic() {
+    Constants.Vision.ENABLE = SmartDashboard.getBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
     Constants.AlgaeEndEffector.INTAKE_SPEED =
         SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     Constants.AlgaeEndEffector.OUTAKE_SPEED =
