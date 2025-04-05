@@ -82,21 +82,24 @@ public class RobotContainer {
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandXboxController manualController = new CommandXboxController(1);
 
-  DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(MAX_SPEED / 2, MAX_SPEED, 0.5);
-  DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY * 2, 0.5);
+  DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(MAX_SPEED / 1.75, MAX_SPEED, 0.3);
+  DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY * 2, 0.3);
 
   DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02),
+      TRANSLATE_RATE_CONFIG) + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftY(), 0.02),
       TRANSLATE_RATE_CONFIG);
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), TRANSLATE_RATE_CONFIG));
 
   DoubleSupplier swerve_y = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02),
+      TRANSLATE_RATE_CONFIG) + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftX(), 0.02),
       TRANSLATE_RATE_CONFIG);
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), ));
 
   DoubleSupplier swerve_turn = () -> DrivingRate
-      .applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG);
+      .applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG) + DrivingRate
+      .applyRateConfig(-MathUtil.applyDeadband(manualController.getRightX(), 0.02), TURN_RATE_CONFIG);
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), TRANSLATE_RATE_CONFIG));
 
@@ -176,7 +179,7 @@ public class RobotContainer {
             m_elevator.setHeightCommand(ElevatorHeights.TOP),
             Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
             Commands.waitSeconds(0.8),
-            algaeSubsystem.startVariableOutake(0.13),
+            algaeSubsystem.startVariableOutake(0.10),
             Commands.waitSeconds(0.4),
             algaeSubsystem.stopMotors()));
 
