@@ -45,6 +45,14 @@ public class AutonTeleController {
     return pathfindingCommand;
   }
 
+  public Command GoToPoseWithUnlimitedContraints(Pose2d targetPose) {
+    PathConstraints constraints = PathConstraints.unlimitedConstraints(12);
+        
+    Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+
+    return pathfindingCommand;
+  }
+
   public Command GoToPose(Pose2d targetPose, double maxSpeed) {
     PathConstraints constraints =
         new PathConstraints(maxSpeed, 3.0, Units.degreesToRadians(360), Units.degreesToRadians(540));

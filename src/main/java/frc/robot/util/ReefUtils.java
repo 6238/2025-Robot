@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.Elevator.ElevatorHeights;
 import frc.robot.Constants.PathfindingConfig;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -95,20 +96,20 @@ public class ReefUtils {
     Pose2d reefEndPose = GetReefPose(reefCenter, currentPos, 3.112);
 
     return Commands.sequence(
-      // Commands.either(
+      Commands.either(
         Commands.parallel(
-          autonTeleController.GoToPose(reefStartPose, 3.0, 0.5),
+          autonTeleController.GoToPoseWithUnlimitedContraints(reefStartPose),
           Commands.sequence(
             elevator.setHeightCommand(ElevatorHeights.GROUND),
             Commands.waitSeconds(0.5)
           )
         ),
-      //   Commands.sequence(
-      //     elevator.setHeightCommand(ElevatorHeights.GROUND),
-      //     new TurnToAngle(swerve, () -> AngleToReef(currentPos, reefCenter), () -> 0, () -> 0)
-      //   ),
-      //   () -> currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4
-      // ),
+        Commands.sequence(
+          elevator.setHeightCommand(ElevatorHeights.GROUND),
+          new TurnToAngle(swerve, () -> AngleToReef(currentPos, reefCenter), () -> 0, () -> 0)
+        ),
+        () -> currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4
+      ),
       elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
       Commands.waitSeconds(0.4),
       Commands.parallel(
