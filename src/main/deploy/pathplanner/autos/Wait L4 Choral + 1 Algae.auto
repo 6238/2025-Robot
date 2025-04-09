@@ -13,7 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 3.0
           }
         },
         {
@@ -119,13 +119,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator_Algae_L3"
+            "name": "Elevator_Algae_L1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Leave After Barge"
+            "pathName": "Final Leave"
           }
         }
       ]

@@ -119,38 +119,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator_Algae_L3"
+            "name": "Elevator_Algae_L1"
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Start_Intake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Leave After Barge"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Copy of Leave After Barge"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop_Intake"
-                }
-              }
-            ]
+            "pathName": "Final Leave"
           }
         }
       ]
