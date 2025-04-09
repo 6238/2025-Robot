@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.9869689427572,
-        "y": 3.796770577935028
+        "x": 6.813394820601851,
+        "y": 4.2632855902777775
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 6.08950122974537
       },
       "prevControl": {
-        "x": 6.547026244729375,
-        "y": 6.007181942409896
+        "x": 6.7767069609563055,
+        "y": 5.83991014610075
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "3 Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 45.0
+    "rotation": 54.00562685636202
   },
   "useDefaultConstraints": false
 }
