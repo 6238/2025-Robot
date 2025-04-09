@@ -1,0 +1,200 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Algae_L1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator_Choral_L4_T"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Deposit Choral L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Choral_L4_B"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Leave Deposit Choral L4"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.2
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Elevator_Algae_L2"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start_Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B Algae after l4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop_Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Raise_And_Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Choral_L1"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start_Intake"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.2
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Elevator_Algae_L3"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Full 2nd"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop_Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Raise_And_Shoot_Far"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator_Algae_L1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "New New New New Path"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

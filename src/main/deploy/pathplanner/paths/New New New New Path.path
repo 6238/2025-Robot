@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.186080005787037,
-        "y": 4.675976200810185
+        "x": 6.85730179398148,
+        "y": 6.510111400462963
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.257045717592592,
-        "y": 2.4626338252314803
+        "x": 6.688195891203703,
+        "y": 5.498736979166666
       },
       "isLocked": false,
-      "linkedName": "Barge End Shoot"
+      "linkedName": "End of 2nd Full"
     },
     {
       "anchor": {
-        "x": 5.7444871238425925,
-        "y": 1.781027560763888
+        "x": 5.851634114583333,
+        "y": 1.8891062644675924
       },
       "prevControl": {
-        "x": 6.223969907407408,
-        "y": 2.4391080729166656
+        "x": 6.989605034722222,
+        "y": 3.092180627893518
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": "3 Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 36.89139851197384
+    "rotation": -48.64968367403082
   },
   "useDefaultConstraints": false
 }

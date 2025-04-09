@@ -1,0 +1,93 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.186080005787037,
+        "y": 4.675976200810185
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.945816220745071,
+        "y": 7.095617291819313
+      },
+      "isLocked": false,
+      "linkedName": "Barge End Shoot"
+    },
+    {
+      "anchor": {
+        "x": 5.010937861689814,
+        "y": 5.236226851851852
+      },
+      "prevControl": {
+        "x": 5.160176059677555,
+        "y": 5.436795942843888
+      },
+      "nextControl": {
+        "x": 4.861699663702073,
+        "y": 5.0356577608598165
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.85730179398148,
+        "y": 6.510111400462963
+      },
+      "prevControl": {
+        "x": 6.454380453532685,
+        "y": 6.300562735180358
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "End of 2nd Full"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6083687060889927,
+      "rotationDegrees": -119.99999999999999
+    },
+    {
+      "waypointRelativePos": 1.4139344262295093,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.6083423132183905,
+      "maxWaypointRelativePos": 1.5319010416666667,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -48.64968367403082
+  },
+  "reversed": false,
+  "folder": "3 Algae",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 36.89139851197384
+  },
+  "useDefaultConstraints": false
+}
