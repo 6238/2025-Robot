@@ -182,6 +182,16 @@ public class RobotContainer {
             algaeSubsystem.startVariableOutake(0.10),
             Commands.waitSeconds(0.4),
             algaeSubsystem.stopMotors()));
+    
+    NamedCommands.registerCommand(
+        "Raise_And_Shoot_Far",
+        Commands.sequence(
+            m_elevator.setHeightCommand(ElevatorHeights.TOP),
+            Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
+            Commands.waitSeconds(0.8),
+            algaeSubsystem.startVariableOutake(0.6),
+            Commands.waitSeconds(0.4),
+            algaeSubsystem.stopMotors()));
 
     NamedCommands.registerCommand(
         "Shoot_Choral",
