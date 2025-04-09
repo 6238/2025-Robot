@@ -95,30 +95,23 @@ public class ReefUtils {
     Pose2d reefEndPose = GetReefPose(reefCenter, currentPos, 3.112);
 
     return Commands.sequence(
-      // Commands.either(
-        Commands.parallel(
-          autonTeleController.GoToPose(reefStartPose, 3.0, 0.5),
-          Commands.sequence(
-            elevator.setHeightCommand(ElevatorHeights.GROUND),
-            Commands.waitSeconds(0.5)
-          )
-        ),
-      //   Commands.sequence(
-      //     elevator.setHeightCommand(ElevatorHeights.GROUND),
-      //     new TurnToAngle(swerve, () -> AngleToReef(currentPos, reefCenter), () -> 0, () -> 0)
-      //   ),
-      //   () -> currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4
-      // ),
+      Commands.parallel(
+        autonTeleController.GoToPose(reefStartPose, 3.5, 0.5, 3.0),
+        Commands.sequence(
+          elevator.setHeightCommand(ElevatorHeights.GROUND),
+          Commands.waitSeconds(0.5)
+        )
+      ),
       elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
       Commands.waitSeconds(0.4),
       Commands.parallel(
         algaeEndEffector.intakeUntilStalled(),
-        autonTeleController.GoToPose(reefPickupPose, 1.5, 0.0)
+        autonTeleController.GoToPose(reefPickupPose, 2, 0.0)
       ),
       algaeEndEffector.holdAlgae(),
       Commands.parallel(
         Commands.sequence(
-          autonTeleController.GoToPose(reefEndPose, 2.5, 2.5, 2)
+          autonTeleController.GoToPose(reefEndPose, 3, 2.5, 2.5)
         ),
         Commands.sequence(
           Commands.waitSeconds(0.5),

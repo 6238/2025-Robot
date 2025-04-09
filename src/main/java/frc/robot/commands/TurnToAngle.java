@@ -17,7 +17,7 @@ public class TurnToAngle extends Command {
   DoubleSupplier swerve_y;
   Boolean fieldRelative = true;
 
-  PIDController turn_pid = new PIDController(0.32, 0.0005,  0.04);
+  PIDController turn_pid = new PIDController(0.35, 0.0005,  0.04);
 
   public TurnToAngle(
       SwerveSubsystem swerve,
