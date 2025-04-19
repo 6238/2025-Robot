@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,7 +23,7 @@ public class WinchSubsystem extends SubsystemBase {
   private final TalonFX motor = new TalonFX(Winch.MOTOR_ID);
   private final NeutralOut neutralRequest = new NeutralOut();
 
-  public static final double MAX = 250;
+  public static final double MAX = 280;
   public static final double MIN = 0;
 
   /** Creates a new WinchSubsystem. */

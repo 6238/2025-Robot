@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.186080005787037,
+        "x": 7.14,
         "y": 4.675976200810185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.082757161458334,
-        "y": 6.566014178240742
+        "x": 6.036677155671296,
+        "y": 6.566014178240753
       },
       "isLocked": false,
       "linkedName": "Barge End Shoot"

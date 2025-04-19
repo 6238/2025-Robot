@@ -174,7 +174,7 @@ public final class Constants {
       new CameraSettings(
         "BL",
         new Transform3d(
-            new Translation3d(Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246+2-0.25)),
+            new Translation3d(Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246+2-0.4)),
             new Rotation3d(
                 Degrees.of(0).in(Radians),
                 Degrees.of(-10).in(Radians),
