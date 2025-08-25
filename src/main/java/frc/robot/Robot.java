@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.telemetry.GeneralLogger;
-import frc.robot.util.ReefUtils;
+// import frc.robot.util.ReefUtils;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -28,20 +28,20 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog()); // Log controller and ds data
 
     m_robotContainer = new RobotContainer();
-    WebServer.start(5800, Filesystem.getDeployDirectory().toString());
+    // WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
-    SmartDashboard.putBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
-    SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
-    SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+    // SmartDashboard.putBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
+    // SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
+    // SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
   }
 
   @Override
   public void robotPeriodic() {
-    Constants.Vision.ENABLE = SmartDashboard.getBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
-    Constants.AlgaeEndEffector.INTAKE_SPEED =
-        SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
-    Constants.AlgaeEndEffector.OUTAKE_SPEED =
-        SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+    // Constants.Vision.ENABLE = SmartDashboard.getBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
+    // Constants.AlgaeEndEffector.INTAKE_SPEED =
+    //     SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
+    // Constants.AlgaeEndEffector.OUTAKE_SPEED =
+    //     SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
 
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_robotContainer.m_elevator.resetEncoder();
+    // m_robotContainer.m_elevator.resetEncoder();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
