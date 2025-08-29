@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.L1;
 import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
 import static frc.robot.Constants.Swerve.MAX_SPEED;
+import frc.robot.subsystems.L1Subsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.DrivingRate;
 import frc.robot.util.DrivingRate.DrivingRateConfig;
@@ -34,6 +36,8 @@ public class RobotContainer {
   SwerveSubsystem swerve = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve"),
       () -> new Matter(new Translation3d(), 0));
+  
+  L1Subsystem l1Subsystem = new L1Subsystem();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandXboxController manualController = new CommandXboxController(1);
@@ -78,6 +82,18 @@ public class RobotContainer {
 
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
     manualController.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
+
+    driverXbox.x().onTrue(Commands.either(
+      Commands.sequence(
+        l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
+        l1Subsystem.startIntakeWheelsCommand()
+      ), 
+      Commands.sequence(
+        l1Subsystem.stopIntakeWheelsCommand(),
+        l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1)
+      ),
+      () -> (l1Subsystem.getArmTargetPosition() == L1.ARM_L1 || l1Subsystem.getArmTargetPosition() == L1.ARM_STOW)
+    ));
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }

@@ -17,6 +17,8 @@ public class L1Subsystem extends SubsystemBase {
     public TalonFX armMotor;
     public TalonFX intakeMotor;
 
+    public double armTarget = 0;
+
     public final PositionVoltage armPositionVoltageRequest;
 
     public L1Subsystem() {
@@ -42,8 +44,13 @@ public class L1Subsystem extends SubsystemBase {
         armPositionVoltageRequest = new PositionVoltage(0).withSlot(0);
     }
 
+    public double getArmTargetPosition() {
+        return armTarget;
+    }
+
     public void setArmPosition(double position) {
         armMotor.setControl(armPositionVoltageRequest.withPosition(position));
+        armTarget = position;
     }
 
     public Command setArmPositionCommand(DoubleSupplier position) {
