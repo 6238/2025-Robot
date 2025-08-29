@@ -4,61 +4,24 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.pathfinding.LocalADStar;
-import com.pathplanner.lib.pathfinding.Pathfinding;
+import java.io.File;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Elevator.ElevatorHeights;
-// import frc.robot.commands.AimAtAlgae;
-// import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
-// import frc.robot.subsystems.ElevatorSubsystem;
-// import frc.robot.subsystems.LEDSubsystem;
-// import frc.robot.subsystems.LEDSubsystem.LEDMode;
-import frc.robot.subsystems.SwerveSubsystem;
-// import frc.robot.subsystems.VisionSubsystem;
-// import frc.robot.subsystems.WinchSubsystem;
-import frc.robot.util.AutonTeleController;
-import frc.robot.util.DrivingRate.DrivingRateConfig;
-import frc.robot.util.Logging;
-import frc.robot.util.OrcestraManager;
-
 import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
 import static frc.robot.Constants.Swerve.MAX_SPEED;
-
-import java.io.File;
-import java.util.Set;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import edu.wpi.first.math.filter.SlewRateLimiter;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.DrivingRate;
-
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import frc.robot.util.ReefUtils;
-
+import frc.robot.util.DrivingRate.DrivingRateConfig;
+import frc.robot.util.Logging;
 import swervelib.math.Matter;
 
 /**

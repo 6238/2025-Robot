@@ -232,4 +232,26 @@ public final class Constants {
     public static final Pose2d BLUE_REEF_CENTER = new Pose2d(4.486, 4.027, Rotation2d.kZero);
     public static final Pose2d RED_REEF_CENTER = new Pose2d(13.062, 4.027, Rotation2d.kZero);
   }
+
+  public class L1 {
+    public static final int ARM_MOTOR_ID = 45;
+    public static final int INTAKE_MOTOR_ID = 46;
+
+    public static final double ARM_STOW = 0;
+    public static final double ARM_GROUND = 0;
+    public static final double ARM_L1 = 0;
+
+    public static final double ARM_kV = 0.12;
+    public static final double ARM_kA = 0.0;
+    public static final double ARM_kG = 0.0;
+    public static final double ARM_kP = 2.0;
+    public static final double ARM_kI = 0.0;
+    public static final double ARM_kD = 0.0;
+
+    public static final double ARM_VELOCITY = 7.5;
+    public static final double ARM_ACCEL = 20;
+    public static final double ARM_JERK = 300;
+
+    public static final double INTAKE_MOTOR_VOLTAGE = 10.0;
+  }
 }
