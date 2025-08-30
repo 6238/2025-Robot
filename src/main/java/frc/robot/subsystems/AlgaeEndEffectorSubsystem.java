@@ -5,18 +5,15 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeEndEffector;
 import frc.robot.util.OrcestraManager;
-
 import java.util.function.BooleanSupplier;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
 public class AlgaeEndEffectorSubsystem extends SubsystemBase {
@@ -157,11 +154,11 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startOutake() {
-    return runOnce(() -> setMotorSpeed(100*-AlgaeEndEffector.OUTAKE_SPEED));
+    return runOnce(() -> setMotorSpeed(100 * -AlgaeEndEffector.OUTAKE_SPEED));
   }
 
   public Command startVariableOutake(double speed) {
-    return runOnce(() -> setMotorSpeed(100*-speed));
+    return runOnce(() -> setMotorSpeed(100 * -speed));
   }
 
   public Command startDutyOuttake(double speed) {
@@ -169,7 +166,7 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command startFastOutake() {
-    return runOnce(() -> setMotorSpeed(100*-0.4));
+    return runOnce(() -> setMotorSpeed(100 * -0.4));
   }
 
   public Command stopMotors() {
@@ -186,7 +183,6 @@ public class AlgaeEndEffectorSubsystem extends SubsystemBase {
       leftMotor.setPosition(0);
       rightMotor.setPosition(0);
     }
-
 
     SmartDashboard.putNumber("currentPosL", leftMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("currentPosR", rightMotor.getPosition().getValueAsDouble());

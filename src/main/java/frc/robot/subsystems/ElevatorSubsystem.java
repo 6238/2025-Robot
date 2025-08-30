@@ -169,6 +169,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leaderMotor.setPosition(0);
     followerMotor.setPosition(0);
   }
+
   public void resetEncoder(double val) {
     leaderMotor.setPosition(val);
     followerMotor.setPosition(val);
@@ -208,7 +209,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "elevator setpoint", goal.position / ElevatorHeights.ELEVATOR_GEAR_RATIO);
 
-    
     SmartDashboard.putNumber("elevator voltage", leaderMotor.getMotorVoltage().getValueAsDouble());
 
     if (getHeight() < 0.5 && getTargetHeight() < 4.5) {

@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import com.therekrab.autopilot.APTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
@@ -47,7 +48,8 @@ public class AutonTeleController {
 
   public Command GoToPose(Pose2d targetPose, double maxSpeed) {
     PathConstraints constraints =
-        new PathConstraints(maxSpeed, 3.0, Units.degreesToRadians(360), Units.degreesToRadians(540));
+        new PathConstraints(
+            maxSpeed, 3.0, Units.degreesToRadians(360), Units.degreesToRadians(540));
 
     Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
 
@@ -56,18 +58,23 @@ public class AutonTeleController {
 
   public Command GoToPose(Pose2d targetPose, double maxSpeed, double targetEndVelocity) {
     PathConstraints constraints =
-        new PathConstraints(maxSpeed, 3.0, Units.degreesToRadians(360), Units.degreesToRadians(540));
+        new PathConstraints(
+            maxSpeed, 3.0, Units.degreesToRadians(360), Units.degreesToRadians(540));
 
-    Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, targetEndVelocity);
+    Command pathfindingCommand =
+        AutoBuilder.pathfindToPose(targetPose, constraints, targetEndVelocity);
 
     return pathfindingCommand;
   }
 
-  public Command GoToPose(Pose2d targetPose, double maxSpeed, double targetEndVelocity, double maxAcceleration) {
+  public Command GoToPose(
+      Pose2d targetPose, double maxSpeed, double targetEndVelocity, double maxAcceleration) {
     PathConstraints constraints =
-        new PathConstraints(maxSpeed, maxAcceleration, Units.degreesToRadians(360), Units.degreesToRadians(540));
+        new PathConstraints(
+            maxSpeed, maxAcceleration, Units.degreesToRadians(360), Units.degreesToRadians(540));
 
-    Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, targetEndVelocity);
+    Command pathfindingCommand =
+        AutoBuilder.pathfindToPose(targetPose, constraints, targetEndVelocity);
 
     return pathfindingCommand;
   }
