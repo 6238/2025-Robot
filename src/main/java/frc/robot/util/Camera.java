@@ -1,5 +1,13 @@
 package frc.robot.util;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -9,12 +17,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants.Vision;
 import frc.robot.subsystems.SwerveSubsystem;
-import java.util.List;
-import java.util.Optional;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 @Logged
 public class Camera {
@@ -55,6 +57,7 @@ public class Camera {
     if (!enabled) {
       return;
     }
+    estimator.setLastPose(swerve.getPose());
 
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 
@@ -70,7 +73,7 @@ public class Camera {
 
       // Calculate Ambiguity of pose
       double ambiguity = result.getBestTarget().poseAmbiguity;
-      if (ambiguity > Vision.AMBIGUITY_CUTOFF) {
+      if (ambiguity > Vision.AMBIGUITY_CUTOFF && Vision.AMBIGUITY_CUTOFF_ENABLE) {
         continue;
       }
 
@@ -81,14 +84,12 @@ public class Camera {
               .bestCameraToTarget
               .getTranslation()
               .getDistance(Translation3d.kZero);
-      if (distanceToTag > Vision.CLOSE_FAR_CUTOFF) {
+      if (distanceToTag > Vision.CLOSE_FAR_CUTOFF && Vision.CLOSE_FAR_CUTOFF_ENABLE) {
         continue;
       }
 
       Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, distanceToTag);
       swerve.addVisionPose(pose.get(), stdDvs);
-
-      double[] poseArray = new double[8];
     }
   }
 

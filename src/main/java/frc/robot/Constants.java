@@ -143,7 +143,7 @@ public final class Constants {
   }
 
   public final class Vision {
-    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.LOWEST_AMBIGUITY;
+    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.CLOSEST_TO_LAST_POSE;
 
     public static final CameraSettings[] CAMERA_SETTINGS = {
       new CameraSettings(
@@ -173,21 +173,23 @@ public final class Constants {
                   Degrees.of(0).in(Radians),
                   Degrees.of(-10).in(Radians),
                   Degrees.of(180 + 45).in(Radians)))),
-      new CameraSettings(
-          "BL",
-          new Transform3d(
-              new Translation3d(
-                  Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246 + 2 - 0.4)),
-              new Rotation3d(
-                  Degrees.of(0).in(Radians),
-                  Degrees.of(-10).in(Radians),
-                  Degrees.of(180 - 45).in(Radians)))),
+      // new CameraSettings(
+      //     "BL",
+      //     new Transform3d(
+      //         new Translation3d(
+      //             Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246 + 2 - 0.4)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(-10).in(Radians),
+      //             Degrees.of(180 - 45).in(Radians)))),
     };
 
     public static boolean ENABLE = true;
 
     public static final double CLOSE_FAR_CUTOFF = Units.feetToMeters(9);
+    public static final boolean CLOSE_FAR_CUTOFF_ENABLE = false;
     public static final double AMBIGUITY_CUTOFF = 0.2;
+    public static final boolean AMBIGUITY_CUTOFF_ENABLE = true;
 
     public static final Matrix<N3, N1> REEF_CLOSE_VISION_STDDEV =
         new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.01, 0.01, Math.toRadians(5)});

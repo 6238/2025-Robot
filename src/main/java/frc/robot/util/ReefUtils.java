@@ -78,7 +78,7 @@ public class ReefUtils {
     double x = reefPose.getX() + dx * distAway;
     double y = reefPose.getY() + dy * distAway;
 
-    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(180 + targetAngle)));
+    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(targetAngle)));
   }
 
   public static Pose2d GetAllianceReefPose() {
@@ -103,25 +103,23 @@ public class ReefUtils {
     Pose2d reefStartPose = GetReefPose(reefCenter, currentPos, 2.286);
     Pose2d reefPickupPose = GetReefPose(reefCenter, currentPos, 1.294);
     Pose2d reefEndPose = GetReefPose(reefCenter, currentPos, 3.112);
+    double angle = AngleToReef(currentPos);
 
     return Commands.sequence(
-      swerve.align(new APTarget(reefStartPose))
-        .onlyIf(() ->
-         currentPos.getTranslation()
-          .getDistance(reefStartPose.getTranslation())
-         < 0.4),
-      elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
-      Commands.waitSeconds(0.4),
-      Commands.parallel(
-        algaeEndEffector.intakeUntilStalled(),
-        swerve.align(new APTarget(reefPickupPose))
-      ),
-      algaeEndEffector.holdAlgae(),
-      Commands.parallel(
-        Commands.sequence(swerve.align(new APTarget(reefEndPose))),
-        Commands.sequence(Commands.waitSeconds(0.5), elevator.setHeightCommand(ElevatorHeights.L1_25))
-      )
-    );
+        swerve
+            .align(new APTarget(reefStartPose).withEntryAngle(Rotation2d.fromDegrees(angle)))
+            .onlyIf(
+                () ->
+                    currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4),
+        elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
+        Commands.waitSeconds(0.4),
+        Commands.parallel(
+            algaeEndEffector.intakeUntilStalled(), swerve.align(new APTarget(reefPickupPose).withoutEntryAngle())),
+        algaeEndEffector.holdAlgae(),
+        Commands.parallel(
+            Commands.sequence(swerve.align(new APTarget(reefEndPose))),
+            Commands.sequence(
+                Commands.waitSeconds(0.5), elevator.setHeightCommand(ElevatorHeights.L1_25))));
   }
 
   public static Pose2d GetBargePose(Pose2d currentPose2d) {
