@@ -238,16 +238,22 @@ public final class Constants {
     public static final Pose2d RED_REEF_CENTER = new Pose2d(13.062, 4.027, Rotation2d.kZero);
   }
 
-  public static final APConstraints kConstraints = new APConstraints()
-    .withAcceleration(5.0)
-    .withJerk(2.0);
+  // public static final APConstraints kConstraints = new APConstraints()
+  //   .withVelocity(Swerve.MAX_SPEED * 0.85)
+  //   .withAcceleration(7.0)
+  //   .withJerk(5);
+
+  private static final APConstraints kConstraints = new APConstraints()
+    .withVelocity(Swerve.MAX_SPEED * 0.95)
+    .withAcceleration(15.0)
+    .withJerk(30.0);
 
   public static final APProfile kProfile = new APProfile(kConstraints)
-      .withErrorXY(Centimeters.of(2))
-      .withErrorTheta(Degrees.of(0.5))
+      .withErrorXY(Centimeters.of(10))
+      .withErrorTheta(Degrees.of(5))
       .withBeelineRadius(Centimeters.of(8));
 
   public static final Autopilot kAutopilot = new Autopilot(kProfile);
 
-  public static final double kP_ROT = 2.0;
+  public static final double kP_ROT = 1.75;
 }

@@ -7,8 +7,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.Elevator.ElevatorHeights;
@@ -89,6 +91,16 @@ public class ReefUtils {
         : PathfindingConfig.RED_REEF_CENTER;
   }
 
+  public static double getClosestAngle(double currentAngle, double targetAngle) {
+    // Ensure targetAngle is between -180 and +180
+    targetAngle = ((targetAngle + 180) % 360 + 360) % 360 - 180;
+    
+    // Compute the multiple of 360 to add to targetAngle to minimize difference
+    double delta = currentAngle - targetAngle;
+    double n = Math.round(delta / 360.0);
+    return targetAngle + n * 360.0;
+}
+
   public static Command GenerateReefCommand(
       Pose2d currentPos,
       SwerveSubsystem swerve,
@@ -103,21 +115,22 @@ public class ReefUtils {
     Pose2d reefStartPose = GetReefPose(reefCenter, currentPos, 2.286);
     Pose2d reefPickupPose = GetReefPose(reefCenter, currentPos, 1.294);
     Pose2d reefEndPose = GetReefPose(reefCenter, currentPos, 3.112);
-    double angle = AngleToReef(currentPos);
+    double angle = getClosestAngle(swerve.getHeading().getDegrees(), AngleToReef(currentPos));
 
     return Commands.sequence(
         swerve
-            .align(new APTarget(reefStartPose).withEntryAngle(Rotation2d.fromDegrees(angle)))
+            .align(new APTarget(reefStartPose).withEntryAngle(Rotation2d.fromDegrees(180+angle)))
             .onlyIf(
                 () ->
-                    currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4),
+                    currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) > 0.4),
         elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
         Commands.waitSeconds(0.4),
         Commands.parallel(
-            algaeEndEffector.intakeUntilStalled(), swerve.align(new APTarget(reefPickupPose).withoutEntryAngle())),
+            algaeEndEffector.intakeUntilStalled(), 
+        swerve.align(new APTarget(reefPickupPose).withoutEntryAngle())),
         algaeEndEffector.holdAlgae(),
         Commands.parallel(
-            Commands.sequence(swerve.align(new APTarget(reefEndPose))),
+            Commands.sequence(swerve.align(new APTarget(reefEndPose).withoutEntryAngle())),
             Commands.sequence(
                 Commands.waitSeconds(0.5), elevator.setHeightCommand(ElevatorHeights.L1_25))));
   }

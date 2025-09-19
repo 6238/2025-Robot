@@ -31,6 +31,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -535,9 +536,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command align(APTarget target) {
     return this.run(
             () -> {
-              
               SmartDashboard.putNumberArray("TARGET_POSE", new double[]{ target.getReference().getMeasureX().baseUnitMagnitude(), target.getReference().getMeasureY().baseUnitMagnitude(), target.getReference().getRotation().getDegrees() });
-              
+
               ChassisSpeeds robotRelativeSpeeds = this.getRobotVelocity();
               Pose2d pose = this.getPose();
 
@@ -547,18 +547,24 @@ public class SwerveSubsystem extends SubsystemBase {
               double veloX = output.vx().in(MetersPerSecond);
               double veloY = output.vy().in(MetersPerSecond);
               Rotation2d headingReference = output.targetAngle();
+              double diff = headingReference.getRadians()-pose.getRotation().getRadians();
+              double appliedRot = Math.abs(diff) > Units.degreesToRadians(2) ? (diff * Constants.kP_ROT) : 0;
+              
+              SmartDashboard.putNumber("currentRot", pose.getRotation().getRadians());
+              SmartDashboard.putNumber("headingTarget", headingReference.getRadians());
+              SmartDashboard.putNumber("sub", diff);
+              SmartDashboard.putNumber("appliedRot", appliedRot);
 
               ChassisSpeeds chassisSpeeds =
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       veloX,
                       veloY,
-                      new Rotation2d(0).minus(headingReference).getRadians()
-                          * Constants.kP_ROT, // Assuming the heading is a simple P-controller
+                      appliedRot, // Assuming the heading is a simple P-controller
                       pose.getRotation());
 
               // Set the speeds using the YAGSL SwerveDrive object
               swerveDrive.setChassisSpeeds(chassisSpeeds);
-            })
+        })
         .until(() -> Constants.kAutopilot.atTarget(this.getPose(), target))
         .finallyDo(() -> swerveDrive.setChassisSpeeds(new ChassisSpeeds(0, 0, 0)));
   }
