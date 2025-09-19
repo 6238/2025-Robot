@@ -68,6 +68,7 @@ public final class Constants {
 
     /* Turn PID */
     public static final double TURN_kP = 0.175;
+
     public static final double TURN_kI = 0.005;
     public static final double TURN_kD = 0;
 
@@ -237,15 +238,17 @@ public final class Constants {
     public static final int ARM_MOTOR_ID = 45;
     public static final int INTAKE_MOTOR_ID = 46;
 
-    public static final double ARM_STOW = 0;
-    public static final double ARM_GROUND = 0;
-    public static final double ARM_L1 = 0;
+    public static final double ARM_STOW = Units.degreesToRotations(100);
+    public static final double ARM_GROUND = Units.degreesToRotations(0);
+    public static final double ARM_L1 = Units.degreesToRotations(100);
 
-    public static final double ARM_kV = 0.12;
-    public static final double ARM_kA = 0.0;
-    public static final double ARM_kG = 0.0;
-    public static final double ARM_kP = 2.0;
-    public static final double ARM_kI = 0.0;
+    public static final int GEAR_RATIO = 10*7;
+
+    public static final double ARM_kV = 1.60;
+    public static final double ARM_kA = 0;
+    public static final double ARM_kG = 0.30;
+    public static final double ARM_kP = 10.0;
+    public static final double ARM_kI = 0.15;
     public static final double ARM_kD = 0.0;
 
     public static final double ARM_VELOCITY = 7.5;

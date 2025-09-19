@@ -6,8 +6,10 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.L1;
@@ -27,6 +29,7 @@ public class L1Subsystem extends SubsystemBase {
 
         // Configure Arm Motor Constants
         TalonFXConfiguration armConfig = new TalonFXConfiguration();
+        armConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         armConfig.Slot0.kV = L1.ARM_kV;
         armConfig.Slot0.kA = L1.ARM_kA;
@@ -39,6 +42,8 @@ public class L1Subsystem extends SubsystemBase {
         armConfig.MotionMagic.MotionMagicAcceleration = L1.ARM_ACCEL;
         armConfig.MotionMagic.MotionMagicJerk = L1.ARM_JERK;
 
+        // armConfig.Feedback.SensorToMechanismRatio = L1.GEAR_RATIO;
+
         armMotor.getConfigurator().apply(armConfig);
 
         armPositionVoltageRequest = new PositionVoltage(0).withSlot(0);
@@ -49,7 +54,7 @@ public class L1Subsystem extends SubsystemBase {
     }
 
     public void setArmPosition(double position) {
-        armMotor.setControl(armPositionVoltageRequest.withPosition(position));
+        armMotor.setControl(armPositionVoltageRequest.withPosition(position * L1.GEAR_RATIO));
         armTarget = position;
     }
 
@@ -71,5 +76,11 @@ public class L1Subsystem extends SubsystemBase {
 
     public Command stopIntakeWheelsCommand() {
         return runOnce(() -> stopIntakeWheels());
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("ARM_MOTOR_VOLTAGE", armMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("ARM_MOTOR_POS", armMotor.getPosition().getValueAsDouble() / L1.GEAR_RATIO);
     }
 }

@@ -64,7 +64,7 @@ public class RobotContainer {
 
     Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 
-    swerve.setDefaultCommand(driveCommand);
+    // swerve.setDefaultCommand(driveCommand);
   }
 
   /**
@@ -83,17 +83,31 @@ public class RobotContainer {
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
     manualController.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
-    driverXbox.x().onTrue(Commands.either(
+    // driverXbox.x().onTrue(Commands.either(
+    //   Commands.sequence(
+    //     l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
+    //     l1Subsystem.startIntakeWheelsCommand()
+    //   ), 
+    //   Commands.sequence(
+    //     l1Subsystem.stopIntakeWheelsCommand(),
+    //     l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1)
+    //   ),
+    //   () -> (l1Subsystem.getArmTargetPosition() == L1.ARM_L1 || l1Subsystem.getArmTargetPosition() == L1.ARM_STOW)
+    // ));
+
+    driverXbox.x().onTrue(
       Commands.sequence(
         l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
         l1Subsystem.startIntakeWheelsCommand()
-      ), 
+      )
+    );
+
+    driverXbox.b().onTrue(
       Commands.sequence(
         l1Subsystem.stopIntakeWheelsCommand(),
         l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1)
-      ),
-      () -> (l1Subsystem.getArmTargetPosition() == L1.ARM_L1 || l1Subsystem.getArmTargetPosition() == L1.ARM_STOW)
-    ));
+      )
+    );
 
     new Trigger(HALUtil::getFPGAButton).onTrue(toggleBrakeMode().ignoringDisable(true));
   }
