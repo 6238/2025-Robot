@@ -24,8 +24,8 @@ public class L1Subsystem extends SubsystemBase {
     public final PositionVoltage armPositionVoltageRequest;
 
     public L1Subsystem() {
-        armMotor = new TalonFX(L1.ARM_MOTOR_ID);
-        intakeMotor = new TalonFX(L1.INTAKE_MOTOR_ID);
+        armMotor = new TalonFX(L1.ARM_MOTOR_ID, "canivore");
+        intakeMotor = new TalonFX(L1.INTAKE_MOTOR_ID, "canivore");
 
         // Configure Arm Motor Constants
         TalonFXConfiguration armConfig = new TalonFXConfiguration();
