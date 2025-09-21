@@ -69,6 +69,11 @@ public class L1Subsystem extends SubsystemBase {
     public Command startIntakeWheelsCommand() {
         return runOnce(() -> startIntakeWheels());
     }
+    
+    public void outtake() {
+        intakeMotor.setVoltage(L1.OUTTAKE_MOTOR_VOLTAGE);
+    }
+
 
     public void stopIntakeWheels() {
         intakeMotor.setVoltage(0.0);
@@ -76,6 +81,10 @@ public class L1Subsystem extends SubsystemBase {
 
     public Command stopIntakeWheelsCommand() {
         return runOnce(() -> stopIntakeWheels());
+    }
+
+    public Command outtakeCommand() {
+        return runOnce(() -> outtake());
     }
 
     @Override

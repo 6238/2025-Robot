@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import java.io.File;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -17,9 +20,11 @@ import frc.robot.Constants.L1;
 import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
 import static frc.robot.Constants.Swerve.MAX_SPEED;
 import frc.robot.subsystems.L1Subsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.DrivingRate;
 import frc.robot.util.DrivingRate.DrivingRateConfig;
 import frc.robot.util.Logging;
+import swervelib.math.Matter;
 
 /**
  * This class is where almost all of the robot is defined - logic and subsystems
@@ -28,38 +33,40 @@ import frc.robot.util.Logging;
  */
 @Logged
 public class RobotContainer {
-//   SwerveSubsystem swerve = new SwerveSubsystem(
-//       new File(Filesystem.getDeployDirectory(), "swerve"),
-//       () -> new Matter(new Translation3d(), 0));
+  SwerveSubsystem swerve = new SwerveSubsystem(
+      new File(Filesystem.getDeployDirectory(), "swerve"),
+      () -> new Matter(new Translation3d(), 0));
   
   L1Subsystem l1Subsystem = new L1Subsystem();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
-  CommandXboxController manualController = new CommandXboxController(1);
+  // CommandXboxController manualController = new CommandXboxController(1);
 
   DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(MAX_SPEED / 1.75, MAX_SPEED, 0.3);
   DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY * 2, 0.3);
 
   DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02),
-      TRANSLATE_RATE_CONFIG) + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftY(), 0.02),
       TRANSLATE_RATE_CONFIG);
+      //  + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftY(), 0.02),
+      // TRANSLATE_RATE_CONFIG);
 
   DoubleSupplier swerve_y = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02),
-      TRANSLATE_RATE_CONFIG) + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftX(), 0.02),
       TRANSLATE_RATE_CONFIG);
+      //  + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftX(), 0.02),
+      // TRANSLATE_RATE_CONFIG);
 
   DoubleSupplier swerve_turn = () -> DrivingRate
-      .applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG) + DrivingRate
-      .applyRateConfig(-MathUtil.applyDeadband(manualController.getRightX(), 0.02), TURN_RATE_CONFIG);
+      .applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG); // + DrivingRate
+      // .applyRateConfig(-MathUtil.applyDeadband(manualController.getRightX(), 0.02), TURN_RATE_CONFIG);
 
   public RobotContainer() {
     Logging.logMetadata();
 
     configureTriggers();
 
-//     Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
+    Command driveCommand = swerve.driveCommand(swerve_x, swerve_y, swerve_turn);
 
-    // swerve.setDefaultCommand(driveCommand);
+    swerve.setDefaultCommand(driveCommand);
   }
 
   /**
@@ -75,8 +82,8 @@ public class RobotContainer {
   private void configureTriggers() {
     // Controls
 
-//     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
-//     manualController.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
+    driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
+    // manualController.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
     // driverXbox.x().onTrue(Commands.either(
     //   Commands.sequence(
@@ -101,6 +108,14 @@ public class RobotContainer {
       Commands.sequence(
         l1Subsystem.stopIntakeWheelsCommand(),
         l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1)
+      )
+    );
+
+    driverXbox.rightTrigger().onTrue(
+      Commands.sequence(
+        l1Subsystem.outtakeCommand(),
+        Commands.waitSeconds(0.5),
+        l1Subsystem.stopIntakeWheelsCommand()
       )
     );
 

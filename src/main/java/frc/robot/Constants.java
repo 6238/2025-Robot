@@ -238,9 +238,9 @@ public final class Constants {
     public static final int ARM_MOTOR_ID = 45;
     public static final int INTAKE_MOTOR_ID = 46;
 
-    public static final double ARM_STOW = Units.degreesToRotations(100);
+    public static final double ARM_STOW = Units.degreesToRotations(150);
     public static final double ARM_GROUND = Units.degreesToRotations(0);
-    public static final double ARM_L1 = Units.degreesToRotations(100);
+    public static final double ARM_L1 = Units.degreesToRotations(150);
 
     public static final int GEAR_RATIO = 10*7;
 
@@ -256,5 +256,6 @@ public final class Constants {
     public static final double ARM_JERK = 300;
 
     public static final double INTAKE_MOTOR_VOLTAGE = 10.0;
+    public static final double OUTTAKE_MOTOR_VOLTAGE = -5.0;
   }
 }
