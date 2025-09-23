@@ -1,12 +1,5 @@
 package frc.robot.subsystems;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Logged;
@@ -15,7 +8,10 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Vision;
 import frc.robot.util.Camera;
-import frc.robot.util.CameraSettings;
+import java.io.IOException;
+import java.util.List;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 @Logged
 public class VisionSubsystem extends SubsystemBase {
@@ -61,7 +57,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
-  public List<PhotonPipelineResult> getAlgaeCamResults() { 
+  public List<PhotonPipelineResult> getAlgaeCamResults() {
     return algaeCamera.getAllUnreadResults();
   }
 

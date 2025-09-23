@@ -4,18 +4,24 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
-import static frc.robot.Constants.Swerve.MAX_SPEED;
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot.APResult;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -25,22 +31,16 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import org.dyn4j.geometry.Translatable;
-import org.photonvision.EstimatedRobotPose;
-
+import static frc.robot.Constants.Swerve.MAX_SPEED;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.imu.NavXSwerve;
@@ -121,14 +121,14 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param fieldRelative Drive mode. True for field-relative, false for robot-relative.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
-    
+
     List<Matter> matter = List.of(Constants.Swerve.CHASSIS, elevatorMatter.get());
 
     // Translation2d limitedTranslation = SwerveMath.limitVelocity(
-    //   translation, 
-    //   getFieldVelocity(), 
+    //   translation,
+    //   getFieldVelocity(),
     //   getPose(),
-    //   Constants.LOOP_TIME, 
+    //   Constants.LOOP_TIME,
     //   125,
     //   matter,
     //   swerveDrive.swerveDriveConfiguration
@@ -484,7 +484,9 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return Drive command.
    */
   public Command driveCommand(
-      DoubleSupplier translationSpeedX, DoubleSupplier translationSpeedY, DoubleSupplier rotationSpeed) {
+      DoubleSupplier translationSpeedX,
+      DoubleSupplier translationSpeedY,
+      DoubleSupplier rotationSpeed) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
     return run(
@@ -498,7 +500,8 @@ public class SwerveSubsystem extends SubsystemBase {
           sign *= Constants.FLIP_DIR ? -1.0 : 1.0;
 
           Translation2d translation =
-              new Translation2d(sign * translationSpeedX.getAsDouble(), sign * translationSpeedY.getAsDouble());
+              new Translation2d(
+                  sign * translationSpeedX.getAsDouble(), sign * translationSpeedY.getAsDouble());
           this.drive(translation, rotationSpeed.getAsDouble(), true);
         });
   }
@@ -513,7 +516,9 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return Drive command.
    */
   public Command driveCommandRobotRelative(
-      DoubleSupplier translationSpeedX, DoubleSupplier translationSpeedY, DoubleSupplier rotationSpeed) {
+      DoubleSupplier translationSpeedX,
+      DoubleSupplier translationSpeedY,
+      DoubleSupplier rotationSpeed) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
     // correction for this kind of control.
     return run(
@@ -526,5 +531,47 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
     return swerveDrive.swerveDrivePoseEstimator.sampleAt(timestampSeconds);
+  }
+
+  public Command align(APTarget target) {
+    return this.run(
+            () -> {
+              SmartDashboard.putNumberArray("TARGET_POSE", new double[]{ target.getReference().getMeasureX().baseUnitMagnitude(), target.getReference().getMeasureY().baseUnitMagnitude(), target.getReference().getRotation().getDegrees() });
+
+              ChassisSpeeds robotRelativeSpeeds = this.getRobotVelocity();
+              Pose2d pose = this.getPose();
+
+              APResult output = Constants.kAutopilot.calculate(pose, robotRelativeSpeeds, target);
+
+              /* these speeds are field relative */
+              double veloX = output.vx().in(MetersPerSecond);
+              double veloY = output.vy().in(MetersPerSecond);
+              double headingReference = output.targetAngle().getRadians();
+              double diff = headingReference-pose.getRotation().getRadians();
+              if (diff > Math.PI) {
+                diff -= 360;
+              } else if (diff < -Math.PI) {
+                diff += 360;
+              }
+
+              double appliedRot = Math.abs(diff) > Units.degreesToRadians(2) ? (diff * Constants.kP_ROT) : 0;
+              
+              SmartDashboard.putNumber("currentRot", pose.getRotation().getDegrees());
+              SmartDashboard.putNumber("headingTarget", headingReference);
+              SmartDashboard.putNumber("sub", diff);
+              SmartDashboard.putNumber("appliedRot", appliedRot);
+
+              ChassisSpeeds chassisSpeeds =
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      veloX,
+                      veloY,
+                      appliedRot, // Assuming the heading is a simple P-controller
+                      pose.getRotation());
+
+              // Set the speeds using the YAGSL SwerveDrive object
+              swerveDrive.setChassisSpeeds(chassisSpeeds);
+        })
+        .until(() -> Constants.kAutopilot.atTarget(this.getPose(), target))
+        .finallyDo(() -> swerveDrive.setChassisSpeeds(new ChassisSpeeds(0, 0, 0)));
   }
 }

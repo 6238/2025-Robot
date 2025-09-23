@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import com.therekrab.autopilot.APTarget;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -58,7 +60,7 @@ public class ReefUtils {
       alliance = Alliance.Red;
     }
     double angle = AngleToReef(pose, reefCenter);
-    
+
     if (Math.floor((30 + Math.abs(angle)) / 60) % 2 >= 1) {
       return alliance == Alliance.Blue ? ElevatorHeights.L3 : ElevatorHeights.L2;
     }
@@ -76,61 +78,67 @@ public class ReefUtils {
     double x = reefPose.getX() + dx * distAway;
     double y = reefPose.getY() + dy * distAway;
 
-    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(180+targetAngle)));
+    double a = (180+targetAngle) > 180 ? (180+targetAngle) - 360 : (180+targetAngle);
+
+    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(a)));
   }
 
   public static Pose2d GetAllianceReefPose() {
     Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
 
     return alliance == Alliance.Blue
-            ? PathfindingConfig.BLUE_REEF_CENTER
-            : PathfindingConfig.RED_REEF_CENTER;
+        ? PathfindingConfig.BLUE_REEF_CENTER
+        : PathfindingConfig.RED_REEF_CENTER;
   }
 
-  public static Command GenerateReefCommand(Pose2d currentPos, SwerveSubsystem swerve, AutonTeleController autonTeleController, ElevatorSubsystem elevator, AlgaeEndEffectorSubsystem algaeEndEffector) {
-    final Pose2d reefCenter = currentPos.getX() < 8.767 ? PathfindingConfig.BLUE_REEF_CENTER : PathfindingConfig.RED_REEF_CENTER;
+  public static double getClosestAngle(double currentAngle, double targetAngle) {
+    // Ensure targetAngle is between -180 and +180
+    targetAngle = ((targetAngle + 180) % 360 + 360) % 360 - 180;
+    
+    // Compute the multiple of 360 to add to targetAngle to minimize difference
+    double delta = currentAngle - targetAngle;
+    double n = Math.round(delta / 360.0);
+    return targetAngle + n * 360.0;
+}
+
+  public static Command GenerateReefCommand(
+      Pose2d currentPos,
+      SwerveSubsystem swerve,
+      AutonTeleController autonTeleController,
+      ElevatorSubsystem elevator,
+      AlgaeEndEffectorSubsystem algaeEndEffector) {
+    final Pose2d reefCenter =
+        currentPos.getX() < 8.767
+            ? PathfindingConfig.BLUE_REEF_CENTER
+            : PathfindingConfig.RED_REEF_CENTER;
 
     Pose2d reefStartPose = GetReefPose(reefCenter, currentPos, 2.286);
     Pose2d reefPickupPose = GetReefPose(reefCenter, currentPos, 1.294);
     Pose2d reefEndPose = GetReefPose(reefCenter, currentPos, 3.112);
+    // double angle = getClosestAngle(swerve.getHeading().getDegrees(), AngleToReef(currentPos)); TODO: need to do weird 60 thang
 
     return Commands.sequence(
-      // Commands.either(
+        swerve
+            .align(new APTarget(reefStartPose).withoutEntryAngle())//.withEntryAngle(Rotation2d.fromDegrees(180+angle)))
+            .onlyIf(
+                () ->
+                    currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) > 0.4),
+        elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
+        Commands.waitSeconds(0.4),
         Commands.parallel(
-          autonTeleController.GoToPose(reefStartPose, 3.0, 0.5),
-          Commands.sequence(
-            elevator.setHeightCommand(ElevatorHeights.GROUND),
-            Commands.waitSeconds(0.5)
-          )
-        ),
-      //   Commands.sequence(
-      //     elevator.setHeightCommand(ElevatorHeights.GROUND),
-      //     new TurnToAngle(swerve, () -> AngleToReef(currentPos, reefCenter), () -> 0, () -> 0)
-      //   ),
-      //   () -> currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) < 0.4
-      // ),
-      elevator.setHeightCommand(ReefHeight(currentPos, reefCenter)),
-      Commands.waitSeconds(0.4),
-      Commands.parallel(
-        algaeEndEffector.intakeUntilStalled(),
-        autonTeleController.GoToPose(reefPickupPose, 1.5, 0.0)
-      ),
-      algaeEndEffector.holdAlgae(),
-      Commands.parallel(
-        Commands.sequence(
-          autonTeleController.GoToPose(reefEndPose, 2.5, 2.5, 2)
-        ),
-        Commands.sequence(
-          Commands.waitSeconds(0.5),
-          elevator.setHeightCommand(ElevatorHeights.L1_25)
-        )
-      )
-  );
+            algaeEndEffector.intakeUntilStalled(), 
+        swerve.align(new APTarget(reefPickupPose).withoutEntryAngle())),
+        algaeEndEffector.holdAlgae(),
+        Commands.parallel(
+            Commands.sequence(swerve.align(new APTarget(reefEndPose).withoutEntryAngle())),
+            Commands.sequence(
+                Commands.waitSeconds(0.5), elevator.setHeightCommand(ElevatorHeights.L1_25))));
   }
 
   public static Pose2d GetBargePose(Pose2d currentPose2d) {
     Alliance alliance = DriverStation.getAlliance().get();
-    Transform2d offset = new Transform2d(new Translation2d(0, (Math.random()*2-1)), new Rotation2d());
+    Transform2d offset =
+        new Transform2d(new Translation2d(0, (Math.random() * 2 - 1)), new Rotation2d());
 
     if (alliance == Alliance.Blue) {
       if (currentPose2d.getX() > 7.25) {

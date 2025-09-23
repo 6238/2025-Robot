@@ -35,11 +35,13 @@ public class Camera {
     enabled = true;
 
     camera = new PhotonCamera(settings.getCameraName());
-    estimator = new PhotonPoseEstimator(
-        layout, Vision.VISION_POSE_STRATEGY, settings.getCameraToRobotTransform());
+    estimator =
+        new PhotonPoseEstimator(
+            layout, Vision.VISION_POSE_STRATEGY, settings.getCameraToRobotTransform());
   }
 
-  @NotLogged public CameraSettings getCameraSettings() {
+  @NotLogged
+  public CameraSettings getCameraSettings() {
     return settings;
   }
 
@@ -55,13 +57,14 @@ public class Camera {
     if (!enabled) {
       return;
     }
+    estimator.setLastPose(swerve.getPose());
 
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
 
     if (results.isEmpty()) {
       return;
     }
-    
+
     for (PhotonPipelineResult result : results) {
       Optional<EstimatedRobotPose> pose = estimator.update(result);
       if (pose.isEmpty()) {
@@ -70,20 +73,23 @@ public class Camera {
 
       // Calculate Ambiguity of pose
       double ambiguity = result.getBestTarget().poseAmbiguity;
-      if (ambiguity > Vision.AMBIGUITY_CUTOFF) {
+      if (ambiguity > Vision.AMBIGUITY_CUTOFF && Vision.AMBIGUITY_CUTOFF_ENABLE) {
         continue;
       }
 
       // Calculate Average Target Area
-      double distanceToTag = result.getBestTarget().bestCameraToTarget.getTranslation().getDistance(Translation3d.kZero);
-      if (distanceToTag > Vision.CLOSE_FAR_CUTOFF) {
+      double distanceToTag =
+          result
+              .getBestTarget()
+              .bestCameraToTarget
+              .getTranslation()
+              .getDistance(Translation3d.kZero);
+      if (distanceToTag > Vision.CLOSE_FAR_CUTOFF && Vision.CLOSE_FAR_CUTOFF_ENABLE) {
         continue;
       }
-      
+
       Matrix<N3, N1> stdDvs = calculateStandardDevs(ambiguity, distanceToTag);
       swerve.addVisionPose(pose.get(), stdDvs);
-
-      double[] poseArray = new double[8];
     }
   }
 

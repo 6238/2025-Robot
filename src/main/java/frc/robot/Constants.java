@@ -1,11 +1,11 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
-
 import static java.util.Map.entry;
 
 import edu.wpi.first.math.Matrix;
@@ -22,14 +22,14 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.Filesystem;
 import frc.robot.util.CameraSettings;
-
 import java.io.File;
 import java.util.Map;
-
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
-import frc.robot.util.DrivingRate;
-import frc.robot.util.DrivingRate.DrivingRateConfig;
+import com.therekrab.autopilot.APConstraints;
+import com.therekrab.autopilot.APProfile;
+import com.therekrab.autopilot.Autopilot;
+
 import swervelib.math.Matter;
 
 /** Constants for the robot. */
@@ -102,9 +102,9 @@ public final class Constants {
 
       public static final double STOW = 0;
       public static final double GROUND = 7;
-      public static final double L1_25 = 13.5-1.5;
-      public static final double L1_5 = 18.5-1.5;
-      public static final double L2 = 34.5-1.5;
+      public static final double L1_25 = 13.5 - 1.5;
+      public static final double L1_5 = 18.5 - 1.5;
+      public static final double L2 = 34.5 - 1.5;
       public static final double L3 = 48.5;
       public static final double TOP = 80; // MAX HEIGHT
 
@@ -143,54 +143,59 @@ public final class Constants {
   }
 
   public final class Vision {
-    public static final PoseStrategy VISION_POSE_STRATEGY =
-        PoseStrategy.LOWEST_AMBIGUITY;
+    public static final PoseStrategy VISION_POSE_STRATEGY = PoseStrategy.CLOSEST_TO_LAST_POSE;
 
     public static final CameraSettings[] CAMERA_SETTINGS = {
       new CameraSettings(
           "Reef_L",
           new Transform3d(
-              new Translation3d(Inches.of(12.615295), Inches.of(10.696954), Inches.of(7.612962+1.4785)),
+              new Translation3d(
+                  Inches.of(12.615295), Inches.of(10.696954), Inches.of(7.612962 + 1.4785)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-10).in(Radians),
                   Degrees.of(-20).in(Radians)))),
       new CameraSettings(
-        "Reef_R",
-        new Transform3d(
-            new Translation3d(Inches.of(12.615), Inches.of(-10.841124), Inches.of(7.612962+1.4785)),
-            new Rotation3d(
-                Degrees.of(0).in(Radians),
-                Degrees.of(-10).in(Radians),
-                Degrees.of(20).in(Radians)))),
-      new CameraSettings(
-          "BR",
+          "Reef_R",
           new Transform3d(
-              new Translation3d(Inches.of(-12.306612), Inches.of(-12.743715), Inches.of(7.598246+1.875)),
+              new Translation3d(
+                  Inches.of(12.615), Inches.of(-10.841124), Inches.of(7.612962 + 1.4785)),
               new Rotation3d(
                   Degrees.of(0).in(Radians),
                   Degrees.of(-10).in(Radians),
-                  Degrees.of(180+45).in(Radians)))),
+                  Degrees.of(20).in(Radians)))),
       new CameraSettings(
-        "BL",
-        new Transform3d(
-            new Translation3d(Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246+2-0.4)),
-            new Rotation3d(
-                Degrees.of(0).in(Radians),
-                Degrees.of(-10).in(Radians),
-                Degrees.of(180 - 45).in(Radians)))),
+          "BR",
+          new Transform3d(
+              new Translation3d(
+                  Inches.of(-12.306612), Inches.of(-12.743715), Inches.of(7.598246 + 1.875)),
+              new Rotation3d(
+                  Degrees.of(0).in(Radians),
+                  Degrees.of(-10).in(Radians),
+                  Degrees.of(180 + 45).in(Radians)))),
+      // new CameraSettings(
+      //     "BL",
+      //     new Transform3d(
+      //         new Translation3d(
+      //             Inches.of(-12.306612), Inches.of(12.743715), Inches.of(7.598246 + 2 - 0.4)),
+      //         new Rotation3d(
+      //             Degrees.of(0).in(Radians),
+      //             Degrees.of(-10).in(Radians),
+      //             Degrees.of(180 - 45).in(Radians)))),
     };
 
     public static boolean ENABLE = true;
 
     public static final double CLOSE_FAR_CUTOFF = Units.feetToMeters(9);
+    public static final boolean CLOSE_FAR_CUTOFF_ENABLE = false;
     public static final double AMBIGUITY_CUTOFF = 0.2;
+    public static final boolean AMBIGUITY_CUTOFF_ENABLE = true;
 
     public static final Matrix<N3, N1> REEF_CLOSE_VISION_STDDEV =
-      new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.01, 0.01, Math.toRadians(5)});
-    
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.01, 0.01, Math.toRadians(5)});
+
     public static final Matrix<N3, N1> REEF_FAR_VISION_STDDEV =
-      new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.toRadians(15)});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.toRadians(15)});
   }
 
   public final class Winch {
@@ -225,11 +230,30 @@ public final class Constants {
      */
     public static final Pose2d BARGE_BLUE = new Pose2d(7.10, 5.65, Rotation2d.fromDegrees(25));
     public static final Pose2d BARGE_BLUE_FLIPPED =
-        new Pose2d(10.35, 6, Rotation2d.fromDegrees(180-25));
-    public static final Pose2d BARGE_RED = new Pose2d(10.35, 2, Rotation2d.fromDegrees(180-25));
+        new Pose2d(10.35, 6, Rotation2d.fromDegrees(180 - 25));
+    public static final Pose2d BARGE_RED = new Pose2d(10.35, 2, Rotation2d.fromDegrees(180 - 25));
     public static final Pose2d BARGE_RED_FLIPPED = new Pose2d(7.1, 2, Rotation2d.fromDegrees(25));
 
     public static final Pose2d BLUE_REEF_CENTER = new Pose2d(4.486, 4.027, Rotation2d.kZero);
     public static final Pose2d RED_REEF_CENTER = new Pose2d(13.062, 4.027, Rotation2d.kZero);
   }
+
+  // public static final APConstraints kConstraints = new APConstraints()
+  //   .withVelocity(Swerve.MAX_SPEED * 0.85)
+  //   .withAcceleration(7.0)
+  //   .withJerk(5);
+
+  private static final APConstraints kConstraints = new APConstraints()
+    .withVelocity(Swerve.MAX_SPEED * 0.95)
+    .withAcceleration(15.0)
+    .withJerk(30.0);
+
+  public static final APProfile kProfile = new APProfile(kConstraints)
+      .withErrorXY(Centimeters.of(10))
+      .withErrorTheta(Degrees.of(5))
+      .withBeelineRadius(Centimeters.of(8));
+
+  public static final Autopilot kAutopilot = new Autopilot(kProfile);
+
+  public static final double kP_ROT =1.75;
 }
