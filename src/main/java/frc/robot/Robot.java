@@ -6,12 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.L1;
 import frc.robot.telemetry.GeneralLogger;
 
 @Logged
@@ -28,17 +30,56 @@ public class Robot extends TimedRobot {
     // WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
     // SmartDashboard.putBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
-    // SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
-    // SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+    SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
+    SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+
+    SmartDashboard.putNumber("L1_STOW_POS", Units.rotationsToDegrees(L1.ARM_STOW));
+    SmartDashboard.putNumber("L1_GROUND_POS", Units.rotationsToDegrees(L1.ARM_GROUND));
+    SmartDashboard.putNumber("L1_SCORE_POS", Units.rotationsToDegrees(L1.ARM_L1));
+
+    SmartDashboard.putNumber("L1_kV", L1.ARM_kV);
+    SmartDashboard.putNumber("L1_kA", L1.ARM_kA);
+    SmartDashboard.putNumber("L1_kG", L1.ARM_kG);
+    SmartDashboard.putNumber("L1_kP", L1.ARM_kP);
+    SmartDashboard.putNumber("L1_kI", L1.ARM_kI);
+    SmartDashboard.putNumber("L1_kD", L1.ARM_kD);
+
+    SmartDashboard.putNumber("L1_VELOCITY", L1.ARM_VELOCITY);
+    SmartDashboard.putNumber("L1_ACCEL", L1.ARM_ACCEL);
+    SmartDashboard.putNumber("L1_JERK", L1.ARM_JERK);
+
+    SmartDashboard.putNumber("L1_INTAKE_VOLTAGE", L1.INTAKE_MOTOR_VOLTAGE);
+    SmartDashboard.putNumber("L1_HOLD_VOLTAGE", L1.HOLD_MOTOR_VOLTAGE);
+    SmartDashboard.putNumber("L1_OUTTAKE_VOLTAGE", L1.OUTTAKE_MOTOR_VOLTAGE);
+    
   }
 
   @Override
   public void robotPeriodic() {
+    L1.ARM_STOW = Units.degreesToRotations(SmartDashboard.getNumber("L1_STOW_POS", Units.rotationsToDegrees(L1.ARM_STOW)));
+    L1.ARM_GROUND = Units.degreesToRotations(SmartDashboard.getNumber("L1_GROUND_POS", Units.rotationsToDegrees(L1.ARM_GROUND)));
+    L1.ARM_L1 = Units.degreesToRotations(SmartDashboard.getNumber("L1_SCORE_POS", Units.rotationsToDegrees(L1.ARM_L1)));
+
+    L1.ARM_kV = SmartDashboard.getNumber("L1_kV", L1.ARM_kV);
+    L1.ARM_kA = SmartDashboard.getNumber("L1_kA", L1.ARM_kA);
+    L1.ARM_kG = SmartDashboard.getNumber("L1_kG", L1.ARM_kG);
+    L1.ARM_kP = SmartDashboard.getNumber("L1_kP", L1.ARM_kP);
+    L1.ARM_kI = SmartDashboard.getNumber("L1_kI", L1.ARM_kI);
+    L1.ARM_kD = SmartDashboard.getNumber("L1_kD", L1.ARM_kD);
+
+    L1.ARM_VELOCITY = SmartDashboard.getNumber("L1_VELOCITY", L1.ARM_VELOCITY);
+    L1.ARM_ACCEL = SmartDashboard.getNumber("L1_ACCEL", L1.ARM_ACCEL);
+    L1.ARM_JERK = SmartDashboard.getNumber("L1_JERK", L1.ARM_JERK);
+
+    L1.INTAKE_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_INTAKE_VOLTAGE", L1.INTAKE_MOTOR_VOLTAGE);
+    L1.HOLD_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_HOLD_VOLTAGE", L1.HOLD_MOTOR_VOLTAGE);
+    L1.OUTTAKE_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_OUTTAKE_VOLTAGE", L1.OUTTAKE_MOTOR_VOLTAGE);
+
     // Constants.Vision.ENABLE = SmartDashboard.getBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
-    // Constants.AlgaeEndEffector.INTAKE_SPEED =
-    //     SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
-    // Constants.AlgaeEndEffector.OUTAKE_SPEED =
-    //     SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+    Constants.AlgaeEndEffector.INTAKE_SPEED =
+        SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
+    Constants.AlgaeEndEffector.OUTAKE_SPEED =
+        SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
 
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());

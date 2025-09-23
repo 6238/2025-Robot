@@ -71,7 +71,7 @@ public class L1Subsystem extends SubsystemBase {
     }
 
     public Command holdIntakeWheelsCommand() {
-        return runOnce(() -> intakeMotor.setVoltage(2));
+        return runOnce(() -> intakeMotor.setVoltage(L1.HOLD_MOTOR_VOLTAGE));
     }
     
     public void outtake() {

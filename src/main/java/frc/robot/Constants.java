@@ -193,10 +193,10 @@ public final class Constants {
     public static final boolean AMBIGUITY_CUTOFF_ENABLE = true;
 
     public static final Matrix<N3, N1> REEF_CLOSE_VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.01, 0.01, Math.toRadians(5)});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.03, 0.03, Math.toRadians(7)});
 
     public static final Matrix<N3, N1> REEF_FAR_VISION_STDDEV =
-        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.05, 0.05, Math.toRadians(15)});
+        new Matrix<N3, N1>(N3.instance, N1.instance, new double[] {0.1, 0.1, Math.toRadians(20)});
   }
 
   public final class Winch {
@@ -262,24 +262,25 @@ public final class Constants {
     public static final int ARM_MOTOR_ID = 45;
     public static final int INTAKE_MOTOR_ID = 46;
 
-    public static final double ARM_STOW = Units.degreesToRotations(150);
-    public static final double ARM_GROUND = Units.degreesToRotations(0);
-    public static final double ARM_L1 = Units.degreesToRotations(150);
+    public static double ARM_STOW = Units.degreesToRotations(0);
+    public static double ARM_GROUND = Units.degreesToRotations(-100);
+    public static double ARM_L1 = Units.degreesToRotations(0);
 
     public static final int GEAR_RATIO = 10*7;
 
-    public static final double ARM_kV = 1.60;
-    public static final double ARM_kA = 0;
-    public static final double ARM_kG = 0.30;
-    public static final double ARM_kP = 10.0;
-    public static final double ARM_kI = 0.15;
-    public static final double ARM_kD = 0.0;
+    public static double ARM_kV = 1.60;
+    public static double ARM_kA = 0;
+    public static double ARM_kG = 0.30;
+    public static double ARM_kP = 10.0;
+    public static double ARM_kI = 0.15;
+    public static double ARM_kD = 0.0;
 
-    public static final double ARM_VELOCITY = 7.5;
-    public static final double ARM_ACCEL = 20;
-    public static final double ARM_JERK = 300;
+    public static double ARM_VELOCITY = 3.5;
+    public static double ARM_ACCEL = 10;
+    public static double ARM_JERK = 300;
 
-    public static final double INTAKE_MOTOR_VOLTAGE = 10.0;
-    public static final double OUTTAKE_MOTOR_VOLTAGE = -5.0;
+    public static double INTAKE_MOTOR_VOLTAGE = 10.0;
+    public static double HOLD_MOTOR_VOLTAGE = 2.0;
+    public static double OUTTAKE_MOTOR_VOLTAGE = -5.0;
   }
 }

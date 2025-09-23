@@ -331,16 +331,15 @@ public class RobotContainer {
                                 l1Subsystem.startIntakeWheelsCommand()
                         ),
                         Commands.sequence(
-                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_STOW),
+                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
                                 l1Subsystem.holdIntakeWheelsCommand()
                         ),
-                        () -> l1Subsystem.armTarget == L1.ARM_STOW
+                        () -> l1Subsystem.armTarget == L1.ARM_STOW || l1Subsystem.armTarget == L1.ARM_L1
                 )
         );
 
         driverXbox.leftStick().onTrue(
                 Commands.sequence(
-                        l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
                         l1Subsystem.outtakeCommand(),
                         Commands.waitSeconds(0.4),
                         l1Subsystem.stopIntakeWheelsCommand()
