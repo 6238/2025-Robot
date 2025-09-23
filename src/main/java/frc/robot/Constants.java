@@ -68,6 +68,7 @@ public final class Constants {
 
     /* Turn PID */
     public static final double TURN_kP = 0.175;
+
     public static final double TURN_kI = 0.005;
     public static final double TURN_kD = 0;
 
@@ -256,4 +257,29 @@ public final class Constants {
   public static final Autopilot kAutopilot = new Autopilot(kProfile);
 
   public static final double kP_ROT =1.75;
+
+  public class L1 {
+    public static final int ARM_MOTOR_ID = 45;
+    public static final int INTAKE_MOTOR_ID = 46;
+
+    public static final double ARM_STOW = Units.degreesToRotations(150);
+    public static final double ARM_GROUND = Units.degreesToRotations(0);
+    public static final double ARM_L1 = Units.degreesToRotations(150);
+
+    public static final int GEAR_RATIO = 10*7;
+
+    public static final double ARM_kV = 1.60;
+    public static final double ARM_kA = 0;
+    public static final double ARM_kG = 0.30;
+    public static final double ARM_kP = 10.0;
+    public static final double ARM_kI = 0.15;
+    public static final double ARM_kD = 0.0;
+
+    public static final double ARM_VELOCITY = 7.5;
+    public static final double ARM_ACCEL = 20;
+    public static final double ARM_JERK = 300;
+
+    public static final double INTAKE_MOTOR_VOLTAGE = 10.0;
+    public static final double OUTTAKE_MOTOR_VOLTAGE = -5.0;
+  }
 }
