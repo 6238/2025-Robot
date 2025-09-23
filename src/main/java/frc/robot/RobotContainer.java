@@ -77,25 +77,25 @@ public class RobotContainer {
     DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY * 2, 0.3);
 
     DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(
-            -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02), TRANSLATE_RATE_CONFIG)
+            -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.05), TRANSLATE_RATE_CONFIG)
             + DrivingRate.applyRateConfig(
-                    -MathUtil.applyDeadband(manualController.getLeftY(), 0.02),
+                    -MathUtil.applyDeadband(manualController.getLeftY(), 0.05),
                     TRANSLATE_RATE_CONFIG);
     // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
     // 2), TRANSLATE_RATE_CONFIG));
 
     DoubleSupplier swerve_y = () -> DrivingRate.applyRateConfig(
-            -MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02), TRANSLATE_RATE_CONFIG)
+            -MathUtil.applyDeadband(driverXbox.getLeftX(), 0.05), TRANSLATE_RATE_CONFIG)
             + DrivingRate.applyRateConfig(
-                    -MathUtil.applyDeadband(manualController.getLeftX(), 0.02),
+                    -MathUtil.applyDeadband(manualController.getLeftX(), 0.05),
                     TRANSLATE_RATE_CONFIG);
     // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
     // 2), ));
 
     DoubleSupplier swerve_turn = () -> DrivingRate.applyRateConfig(
-            -MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG)
+            -MathUtil.applyDeadband(driverXbox.getRightX(), 0.05), TURN_RATE_CONFIG)
             + DrivingRate.applyRateConfig(
-                    -MathUtil.applyDeadband(manualController.getRightX(), 0.02), TURN_RATE_CONFIG);
+                    -MathUtil.applyDeadband(manualController.getRightX(), 0.05), TURN_RATE_CONFIG);
     // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
     // 2), TRANSLATE_RATE_CONFIG));
 
@@ -388,13 +388,13 @@ public class RobotContainer {
                                         () -> m_elevator.getHeight() < 4),
                                 m_elevator.setHeightCommand(ElevatorHeights.TOP)));
 
-        driverXbox
-                .x()
-                .onTrue(
-                        Commands.sequence(
-                                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
-                                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
-                                m_elevator.setHeightCommand(ElevatorHeights.L3)));
+        // driverXbox
+        //         .x()
+        //         .onTrue(
+        //                 Commands.sequence(
+        //                         m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+        //                         Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+        //                         m_elevator.setHeightCommand(ElevatorHeights.L3)));
 
         // driverXbox
         // .b()

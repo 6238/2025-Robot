@@ -127,7 +127,8 @@ public class ReefUtils {
         Commands.waitSeconds(0.4),
         Commands.parallel(
             algaeEndEffector.intakeUntilStalled(), 
-        swerve.align(new APTarget(reefPickupPose).withoutEntryAngle())),
+          swerve.align(new APTarget(reefPickupPose).withoutEntryAngle())),
+        Commands.waitSeconds(0.1),
         algaeEndEffector.holdAlgae(),
         Commands.parallel(
             Commands.sequence(swerve.align(new APTarget(reefEndPose).withoutEntryAngle())),

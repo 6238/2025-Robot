@@ -245,13 +245,13 @@ public final class Constants {
   //   .withJerk(5);
 
   private static final APConstraints kConstraints = new APConstraints()
-    .withVelocity(Swerve.MAX_SPEED * 0.95)
-    .withAcceleration(15.0)
-    .withJerk(30.0);
+    .withVelocity(Swerve.MAX_SPEED * 1.2)
+    .withAcceleration(24.0)
+    .withJerk(55.0);
 
   public static final APProfile kProfile = new APProfile(kConstraints)
-      .withErrorXY(Centimeters.of(10))
-      .withErrorTheta(Degrees.of(5))
+      .withErrorXY(Centimeters.of(17))
+      .withErrorTheta(Degrees.of(18))
       .withBeelineRadius(Centimeters.of(8));
 
   public static final Autopilot kAutopilot = new Autopilot(kProfile);

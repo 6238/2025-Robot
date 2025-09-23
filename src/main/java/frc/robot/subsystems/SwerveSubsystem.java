@@ -499,6 +499,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
           sign *= Constants.FLIP_DIR ? -1.0 : 1.0;
 
+          SmartDashboard.putNumber("rotSwerveDriveSpeed", rotationSpeed.getAsDouble());
+
           Translation2d translation =
               new Translation2d(
                   sign * translationSpeedX.getAsDouble(), sign * translationSpeedY.getAsDouble());
