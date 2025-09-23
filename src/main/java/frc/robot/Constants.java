@@ -255,5 +255,5 @@ public final class Constants {
 
   public static final Autopilot kAutopilot = new Autopilot(kProfile);
 
-  public static final double kP_ROT = 1.75;
+  public static final double kP_ROT =1.75;
 }

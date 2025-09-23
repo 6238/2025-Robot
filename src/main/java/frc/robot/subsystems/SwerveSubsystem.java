@@ -550,8 +550,8 @@ public class SwerveSubsystem extends SubsystemBase {
               double diff = headingReference.getRadians()-pose.getRotation().getRadians();
               double appliedRot = Math.abs(diff) > Units.degreesToRadians(2) ? (diff * Constants.kP_ROT) : 0;
               
-              SmartDashboard.putNumber("currentRot", pose.getRotation().getRadians());
-              SmartDashboard.putNumber("headingTarget", headingReference.getRadians());
+              SmartDashboard.putNumber("currentRot", pose.getRotation().getDegrees());
+              SmartDashboard.putNumber("headingTarget", headingReference.getDegrees());
               SmartDashboard.putNumber("sub", diff);
               SmartDashboard.putNumber("appliedRot", appliedRot);
 

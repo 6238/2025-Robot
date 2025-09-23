@@ -7,10 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.Elevator.ElevatorHeights;
@@ -80,7 +78,9 @@ public class ReefUtils {
     double x = reefPose.getX() + dx * distAway;
     double y = reefPose.getY() + dy * distAway;
 
-    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(targetAngle)));
+    double a = (180+targetAngle) > 180 ? (180+targetAngle) - 360 : (180+targetAngle);
+
+    return new Pose2d(x, y, new Rotation2d(Units.degreesToRadians(a)));
   }
 
   public static Pose2d GetAllianceReefPose() {
@@ -115,11 +115,11 @@ public class ReefUtils {
     Pose2d reefStartPose = GetReefPose(reefCenter, currentPos, 2.286);
     Pose2d reefPickupPose = GetReefPose(reefCenter, currentPos, 1.294);
     Pose2d reefEndPose = GetReefPose(reefCenter, currentPos, 3.112);
-    double angle = getClosestAngle(swerve.getHeading().getDegrees(), AngleToReef(currentPos));
+    // double angle = getClosestAngle(swerve.getHeading().getDegrees(), AngleToReef(currentPos)); TODO: need to do weird 60 thang
 
     return Commands.sequence(
         swerve
-            .align(new APTarget(reefStartPose).withEntryAngle(Rotation2d.fromDegrees(180+angle)))
+            .align(new APTarget(reefStartPose).withoutEntryAngle())//.withEntryAngle(Rotation2d.fromDegrees(180+angle)))
             .onlyIf(
                 () ->
                     currentPos.getTranslation().getDistance(reefStartPose.getTranslation()) > 0.4),
