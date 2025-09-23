@@ -31,11 +31,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Elevator.ElevatorHeights;
+import frc.robot.Constants.L1;
 import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
 import static frc.robot.Constants.Swerve.MAX_SPEED;
 import frc.robot.commands.AimAtAlgae;
 import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.L1Subsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.LEDSubsystem.LEDMode;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -66,6 +68,7 @@ public class RobotContainer {
     WinchSubsystem winch = new WinchSubsystem();
     LEDSubsystem led = new LEDSubsystem();
     // BatteryIdentification batteryIdentification = new BatteryIdentification();
+    L1Subsystem l1Subsystem = new L1Subsystem();
 
     CommandXboxController driverXbox = new CommandXboxController(0);
     CommandXboxController manualController = new CommandXboxController(1);
@@ -306,6 +309,45 @@ public class RobotContainer {
         // )
         // )
         // ).until(() -> autonTeleController.isDriverInputting()));
+
+        driverXbox.rightTrigger().onTrue(
+                Commands.either(
+                        Commands.sequence(
+                                l1Subsystem.startIntakeWheelsCommand(),
+                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND)
+                        ),
+                        Commands.sequence(
+                                l1Subsystem.holdIntakeWheelsCommand(),
+                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND)
+                        ),
+                        () -> l1Subsystem.armTarget == L1.ARM_GROUND
+                )
+        );
+
+        manualController.rightTrigger().onTrue(
+                Commands.either(
+                        Commands.sequence(
+                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
+                                l1Subsystem.startIntakeWheelsCommand()
+                        ),
+                        Commands.sequence(
+                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_STOW),
+                                l1Subsystem.holdIntakeWheelsCommand()
+                        ),
+                        () -> l1Subsystem.armTarget == L1.ARM_STOW
+                )
+        );
+
+        driverXbox.leftStick().onTrue(
+                Commands.sequence(
+                        l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
+                        l1Subsystem.outtakeCommand(),
+                        Commands.waitSeconds(0.4),
+                        l1Subsystem.stopIntakeWheelsCommand()
+                )
+        );
+
+
         driverXbox
                 .x()
                 .whileTrue(

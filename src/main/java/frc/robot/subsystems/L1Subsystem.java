@@ -19,7 +19,7 @@ public class L1Subsystem extends SubsystemBase {
     public TalonFX armMotor;
     public TalonFX intakeMotor;
 
-    public double armTarget = 0;
+    public double armTarget = L1.ARM_GROUND;
 
     public final PositionVoltage armPositionVoltageRequest;
 
@@ -68,6 +68,10 @@ public class L1Subsystem extends SubsystemBase {
 
     public Command startIntakeWheelsCommand() {
         return runOnce(() -> startIntakeWheels());
+    }
+
+    public Command holdIntakeWheelsCommand() {
+        return runOnce(() -> intakeMotor.setVoltage(2));
     }
     
     public void outtake() {
