@@ -546,12 +546,18 @@ public class SwerveSubsystem extends SubsystemBase {
               /* these speeds are field relative */
               double veloX = output.vx().in(MetersPerSecond);
               double veloY = output.vy().in(MetersPerSecond);
-              Rotation2d headingReference = output.targetAngle();
-              double diff = headingReference.getRadians()-pose.getRotation().getRadians();
+              double headingReference = output.targetAngle().getRadians();
+              double diff = headingReference-pose.getRotation().getRadians();
+              if (diff > Math.PI) {
+                diff -= 360;
+              } else if (diff < -Math.PI) {
+                diff += 360;
+              }
+
               double appliedRot = Math.abs(diff) > Units.degreesToRadians(2) ? (diff * Constants.kP_ROT) : 0;
               
               SmartDashboard.putNumber("currentRot", pose.getRotation().getDegrees());
-              SmartDashboard.putNumber("headingTarget", headingReference.getDegrees());
+              SmartDashboard.putNumber("headingTarget", headingReference);
               SmartDashboard.putNumber("sub", diff);
               SmartDashboard.putNumber("appliedRot", appliedRot);
 
