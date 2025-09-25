@@ -313,14 +313,14 @@ public class RobotContainer {
         driverXbox.rightTrigger().onTrue(
                 Commands.either(
                         Commands.sequence(
-                                l1Subsystem.startIntakeWheelsCommand(),
-                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND)
+                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
+                                l1Subsystem.startIntakeWheelsCommand()
                         ),
                         Commands.sequence(
-                                l1Subsystem.holdIntakeWheelsCommand(),
-                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND)
+                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
+                                l1Subsystem.holdIntakeWheelsCommand()
                         ),
-                        () -> l1Subsystem.armTarget == L1.ARM_GROUND
+                        () -> l1Subsystem.armTarget == L1.ARM_STOW || l1Subsystem.armTarget == L1.ARM_L1
                 )
         );
 
