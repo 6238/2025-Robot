@@ -118,6 +118,7 @@ public class ReefUtils {
     // double angle = getClosestAngle(swerve.getHeading().getDegrees(), AngleToReef(currentPos)); TODO: need to do weird 60 thang
 
     return Commands.sequence(
+        elevator.setHeightCommand(ElevatorHeights.GROUND),
         swerve
             .align(new APTarget(reefStartPose).withoutEntryAngle())//.withEntryAngle(Rotation2d.fromDegrees(180+angle)))
             .onlyIf(

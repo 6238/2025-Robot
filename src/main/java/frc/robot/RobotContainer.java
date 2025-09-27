@@ -310,41 +310,25 @@ public class RobotContainer {
         // )
         // ).until(() -> autonTeleController.isDriverInputting()));
 
-        driverXbox.rightTrigger().onTrue(
-                Commands.either(
-                        Commands.sequence(
-                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
-                                l1Subsystem.startIntakeWheelsCommand()
-                        ),
-                        Commands.sequence(
-                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
-                                l1Subsystem.holdIntakeWheelsCommand()
-                        ),
-                        () -> l1Subsystem.armTarget == L1.ARM_STOW || l1Subsystem.armTarget == L1.ARM_L1
-                )
-        );
+        manualController.rightTrigger().onTrue(Commands.sequence(
+                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
+                l1Subsystem.startIntakeWheelsCommand()
+        ));
 
-        manualController.rightTrigger().onTrue(
-                Commands.either(
-                        Commands.sequence(
-                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
-                                l1Subsystem.startIntakeWheelsCommand()
-                        ),
-                        Commands.sequence(
-                                l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
-                                l1Subsystem.holdIntakeWheelsCommand()
-                        ),
-                        () -> l1Subsystem.armTarget == L1.ARM_STOW || l1Subsystem.armTarget == L1.ARM_L1
-                )
-        );
+        manualController.rightTrigger().onFalse(Commands.sequence(
+                l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
+                l1Subsystem.holdIntakeWheelsCommand()
+        ));
 
-        driverXbox.leftStick().onTrue(
-                Commands.sequence(
-                        l1Subsystem.outtakeCommand(),
-                        Commands.waitSeconds(0.4),
-                        l1Subsystem.stopIntakeWheelsCommand()
-                )
-        );
+        driverXbox.rightTrigger().onTrue(Commands.sequence(
+                l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
+                l1Subsystem.startIntakeWheelsCommand()
+        ));
+
+        driverXbox.rightTrigger().onFalse(Commands.sequence(
+                l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
+                l1Subsystem.holdIntakeWheelsCommand()
+        ));
 
 
         driverXbox
@@ -356,7 +340,15 @@ public class RobotContainer {
                                         Set.of(swerve)),
                                 m_elevator.setHeightCommand(ElevatorHeights.TOP),
                                 Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4)));
-        manualController.x().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L3));
+        manualController.x().onTrue(Commands.sequence(
+                                Commands.either(
+                                        Commands.sequence(
+                                                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                                                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                                                Commands.waitSeconds(0.1)),
+                                        Commands.none(),
+                                        () -> m_elevator.getHeight() < 4),
+                                m_elevator.setHeightCommand(ElevatorHeights.L3)));
 
         // driverXbox.b().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L2));
         // driverXbox.x().onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
@@ -410,7 +402,15 @@ public class RobotContainer {
                                         swerve.getPose(), swerve, autonTeleController, m_elevator, algaeSubsystem),
                                 Set.of(swerve, m_elevator, algaeSubsystem)));
 
-        manualController.b().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L2));
+        manualController.b().onTrue(Commands.sequence(
+                Commands.either(
+                        Commands.sequence(
+                                m_elevator.setHeightCommand(ElevatorHeights.GROUND),
+                                Commands.waitUntil(() -> m_elevator.getHeight() > 4),
+                                Commands.waitSeconds(0.1)),
+                        Commands.none(),
+                        () -> m_elevator.getHeight() < 4),
+                m_elevator.setHeightCommand(ElevatorHeights.L2)));
 
         driverXbox
                 .povLeft()
@@ -515,11 +515,25 @@ public class RobotContainer {
         manualController.povUp().onFalse(Commands.runOnce(() -> winch.stopMotor(), winch));
         manualController.povUp().onTrue(led.climbCommand());
 
-        driverXbox.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
-        driverXbox.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
+        driverXbox.leftTrigger().onTrue(
+        Commands.parallel(
+                m_elevator.setHeightCommand(ElevatorHeights.STOW),
+                Commands.sequence(
+                        l1Subsystem.outtakeCommand(),
+                        Commands.waitSeconds(0.4),
+                        l1Subsystem.stopIntakeWheelsCommand()
+                )
+        ));
 
-        manualController.leftTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.STOW));
-        manualController.rightTrigger().onTrue(m_elevator.setHeightCommand(ElevatorHeights.L1_5));
+        manualController.leftTrigger().onTrue(
+        Commands.parallel(
+                m_elevator.setHeightCommand(ElevatorHeights.STOW),
+                Commands.sequence(
+                        l1Subsystem.outtakeCommand(),
+                        Commands.waitSeconds(0.4),
+                        l1Subsystem.stopIntakeWheelsCommand()
+                )
+        ));
 
         // driverXbox
         // .leftBumper()

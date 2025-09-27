@@ -261,6 +261,9 @@ public final class Constants {
   public class L1 {
     public static final int ARM_MOTOR_ID = 45;
     public static final int INTAKE_MOTOR_ID = 46;
+    public static final int CAN_CODER_ID = 47;
+
+    public static final double ABSOLUTE_POSITION_OFFSET = 0;
 
     public static double ARM_STOW = Units.degreesToRotations(0);
     public static double ARM_GROUND = Units.degreesToRotations(-100);
