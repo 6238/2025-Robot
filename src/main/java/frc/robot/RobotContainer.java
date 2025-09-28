@@ -115,7 +115,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
                 "Elevator_Algae_L1",
-                m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
+                Commands.parallel(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND), l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1)));
+                
 
         NamedCommands.registerCommand(
                 "Elevator_Algae_L1_25",
@@ -185,7 +186,7 @@ public class RobotContainer {
                         m_elevator.setHeightCommand(ElevatorHeights.TOP),
                         Commands.waitUntil(() -> m_elevator.getHeight() > ElevatorHeights.TOP - 4),
                         Commands.waitSeconds(0.8),
-                        algaeSubsystem.startVariableOutake(0.10),
+                        algaeSubsystem.startVariableOutake(0.2),
                         Commands.waitSeconds(0.4),
                         algaeSubsystem.stopMotors()));
 
@@ -220,6 +221,10 @@ public class RobotContainer {
         // Initialize autonomous chooser
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auton Path", autoChooser);
+    }
+
+    public void triggerPanic() {
+        l1Subsystem.panic();
     }
 
     /**
@@ -310,22 +315,26 @@ public class RobotContainer {
         // )
         // ).until(() -> autonTeleController.isDriverInputting()));
 
-        manualController.rightTrigger().onTrue(Commands.sequence(
+        manualController.rightTrigger().whileTrue(Commands.sequence(
                 l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
-                l1Subsystem.startIntakeWheelsCommand()
+                l1Subsystem.startIntakeWheelsCommand(),
+                Commands.waitSeconds(0.4),
+                l1Subsystem.commandZeroToGround()
         ));
 
-        manualController.rightTrigger().onFalse(Commands.sequence(
+        manualController.rightTrigger().whileFalse(Commands.sequence(
                 l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
                 l1Subsystem.holdIntakeWheelsCommand()
         ));
 
-        driverXbox.rightTrigger().onTrue(Commands.sequence(
+        driverXbox.rightTrigger().whileTrue(Commands.sequence(
                 l1Subsystem.setArmPositionCommand(() -> L1.ARM_GROUND),
-                l1Subsystem.startIntakeWheelsCommand()
+                l1Subsystem.startIntakeWheelsCommand(),
+                Commands.waitSeconds(0.4),
+                l1Subsystem.commandZeroToGround()
         ));
 
-        driverXbox.rightTrigger().onFalse(Commands.sequence(
+        driverXbox.rightTrigger().whileFalse(Commands.sequence(
                 l1Subsystem.setArmPositionCommand(() -> L1.ARM_L1),
                 l1Subsystem.holdIntakeWheelsCommand()
         ));

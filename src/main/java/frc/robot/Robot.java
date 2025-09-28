@@ -37,20 +37,21 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("L1_GROUND_POS", Units.rotationsToDegrees(L1.ARM_GROUND));
     SmartDashboard.putNumber("L1_SCORE_POS", Units.rotationsToDegrees(L1.ARM_L1));
 
-    SmartDashboard.putNumber("L1_kV", L1.ARM_kV);
-    SmartDashboard.putNumber("L1_kA", L1.ARM_kA);
-    SmartDashboard.putNumber("L1_kG", L1.ARM_kG);
-    SmartDashboard.putNumber("L1_kP", L1.ARM_kP);
-    SmartDashboard.putNumber("L1_kI", L1.ARM_kI);
-    SmartDashboard.putNumber("L1_kD", L1.ARM_kD);
+    // SmartDashboard.putNumber("L1_kV", L1.ARM_kV);
+    // SmartDashboard.putNumber("L1_kA", L1.ARM_kA);
+    // SmartDashboard.putNumber("L1_kG", L1.ARM_kG);
+    // SmartDashboard.putNumber("L1_kP", L1.ARM_kP);
+    // SmartDashboard.putNumber("L1_kI", L1.ARM_kI);
+    // SmartDashboard.putNumber("L1_kD", L1.ARM_kD);
 
-    SmartDashboard.putNumber("L1_VELOCITY", L1.ARM_VELOCITY);
-    SmartDashboard.putNumber("L1_ACCEL", L1.ARM_ACCEL);
-    SmartDashboard.putNumber("L1_JERK", L1.ARM_JERK);
+    // SmartDashboard.putNumber("L1_VELOCITY", L1.ARM_VELOCITY);
+    // SmartDashboard.putNumber("L1_ACCEL", L1.ARM_ACCEL);
+    // SmartDashboard.putNumber("L1_JERK", L1.ARM_JERK);
 
-    SmartDashboard.putNumber("L1_INTAKE_VOLTAGE", L1.INTAKE_MOTOR_VOLTAGE);
-    SmartDashboard.putNumber("L1_HOLD_VOLTAGE", L1.HOLD_MOTOR_VOLTAGE);
+    // SmartDashboard.putNumber("L1_INTAKE_VOLTAGE", L1.INTAKE_MOTOR_VOLTAGE);
+    // SmartDashboard.putNumber("L1_HOLD_VOLTAGE", L1.HOLD_MOTOR_VOLTAGE);
     SmartDashboard.putNumber("L1_OUTTAKE_VOLTAGE", L1.OUTTAKE_MOTOR_VOLTAGE);
+    SmartDashboard.putBoolean("panicL1", false);
     
   }
 
@@ -60,19 +61,19 @@ public class Robot extends TimedRobot {
     L1.ARM_GROUND = Units.degreesToRotations(SmartDashboard.getNumber("L1_GROUND_POS", Units.rotationsToDegrees(L1.ARM_GROUND)));
     L1.ARM_L1 = Units.degreesToRotations(SmartDashboard.getNumber("L1_SCORE_POS", Units.rotationsToDegrees(L1.ARM_L1)));
 
-    L1.ARM_kV = SmartDashboard.getNumber("L1_kV", L1.ARM_kV);
-    L1.ARM_kA = SmartDashboard.getNumber("L1_kA", L1.ARM_kA);
-    L1.ARM_kG = SmartDashboard.getNumber("L1_kG", L1.ARM_kG);
-    L1.ARM_kP = SmartDashboard.getNumber("L1_kP", L1.ARM_kP);
-    L1.ARM_kI = SmartDashboard.getNumber("L1_kI", L1.ARM_kI);
-    L1.ARM_kD = SmartDashboard.getNumber("L1_kD", L1.ARM_kD);
+    // L1.ARM_kV = SmartDashboard.getNumber("L1_kV", L1.ARM_kV);
+    // L1.ARM_kA = SmartDashboard.getNumber("L1_kA", L1.ARM_kA);
+    // L1.ARM_kG = SmartDashboard.getNumber("L1_kG", L1.ARM_kG);
+    // L1.ARM_kP = SmartDashboard.getNumber("L1_kP", L1.ARM_kP);
+    // L1.ARM_kI = SmartDashboard.getNumber("L1_kI", L1.ARM_kI);
+    // L1.ARM_kD = SmartDashboard.getNumber("L1_kD", L1.ARM_kD);
 
-    L1.ARM_VELOCITY = SmartDashboard.getNumber("L1_VELOCITY", L1.ARM_VELOCITY);
-    L1.ARM_ACCEL = SmartDashboard.getNumber("L1_ACCEL", L1.ARM_ACCEL);
-    L1.ARM_JERK = SmartDashboard.getNumber("L1_JERK", L1.ARM_JERK);
+    // L1.ARM_VELOCITY = SmartDashboard.getNumber("L1_VELOCITY", L1.ARM_VELOCITY);
+    // L1.ARM_ACCEL = SmartDashboard.getNumber("L1_ACCEL", L1.ARM_ACCEL);
+    // L1.ARM_JERK = SmartDashboard.getNumber("L1_JERK", L1.ARM_JERK);
 
-    L1.INTAKE_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_INTAKE_VOLTAGE", L1.INTAKE_MOTOR_VOLTAGE);
-    L1.HOLD_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_HOLD_VOLTAGE", L1.HOLD_MOTOR_VOLTAGE);
+    // L1.INTAKE_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_INTAKE_VOLTAGE", L1.INTAKE_MOTOR_VOLTAGE);
+    // L1.HOLD_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_HOLD_VOLTAGE", L1.HOLD_MOTOR_VOLTAGE);
     L1.OUTTAKE_MOTOR_VOLTAGE = SmartDashboard.getNumber("L1_OUTTAKE_VOLTAGE", L1.OUTTAKE_MOTOR_VOLTAGE);
 
     // Constants.Vision.ENABLE = SmartDashboard.getBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
@@ -80,6 +81,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
     Constants.AlgaeEndEffector.OUTAKE_SPEED =
         SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+    
+    if (SmartDashboard.getBoolean("panicL1", false)) {
+      m_robotContainer.triggerPanic();
+    }
 
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());

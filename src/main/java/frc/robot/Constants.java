@@ -86,7 +86,7 @@ public final class Constants {
           0.13 * Units.inchesToMeters(ElevatorHeights.ELEVATOR_GEAR_RATIO); // volts per 1 rps/s
 
       public static double kg_Ball = 0.465;
-      public static double kg_Top = 2;
+      public static double kg_Top = 1.75;
 
       // PID for correcting errors
       public static double kP = 3;
@@ -266,10 +266,10 @@ public final class Constants {
     public static final double ABSOLUTE_POSITION_OFFSET = 0;
 
     public static double ARM_STOW = Units.degreesToRotations(0);
-    public static double ARM_GROUND = Units.degreesToRotations(-100);
-    public static double ARM_L1 = Units.degreesToRotations(0);
+    public static double ARM_GROUND = Units.degreesToRotations(-120);
+    public static double ARM_L1 = Units.degreesToRotations(-10);
 
-    public static final int GEAR_RATIO = 10*7;
+    public static final int GEAR_RATIO = 7*7;
 
     public static double ARM_kV = 1.60;
     public static double ARM_kA = 0;
@@ -278,12 +278,12 @@ public final class Constants {
     public static double ARM_kI = 0.15;
     public static double ARM_kD = 0.0;
 
-    public static double ARM_VELOCITY = 3.5;
-    public static double ARM_ACCEL = 10;
+    public static double ARM_VELOCITY = 2.5;
+    public static double ARM_ACCEL = 8;
     public static double ARM_JERK = 300;
 
-    public static double INTAKE_MOTOR_VOLTAGE = 10.0;
+    public static double INTAKE_MOTOR_VOLTAGE = 8.0;
     public static double HOLD_MOTOR_VOLTAGE = 2.0;
-    public static double OUTTAKE_MOTOR_VOLTAGE = -5.0;
+    public static double OUTTAKE_MOTOR_VOLTAGE = -3.5;
   }
 }
