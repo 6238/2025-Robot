@@ -44,10 +44,7 @@ public class Logging {
     NetworkTableInstance.getDefault()
         .getStringTopic("/Metadata/GitDirty")
         .publish()
-        .set(
-            BuildConstants.DIRTY == 1
-                ? "✏️ Uncommitted changes present"
-                : "✅ All changes committed");
+        .set(BuildConstants.DIRTY == 1 ? "Uncommitted changes present" : "All changes committed");
 
     NetworkTableInstance.getDefault()
         .getStringTopic("/Metadata/GitBranch")

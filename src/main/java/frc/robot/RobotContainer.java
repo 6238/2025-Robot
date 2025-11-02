@@ -4,109 +4,88 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.pathfinding.LocalADStar;
-import com.pathplanner.lib.pathfinding.Pathfinding;
-
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.hal.HALUtil;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Elevator.ElevatorHeights;
-// import frc.robot.commands.AimAtAlgae;
-// import frc.robot.subsystems.AlgaeEndEffectorSubsystem;
-// import frc.robot.subsystems.ElevatorSubsystem;
-// import frc.robot.subsystems.LEDSubsystem;
-// import frc.robot.subsystems.LEDSubsystem.LEDMode;
-import frc.robot.subsystems.SwerveSubsystem;
-// import frc.robot.subsystems.VisionSubsystem;
-// import frc.robot.subsystems.WinchSubsystem;
-import frc.robot.util.AutonTeleController;
-import frc.robot.util.DrivingRate.DrivingRateConfig;
-import frc.robot.util.Logging;
-import frc.robot.util.OrcestraManager;
-
 import static frc.robot.Constants.Swerve.MAX_ANGULAR_VELOCITY;
 import static frc.robot.Constants.Swerve.MAX_SPEED;
 
-import java.io.File;
-import java.util.Set;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.hal.HALUtil;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.DrivingRate;
-
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import frc.robot.util.ReefUtils;
-
+import frc.robot.util.DrivingRate.DrivingRateConfig;
+import frc.robot.util.Logging;
+import java.io.File;
+import java.util.function.DoubleSupplier;
 import swervelib.math.Matter;
 
 /**
- * This class is where almost all of the robot is defined - logic and subsystems
- * are all set up
+ * This class is where almost all of the robot is defined - logic and subsystems are all set up
  * here.
  */
 @Logged
 public class RobotContainer {
-//   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
-//   public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
-//   Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
-  SwerveSubsystem swerve = new SwerveSubsystem(
-      new File(Filesystem.getDeployDirectory(), "swerve"),
-      () -> new Matter(new Translation3d(), 0));
-//   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
-//   WinchSubsystem winch = new WinchSubsystem();
-//   LEDSubsystem led = new LEDSubsystem();
+  //   AlgaeEndEffectorSubsystem algaeSubsystem = new AlgaeEndEffectorSubsystem();
+  //   public ElevatorSubsystem m_elevator = new ElevatorSubsystem(algaeSubsystem.hasBall());
+  //   Supplier<Matter> elevator_matter = () -> m_elevator.getMatter();
+  SwerveSubsystem swerve =
+      new SwerveSubsystem(
+          new File(Filesystem.getDeployDirectory(), "swerve"),
+          () -> new Matter(new Translation3d(), 0));
+  ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+  //   VisionSubsystem visionSubsystem = new VisionSubsystem(swerve);
+  //   WinchSubsystem winch = new WinchSubsystem();
+  //   LEDSubsystem led = new LEDSubsystem();
   // BatteryIdentification batteryIdentification = new BatteryIdentification();
 
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandXboxController manualController = new CommandXboxController(1);
 
   DrivingRateConfig TRANSLATE_RATE_CONFIG = new DrivingRateConfig(MAX_SPEED / 1.75, MAX_SPEED, 0.3);
-  DrivingRateConfig TURN_RATE_CONFIG = new DrivingRateConfig(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY * 2, 0.3);
+  DrivingRateConfig TURN_RATE_CONFIG =
+      new DrivingRateConfig(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY * 2, 0.3);
 
-  DoubleSupplier swerve_x = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02),
-      TRANSLATE_RATE_CONFIG) + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftY(), 0.02),
-      TRANSLATE_RATE_CONFIG);
+  DoubleSupplier swerve_x =
+      () ->
+          DrivingRate.applyRateConfig(
+                  -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02), TRANSLATE_RATE_CONFIG)
+              + DrivingRate.applyRateConfig(
+                  -MathUtil.applyDeadband(manualController.getLeftY(), 0.02),
+                  TRANSLATE_RATE_CONFIG);
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), TRANSLATE_RATE_CONFIG));
 
-  DoubleSupplier swerve_y = () -> DrivingRate.applyRateConfig(-MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02),
-      TRANSLATE_RATE_CONFIG) + DrivingRate.applyRateConfig(-MathUtil.applyDeadband(manualController.getLeftX(), 0.02),
-      TRANSLATE_RATE_CONFIG);
+  DoubleSupplier swerve_y =
+      () ->
+          DrivingRate.applyRateConfig(
+                  -MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02), TRANSLATE_RATE_CONFIG)
+              + DrivingRate.applyRateConfig(
+                  -MathUtil.applyDeadband(manualController.getLeftX(), 0.02),
+                  TRANSLATE_RATE_CONFIG);
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), ));
 
-  DoubleSupplier swerve_turn = () -> DrivingRate
-      .applyRateConfig(-MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG) + DrivingRate
-      .applyRateConfig(-MathUtil.applyDeadband(manualController.getRightX(), 0.02), TURN_RATE_CONFIG);
+  DoubleSupplier swerve_turn =
+      () ->
+          DrivingRate.applyRateConfig(
+                  -MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG)
+              + DrivingRate.applyRateConfig(
+                  -MathUtil.applyDeadband(manualController.getRightX(), 0.02), TURN_RATE_CONFIG);
+
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), TRANSLATE_RATE_CONFIG));
 
-//   private final SendableChooser<Command> autoChooser;
+  //   private final SendableChooser<Command> autoChooser;
 
-//   AutonTeleController autonTeleController = new AutonTeleController(driverXbox, swerve, swerve_x, swerve_y,
-//       swerve_turn);
+  //   AutonTeleController autonTeleController = new AutonTeleController(driverXbox, swerve,
+  // swerve_x, swerve_y,
+  //       swerve_turn);
 
   public RobotContainer() {
     Logging.logMetadata();
@@ -148,16 +127,19 @@ public class RobotContainer {
     //     "Elevator_Algae_L3", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.L3));
 
     // NamedCommands.registerCommand(
-    //     "Elevator_Algae_L4", m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
+    //     "Elevator_Algae_L4",
+    // m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.TOP));
 
     // NamedCommands.registerCommand("Elevator_Choral_L1", m_elevator.setHeightCommand(21));
 
     // NamedCommands.registerCommand("Elevator_Choral_L4_T", m_elevator.setHeightCommand(75));
     // NamedCommands.registerCommand("Elevator_Choral_L4_B", m_elevator.setHeightCommand(65));
 
-    // NamedCommands.registerCommand("Elevator_Stow", m_elevator.setHeightCommand(ElevatorHeights.STOW));
+    // NamedCommands.registerCommand("Elevator_Stow",
+    // m_elevator.setHeightCommand(ElevatorHeights.STOW));
 
-    // NamedCommands.registerCommand("Elevator_Processor", m_elevator.setHeightCommand(ElevatorHeights.L1_5));
+    // NamedCommands.registerCommand("Elevator_Processor",
+    // m_elevator.setHeightCommand(ElevatorHeights.L1_5));
 
     // NamedCommands.registerCommand(
     //     "Intake_Algae",
@@ -171,7 +153,8 @@ public class RobotContainer {
     // NamedCommands.registerCommand(
     //     "Shoot_Algae",
     //     Commands.sequence(
-    //         algaeSubsystem.startDutyOuttake(-1), Commands.waitSeconds(0.5), algaeSubsystem.stopMotors()));
+    //         algaeSubsystem.startDutyOuttake(-1), Commands.waitSeconds(0.5),
+    // algaeSubsystem.stopMotors()));
 
     // NamedCommands.registerCommand(
     //     "Raise_And_Shoot",
@@ -200,7 +183,8 @@ public class RobotContainer {
     //     .onTrue(m_elevator.setHeightCommand(Constants.Elevator.ElevatorHeights.GROUND));
     // new EventTrigger("Elevator_Choral_L1").onTrue(m_elevator.setHeightCommand(25));
     // new EventTrigger("Intake")
-    //     .onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(), algaeSubsystem.holdAlgae()));
+    //     .onTrue(Commands.sequence(algaeSubsystem.intakeUntilStalled(),
+    // algaeSubsystem.holdAlgae()));
     // new EventTrigger("Start_Intake").onTrue(algaeSubsystem.startIntake());
     // new EventTrigger("Stop_Intake").onTrue(algaeSubsystem.holdAlgae());
     // new EventTrigger("Shoot").onTrue(algaeSubsystem.startOutake());
@@ -218,15 +202,21 @@ public class RobotContainer {
 
   /**
    * This method is where all of the robot's logic is defined. We link {@link
-   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons
-   * and subsystem
-   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The
-   * advantage of
-   * configuring all the robot's logic here is that it's easy to find, and
-   * therefore easy to modify,
+   * edu.wpi.first.wpilibj2.command.button.Trigger}s, such as controller buttons and subsystem
+   * state, to {@link edu.wpi.first.wpilibj2.command.Command} instances. The advantage of
+   * configuring all the robot's logic here is that it's easy to find, and therefore easy to modify,
    * what the robot does when something happens and why.
    */
   private void configureTriggers() {
+
+    driverXbox.a().onTrue(shooterSubsystem.spinupCommand());
+    
+    driverXbox.b().onTrue(shooterSubsystem.stopShooterWheelCommand());
+    
+    driverXbox.x().onTrue(shooterSubsystem.setFeederWheelCommand());
+   
+    driverXbox.y().onTrue(shooterSubsystem.stopFeederWheelCommand());
+
     // Controls
 
     // new Trigger(algaeSubsystem.hasBall())
@@ -247,18 +237,22 @@ public class RobotContainer {
     //     .onTrue(
     //         Commands.runOnce(() -> m_elevator.resetEncoder()) // m_elevator.getTargetHeight() ==
     //                                                           // ElevatorHeights.STOW ? 0.75 *
-    //                                                           // ElevatorHeights.ELEVATOR_GEAR_RATIO : 0)
+    //                                                           //
+    // ElevatorHeights.ELEVATOR_GEAR_RATIO : 0)
     //             .ignoringDisable(true)); // left menu button
     // manualController
     //     .back()
     //     .onTrue(
     //         Commands.runOnce(() -> m_elevator.resetEncoder()) // m_elevator.getTargetHeight() ==
     //                                                           // ElevatorHeights.STOW ? 0.75 *
-    //                                                           // ElevatorHeights.ELEVATOR_GEAR_RATIO : 0)
+    //                                                           //
+    // ElevatorHeights.ELEVATOR_GEAR_RATIO : 0)
     //             .ignoringDisable(true)); // left menu button
 
     driverXbox.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
-    manualController.start().onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
+    manualController
+        .start()
+        .onTrue(swerve.zeroYawCommand().ignoringDisable(true)); // right menu button
 
     // SmartDashboard.putBoolean("RAISE_CLIMBER", false);
     // new Trigger(() -> SmartDashboard.getBoolean("RAISE_CLIMBER", false))
@@ -408,7 +402,8 @@ public class RobotContainer {
     //     Commands.sequence(
     //         m_elevator.setHeightCommand(ElevatorHeights.GROUND),
     //         algaeSubsystem.startIntake(),
-    //         new AimAtAlgae(visionSubsystem, swerve)).until(() -> algaeSubsystem.hasBall().getAsBoolean()));
+    //         new AimAtAlgae(visionSubsystem, swerve)).until(() ->
+    // algaeSubsystem.hasBall().getAsBoolean()));
     // manualController.a().onTrue(m_elevator.setHeightCommand(ElevatorHeights.GROUND));
 
     // Commands.either(
@@ -566,5 +561,8 @@ public class RobotContainer {
 
   public void OnEnable() {
     // m_elevator.brake();
+  }
+  public ShooterSubsystem getShooterSubsystem() {
+    return shooterSubsystem;
   }
 }

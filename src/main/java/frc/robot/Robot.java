@@ -6,15 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Shooter;
 import frc.robot.telemetry.GeneralLogger;
+
 // import frc.robot.util.ReefUtils;
 
 @Logged
@@ -30,18 +30,56 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     // WebServer.start(5800, Filesystem.getDeployDirectory().toString());
     Epilogue.bind(this);
-    // SmartDashboard.putBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
-    // SmartDashboard.putNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
-    // SmartDashboard.putNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+
+    SmartDashboard.putNumber("ShooterkP", Shooter.kP);
+    SmartDashboard.putNumber("ShooterkI", Shooter.kI);
+    SmartDashboard.putNumber("ShooterkD", Shooter.kD);
+    SmartDashboard.putNumber("ShooterkV", Shooter.kV);
+    SmartDashboard.putNumber("ShooterMotionMagicVelocity", Shooter.MOTION_MAGIC_VELOCITY);
+    SmartDashboard.putNumber("ShooterMotionMagicAcceleration", Shooter.MOTION_MAGIC_ACCEL);
+    SmartDashboard.putNumber("FeederVoltage", Shooter.FEEDER_VOLTAGE);
   }
 
   @Override
   public void robotPeriodic() {
-    // Constants.Vision.ENABLE = SmartDashboard.getBoolean("VISION_ENABLE", Constants.Vision.ENABLE);
-    // Constants.AlgaeEndEffector.INTAKE_SPEED =
-    //     SmartDashboard.getNumber("INTAKE_SPEED", Constants.AlgaeEndEffector.INTAKE_SPEED);
-    // Constants.AlgaeEndEffector.OUTAKE_SPEED =
-    //     SmartDashboard.getNumber("OUTAKE_SPEED", Constants.AlgaeEndEffector.OUTAKE_SPEED);
+    boolean update = false;
+    double n = 0;
+    
+    n = SmartDashboard.getNumber("ShooterkP", Shooter.kP);
+    if (n != Shooter.kP) {
+      Shooter.kP = n;
+    }
+
+    n = SmartDashboard.getNumber("ShooterkI", Shooter.kI);
+    if (n != Shooter.kI) {
+      Shooter.kI = n;
+    }
+
+    n = SmartDashboard.getNumber("ShooterkD", Shooter.kD);
+    if (n != Shooter.kD) {
+      Shooter.kD = n;
+    }
+
+    n = SmartDashboard.getNumber("ShooterkV", Shooter.kV);
+    if (n != Shooter.kV) {
+      Shooter.kV = n;
+    }
+
+    n = SmartDashboard.getNumber("ShooterMotionMagicAcceleration", Shooter.MOTION_MAGIC_ACCEL);
+    if (n != Shooter.MOTION_MAGIC_ACCEL) {
+      Shooter.MOTION_MAGIC_ACCEL = n;
+    }
+
+    n = SmartDashboard.getNumber("ShooterMotionMagicVelocity", Shooter.MOTION_MAGIC_VELOCITY);
+    if (n != Shooter.MOTION_MAGIC_VELOCITY) {
+      Shooter.MOTION_MAGIC_VELOCITY = n;
+    }
+
+    if (update) {
+      m_robotContainer.getShooterSubsystem().configure();
+    }
+
+    Shooter.FEEDER_VOLTAGE = SmartDashboard.getNumber("FeederVoltage", Shooter.FEEDER_VOLTAGE);
 
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
