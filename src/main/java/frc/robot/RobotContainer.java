@@ -54,9 +54,9 @@ public class RobotContainer {
   DoubleSupplier swerve_x =
       () ->
           DrivingRate.applyRateConfig(
-                  -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.02), TRANSLATE_RATE_CONFIG)
+                  -MathUtil.applyDeadband(driverXbox.getLeftY(), 0.08), TRANSLATE_RATE_CONFIG)
               + DrivingRate.applyRateConfig(
-                  -MathUtil.applyDeadband(manualController.getLeftY(), 0.02),
+                  -MathUtil.applyDeadband(manualController.getLeftY(), 0.08),
                   TRANSLATE_RATE_CONFIG);
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), TRANSLATE_RATE_CONFIG));
@@ -64,9 +64,9 @@ public class RobotContainer {
   DoubleSupplier swerve_y =
       () ->
           DrivingRate.applyRateConfig(
-                  -MathUtil.applyDeadband(driverXbox.getLeftX(), 0.02), TRANSLATE_RATE_CONFIG)
+                  -MathUtil.applyDeadband(driverXbox.getLeftX(), 0.08), TRANSLATE_RATE_CONFIG)
               + DrivingRate.applyRateConfig(
-                  -MathUtil.applyDeadband(manualController.getLeftX(), 0.02),
+                  -MathUtil.applyDeadband(manualController.getLeftX(), 0.08),
                   TRANSLATE_RATE_CONFIG);
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), ));
@@ -74,9 +74,9 @@ public class RobotContainer {
   DoubleSupplier swerve_turn =
       () ->
           DrivingRate.applyRateConfig(
-                  -MathUtil.applyDeadband(driverXbox.getRightX(), 0.02), TURN_RATE_CONFIG)
+                  -MathUtil.applyDeadband(driverXbox.getRightX(), 0.08), TURN_RATE_CONFIG)
               + DrivingRate.applyRateConfig(
-                  -MathUtil.applyDeadband(manualController.getRightX(), 0.02), TURN_RATE_CONFIG);
+                  -MathUtil.applyDeadband(manualController.getRightX(), 0.08), TURN_RATE_CONFIG);
 
   // DrivingRate.scaleDrivingConfigs(1 - Math.pow((m_elevator.getHeight() / 300),
   // 2), TRANSLATE_RATE_CONFIG));

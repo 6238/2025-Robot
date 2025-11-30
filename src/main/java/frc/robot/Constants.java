@@ -235,6 +235,7 @@ public final class Constants {
     public static final int FEEDER_WHEEL_ID = 39;
 
     public static double FEEDER_VOLTAGE = 3;
+    public static double SHOOTER_TARGET = 50;
     
     public static double kP = 3;
     public static double kI = 0;

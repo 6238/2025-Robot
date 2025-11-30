@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Shooter;
@@ -40,7 +41,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command spinupCommand() {
-        return runOnce(() -> shooterWheel.setControl(velocityVoltage));
+        return runOnce(() -> shooterWheel.setControl(velocityVoltage.withVelocity(Shooter.SHOOTER_TARGET)));
+        // return runOnce(() -> shooterWheel.set(0.1));
     }
 
     public Command stopShooterWheelCommand() {
@@ -53,5 +55,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command stopFeederWheelCommand() {
         return runOnce(() -> feederWheel.stopMotor());
+    }
+
+    public void periodic() {
+        SmartDashboard.putNumber("wheel_speed", shooterWheel.getVelocity().getValueAsDouble());
     }
 }

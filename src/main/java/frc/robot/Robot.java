@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ShooterMotionMagicVelocity", Shooter.MOTION_MAGIC_VELOCITY);
     SmartDashboard.putNumber("ShooterMotionMagicAcceleration", Shooter.MOTION_MAGIC_ACCEL);
     SmartDashboard.putNumber("FeederVoltage", Shooter.FEEDER_VOLTAGE);
+    SmartDashboard.putNumber("ShooterTarget", Shooter.SHOOTER_TARGET);
   }
 
   @Override
@@ -48,31 +49,37 @@ public class Robot extends TimedRobot {
     n = SmartDashboard.getNumber("ShooterkP", Shooter.kP);
     if (n != Shooter.kP) {
       Shooter.kP = n;
+      update = true;
     }
 
     n = SmartDashboard.getNumber("ShooterkI", Shooter.kI);
     if (n != Shooter.kI) {
       Shooter.kI = n;
+      update = true;
     }
 
     n = SmartDashboard.getNumber("ShooterkD", Shooter.kD);
     if (n != Shooter.kD) {
       Shooter.kD = n;
+      update = true;
     }
 
     n = SmartDashboard.getNumber("ShooterkV", Shooter.kV);
     if (n != Shooter.kV) {
       Shooter.kV = n;
+      update = true;
     }
 
     n = SmartDashboard.getNumber("ShooterMotionMagicAcceleration", Shooter.MOTION_MAGIC_ACCEL);
     if (n != Shooter.MOTION_MAGIC_ACCEL) {
       Shooter.MOTION_MAGIC_ACCEL = n;
+      update = true;
     }
 
     n = SmartDashboard.getNumber("ShooterMotionMagicVelocity", Shooter.MOTION_MAGIC_VELOCITY);
     if (n != Shooter.MOTION_MAGIC_VELOCITY) {
       Shooter.MOTION_MAGIC_VELOCITY = n;
+      update = true;
     }
 
     if (update) {
@@ -80,6 +87,7 @@ public class Robot extends TimedRobot {
     }
 
     Shooter.FEEDER_VOLTAGE = SmartDashboard.getNumber("FeederVoltage", Shooter.FEEDER_VOLTAGE);
+    Shooter.SHOOTER_TARGET = SmartDashboard.getNumber("ShooterTarget", Shooter.SHOOTER_TARGET);
 
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
